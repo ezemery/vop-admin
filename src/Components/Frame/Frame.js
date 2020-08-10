@@ -33,8 +33,9 @@ const Frame = (props) => {
     }, [fetchUserDataAsync]);
 
   const logout = () => {
-    fetch('/logout', {
+    fetch(process.env.REACT_APP_API_HOST + '/logout', {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }

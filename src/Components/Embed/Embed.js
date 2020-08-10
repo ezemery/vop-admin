@@ -18,7 +18,8 @@ const Embed = (props) => {
 
 
     useEffect(() => {
-            fetch('/feed-preview?app_id='+user.id, {
+            fetch(process.env.REACT_APP_API_HOST + '/feed-preview?app_id='+user.id, {
+                credentials: 'include',
                 method: 'GET',
             }).then(function(response) {
                 return response.json()
@@ -49,9 +50,6 @@ const Embed = (props) => {
         <Link to="/" ><Button type="primary">Approve Videos</Button></Link>
     </Empty>);
 
-    useEffect(() => {
-        window.TokShop.loadAll();
-    }, [embedAvailable]);
 
     if(embedAvailable === true) {
         embedPreview = <Card>

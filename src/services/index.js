@@ -1,6 +1,7 @@
 export const getUser = () => {
-    return fetch('/api/user', {
+    return fetch(process.env.REACT_APP_API_HOST + '/api/user', {
         method: 'GET',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         }
@@ -14,8 +15,9 @@ export const getUser = () => {
 }
 
 export const getVideos = (lastVideo, status, hasTags, query) => {
-    return fetch('/api/videos', {
+    return fetch(process.env.REACT_APP_API_HOST + '/api/videos', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

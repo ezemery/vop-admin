@@ -23,8 +23,9 @@ const SetupCreate = (props) => {
 
     const createUser = ({email, password}) => {
         setInvalidEmail(false)
-        fetch('/api/user', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/user', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
