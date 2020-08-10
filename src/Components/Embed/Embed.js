@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Link } from "react-router-dom";
 import {UserStore} from "../../Context/store"
 import {EmbedContainer} from "./styles"
+import VopEmbed from '@vop/embed'
 
 const { Text, Title } = Typography;
 
@@ -18,7 +19,7 @@ const Embed = (props) => {
 
 
     useEffect(() => {
-            fetch(process.env.REACT_APP_API_HOST + '/feed-preview?app_id='+user.id, {
+            fetch(process.env.REACT_APP_API_HOST + '/b/feed?app_id='+user.id, {
                 credentials: 'include',
                 method: 'GET',
             }).then(function(response) {
@@ -52,9 +53,15 @@ const Embed = (props) => {
 
 
     if(embedAvailable === true) {
-        embedPreview = <Card>
-            <div data-tokshop-id={user.id}/>
-        </Card>
+        const config = {
+            appId: user.id,
+            baseUrl: process.env.REACT_APP_API_HOST,
+            component: 'carousel',
+            styles: {},
+            body: document.body,
+            debug: false,
+        }
+        embedPreview = <VopEmbed config={config}/>
     }
 
 
