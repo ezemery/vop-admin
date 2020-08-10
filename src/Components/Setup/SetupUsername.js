@@ -18,8 +18,9 @@ const SetupUsername = ({complete, showSteps, username}) => {
         setShowDetails(false)
         setLoading(true)
         setError(null)
-        fetch('/api/tiktok/user', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/user', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -42,8 +43,9 @@ const SetupUsername = ({complete, showSteps, username}) => {
     };
 
     const saveUsername = () => {
-        fetch('/api/tiktok/user_save', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/user_save', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },

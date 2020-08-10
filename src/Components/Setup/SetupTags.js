@@ -62,8 +62,9 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
     const AddHashTag = (tag) => {
         setLoading(true)
         setError(null)
-        fetch('/api/tiktok/tag', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/tag', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -86,8 +87,9 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
     };
 
     const saveTags = () => {
-        fetch('/api/tiktok/tag_save', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/tag_save', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },

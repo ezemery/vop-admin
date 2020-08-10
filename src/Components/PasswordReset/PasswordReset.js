@@ -42,8 +42,9 @@ export default function PasswordReset() {
         const data = {
             "new_password" : password
          }
-        fetch(`/api/password/reset/${token[0]}`, {
+        fetch(process.env.REACT_APP_API_HOST + `/api/password/reset/${token[0]}`, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },

@@ -26,8 +26,9 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
     };
 
     const searchProducts = (query) => {
-        fetch('/api/product/search', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/product/search', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -47,8 +48,9 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
 
     const SetInfo = (status) => {
         removeItem(currentIndex);
-        fetch('/api/video/update', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/video/update', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -88,8 +90,9 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
     };
 
     const productMeta = () => {
-        fetch('/api/product/meta', {
+        fetch(process.env.REACT_APP_API_HOST + '/api/product/meta', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },

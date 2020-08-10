@@ -1,9 +1,10 @@
 import React from 'react';
 import Frame from "./Components/Frame/Frame";
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
+  useHistory,
+  useLocation,
 } from "react-router-dom";
 import TikTokList from "./Components/TikTok/TikTokList";
 import Login from "./Components/LoginForm/LoginForm";
@@ -17,6 +18,9 @@ import {getUser} from "./services"
 import {getVideos} from "./services"
 
 const App = () => {
+  const history = useHistory();
+  let location = useLocation()
+
     const fetchVideoDataAsync = async (lastVideo, status, hasTags, query) => {
       setVideoState({...v, loading:true});
       try{
@@ -32,6 +36,9 @@ const App = () => {
       try{
          const user  =  await getUser();
          setUserState({...u, user:user, loading:false, error:false});
+         if (user.setup_complete === false && location.pathname === "/") {
+           history.push("/setup/create");
+         }
       }catch(error){
         setUserState({...u, error:true});
       }
@@ -55,7 +62,7 @@ const App = () => {
   return (
     <UserStore.Provider value={u}>
       <VideoStore.Provider value={v}>
-        <Router>
+
           <div className="App" style={{minHeight: "100vh", width: "100vw", backgroundColor: "#EEE"}}>
             <Switch>
               <Route path="/login">
@@ -92,7 +99,7 @@ const App = () => {
               </Route>
             </Switch>
           </div>
-        </Router>
+
     </VideoStore.Provider>
   </UserStore.Provider>
   );

@@ -12,8 +12,9 @@ const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
 
   const SetInfo = (status) => {
     removeItem(currentIndex);
-    fetch('/api/video/update', {
+    fetch(process.env.REACT_APP_API_HOST + '/api/video/update', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },

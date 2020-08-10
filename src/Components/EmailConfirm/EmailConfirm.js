@@ -30,8 +30,9 @@ export default function EmailConfirm() {
       const sendEmail = (email) => {
 
         setvalidate("validating");
-        fetch(`/api/password/forgot/${email}`, {
+        fetch(process.env.REACT_APP_API_HOST + `/api/password/forgot/${email}`, {
             method: 'GET',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             }
