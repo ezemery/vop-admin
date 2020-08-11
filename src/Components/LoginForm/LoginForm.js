@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Form, Icon, Input, Button, Card, Row, Col } from 'antd';
 import {Link, useHistory} from "react-router-dom";
 import {LoginContainer} from "./styles"
@@ -7,8 +7,13 @@ import {LoginContainer} from "./styles"
 const LoginForm = (props) => {
     const history = useHistory();
 
+    const [invalidEmail, setInvalidEmail] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     const handleSubmit = event => {
         event.preventDefault();
+        setInvalidEmail(false);
+        setLoading(true)
         const data = new FormData(event.target);
 
         fetch(process.env.REACT_APP_API_HOST + '/login/go', {
@@ -22,12 +27,13 @@ const LoginForm = (props) => {
             return response.json()
         }).then(function(json) {
             if (json.success) {
-                history.push("/setup/create");
+                history.push("/");
                 return
             }
-            throw new Error('Login was unsuccessful');
+            throw new Error('Network response was not ok');
         }).catch(function(ex) {
-            throw ex;
+            setLoading(false)
+            setInvalidEmail(true);
         })
     }
 
@@ -39,7 +45,9 @@ const LoginForm = (props) => {
               bordered={false} style={{ width: 300 }}>
 
                 <form onSubmit={handleSubmit}>
-                <Form.Item>
+                <Form.Item
+                    validateStatus={invalidEmail ? "error" : null}
+                    help={invalidEmail ? "Incorrect email or password" : null}>
                     <Input
                       prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
                       placeholder="Email"
@@ -58,7 +66,7 @@ const LoginForm = (props) => {
                   <Row>
                     <Col span={12}>
 
-                      <Button type="primary" htmlType="submit" className="login-form-button">
+                      <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
                         Log in
                       </Button>
                     </Col>
