@@ -6,11 +6,14 @@ export const getUser = () => {
             'Content-Type': 'application/json'
         }
     }).then(function(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         return response.json()
     }).then(function(json) {
         return json;
     }).catch(function(ex) {
-        return ex;
+        throw ex;
     });
 }
 
@@ -28,11 +31,14 @@ export const getVideos = (lastVideo, status, hasTags, query) => {
           query: query,
         })
       }).then(function(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
         return response.json()
       }).then(function(json) {
         return json
       }).catch(function(ex) {
-        return ex;
+        throw ex;
       })
 }
 
