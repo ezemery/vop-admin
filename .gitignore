@@ -1,5 +1,7 @@
 node_modules
+build
 .vscode
 .idea
 yarn.lock
 .env
+.vscode/settings.json
