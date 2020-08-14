@@ -32,7 +32,7 @@ export const Form = styled.div`
 `;
 
 export const CompanyDesc = styled.div`
-  @media screen and (max-width: 640px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;
