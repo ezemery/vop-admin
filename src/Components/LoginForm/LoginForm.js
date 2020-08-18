@@ -3,12 +3,15 @@ import { Form, Icon, Input, Button, Card, Row, Col } from 'antd';
 import {Link, useHistory} from "react-router-dom";
 import {LoginContainer} from "./styles"
 import { useForm, Controller } from "react-hook-form";
+import {UserStore} from "../../Context/store";
 
 
 const LoginForm = (props) => {
     const history = useHistory();
 
     const { handleSubmit, control } = useForm();
+
+    const {fetchUserDataAsync} = React.useContext(UserStore);
 
     const [invalidEmail, setInvalidEmail] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -31,8 +34,9 @@ const LoginForm = (props) => {
             return response.json()
         }).then(function(json) {
             if (json.success) {
-                history.push("/");
-                return
+                fetchUserDataAsync().then(() => {
+                    history.push("/");
+                })
             }
             throw new Error('Network response was not ok');
         }).catch(function(ex) {

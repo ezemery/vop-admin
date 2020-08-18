@@ -21,40 +21,40 @@ const App = () => {
   const history = useHistory();
   let location = useLocation()
 
-    const fetchVideoDataAsync = async (lastVideo, status, hasTags, query, userId, accountId) => {
-      setVideoState({...v, loading:true});
-      try{
-         const videos  =  await getVideos(lastVideo, status, hasTags, query, userId, accountId);
-         setVideoState({...v, videos:videos, loading:false, error:false});
-      }catch(error){
-        setVideoState({...v,error:true});
-      }
+  const fetchVideoDataAsync = async (lastVideo, status, hasTags, query, userId, accountId) => {
+    setVideoState({...v, loading:true});
+    try{
+      const videos  =  await getVideos(lastVideo, status, hasTags, query, userId, accountId);
+      setVideoState({...v, videos:videos, loading:false, error:false});
+    }catch(error){
+      setVideoState({...v,error:true});
+    }
   }
+
+  const fetchUserDataAsync = async () => {
+    setUserState({loading:true, users: [], error: false});
+    try{
+      const users  =  await getUsers();
+      setUserState({users:users, loading:false, error:false});
+    } catch(error){
+      setUserState({loading:false, users: [],  error:true});
+    }
+  };
 
   const [v, setVideoState] = React.useState({
     videos:{},
     loading: false,
     error:false,
     fetchVideoDataAsync: fetchVideoDataAsync,
-
   })
 
   const [u, setUserState] = React.useState({
-      users: [],
-      loading: true,
-      error:false
+    users: [],
+    loading: true,
+    error:false
   })
 
   useEffect( () => {
-    const fetchUserDataAsync = async () => {
-      setUserState({loading:true, users: [], error: false});
-      try{
-        const users  =  await getUsers();
-        setUserState({users:users, loading:false, error:false});
-      } catch(error){
-        setUserState({loading:false, users: [],  error:true});
-      }
-    };
    fetchUserDataAsync();
   }, []);
 
@@ -71,9 +71,8 @@ const App = () => {
   }, [u, location, history]);
 
   return (
-    <UserStore.Provider value={u}>
+    <UserStore.Provider value={{...u, fetchUserDataAsync }}>
       <VideoStore.Provider value={v}>
-
           <div className="App" style={{minHeight: "100vh", width: "100vw", backgroundColor: "#EEE"}}>
             <Switch>
               <Route path="/login">
