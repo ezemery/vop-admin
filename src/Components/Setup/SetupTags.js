@@ -3,6 +3,7 @@ import {Steps, Input, Button, Card, Table, Alert} from 'antd';
 import NumericLabel from 'react-pretty-numbers';
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
+import {useParams} from "react-router-dom";
 
 
 const { Step } = Steps;
@@ -20,6 +21,8 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
         commafy: false,
         shortFormat: true,
     };
+
+    const { userId, accountId } = useParams();
 
     const columns = [
         {
@@ -62,7 +65,7 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
     const AddHashTag = (tag) => {
         setLoading(true)
         setError(null)
-        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/tag', {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -87,7 +90,7 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
     };
 
     const saveTags = () => {
-        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/tag_save', {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag_save`, {
             method: 'POST',
             credentials: 'include',
             headers: {

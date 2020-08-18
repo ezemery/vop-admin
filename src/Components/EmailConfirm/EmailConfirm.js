@@ -12,7 +12,6 @@ export default function EmailConfirm() {
     const [help, setHelp] = React.useState("");
     const [email, setEmail] = React.useState("");
 
-
       const formSubmit = (e) => {
         e.preventDefault();
         if(email.length === 0){
@@ -22,7 +21,7 @@ export default function EmailConfirm() {
         }
             sendEmail(email);
       };
-    
+
       const changeEmail = (e) => {
         setEmail(e.target.value);
       }
@@ -30,7 +29,7 @@ export default function EmailConfirm() {
       const sendEmail = (email) => {
 
         setvalidate("validating");
-        fetch(process.env.REACT_APP_API_HOST + `/api/password/forgot/${email}`, {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/password/forgot/${email}`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -47,7 +46,7 @@ export default function EmailConfirm() {
             }
             setHelp(json.message)
             setvalidate("success");
-           
+
         }).catch(function(ex) {
             setvalidate("error");
             setHelp("An error occured while processing your request")
@@ -60,12 +59,12 @@ export default function EmailConfirm() {
         <EmailContainer>
             <div className="email-container">
                 <Row className="logo-div">
-                <div className="logo"> <img src="/../vop-black-300.png" alt="Tokshop" /></div>
+                <div className="logo"> <img src="/vop-black-300.png" alt="Tokshop" /></div>
                 </Row>
                 <Row className="email-title_container">
                     <Col lg={24} sm={12}>
                         <Title level={3} className="text-align">Enter a registered email address </Title>
-                    </Col>   
+                    </Col>
                 </Row>
             <Row type="flex" justify="center" align="middle" className="full-height">
                         <Form
@@ -95,7 +94,7 @@ export default function EmailConfirm() {
                                     &lt; Back to Login
                                 </Link>
                                 </Col>
-                            </Form>  
+                            </Form>
                 </Row>
             </div>
         </EmailContainer>
