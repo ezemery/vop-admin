@@ -5,21 +5,21 @@ import {Col, Row} from "react-flexbox-grid";
 import SetupUsername from "../Setup/SetupUsername";
 import SetupTags from "../Setup/SetupTags";
 import {UserStore} from "../../Context/store";
+import {useParams} from "react-router-dom";
+import {findUserInUsersById} from "../../services";
 
 const Settings = (props) => {
-    const {user,fetchUserDataAsync} = React.useContext(UserStore);
+    const { userId } = useParams();
+    const {users} = React.useContext(UserStore);
+    const user = findUserInUsersById(users, userId)
     const [usernameSaved, setUsernameSaved] = useState(false);
     const [tagsSaved, setTagsSaved] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [initialTags, setInitialTags] = useState([]);
 
     useEffect(() => {
-        fetchUserDataAsync();
-         setLoading(false);
-      }, [fetchUserDataAsync]);
-
-    useEffect(() => {
-        user.tags && setInitialTags(user.tags.map(tag => {return {tag: tag, views: 0, videos: 0}}))
+        if (user) {
+            user.tags && setInitialTags(user.tags.map(tag => {return {tag: tag, views: 0, videos: 0}}))
+        }
     }, [user]);
 
     console.log("initialTags", initialTags)
@@ -27,8 +27,8 @@ const Settings = (props) => {
     const usernameComplete = () => setUsernameSaved(true);
     const tagsComplete = () => setTagsSaved(true);
 
-    return (
-        <div hidden={loading}>
+    return user ? (
+        <div>
             <Row>
                 <Col lg={24} xs={12}>&nbsp;
                 </Col>
@@ -54,7 +54,7 @@ const Settings = (props) => {
                 </Col>
             </Row>
         </div>
-    );
+    ) : <></>;
 
 };
 

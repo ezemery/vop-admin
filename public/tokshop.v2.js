@@ -732,7 +732,7 @@ body.tokshop-body-stop {
                     eventLabel: slide.video_url
                     });
                     }catch(e){}
-                    
+
                     for (var key in slide.products) {
                       slide.products[key].encoded_url = encodeURIComponent(slide.products[key].url);
                     }
@@ -805,7 +805,7 @@ body.tokshop-body-stop {
             slidesPerView: 1,
             spaceBetween: 0,
             centeredSlides: true,
-            cssMode: true, 
+            cssMode: true,
             mousewheel: true,
             keyboard: true,
 
@@ -826,7 +826,7 @@ body.tokshop-body-stop {
 
     var loadNew = function(id, el) {
         // Make a request for a user with a given ID
-        axios.get("https://app.getvop.com/feed?q=1&app_id="+id)
+        axios.get("https://api.getvop.com/embed/feed/"+id)
             .then(function (response) {
                 // handle success
                 videoData = response.data;
@@ -868,7 +868,7 @@ body.tokshop-body-stop {
 
     var loadPage = function(id, el,per_page,current_page) {
         // Make a request for a user with a given ID
-        axios.get("https://app.getvop.com/b/feed?q=1&app_id="+ id +"&perPage="+ per_page + "&page_count="+ current_page)
+        axios.get("https://api.getvop.com/embed/feed/"+ id +"?perPage="+ per_page + "&page_count="+ current_page)
             .then(function (response) {
                 // handle success
                 videoData = response.data.data;

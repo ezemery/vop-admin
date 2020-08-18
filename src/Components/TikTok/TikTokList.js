@@ -5,7 +5,7 @@ import TikTokCard from "./TikTokCard";
 import { Row, Col } from 'react-flexbox-grid';
 import InfiniteScroll from 'react-infinite-scroller';
 import TikTokModal from "./TikTokModal";
-import {useHistory} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import {VideoStore} from "../../Context/store";
 
 const InputGroup = Input.Group;
@@ -15,6 +15,8 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
   const {videos, error, fetchVideoDataAsync} = React.useContext(VideoStore);
 
   const history = useHistory();
+
+  const { userId, accountId } = useParams();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modal, setModal] = useState(false);
@@ -42,9 +44,9 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
             if (lastVideo === "0") {
                 setLoading(true);
             }
-            fetchVideoDataAsync(lastVideo, status, hasTags, query)
+            fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId)
         },
-        [fetchVideoDataAsync, hasTags, lastVideo, query, status],
+        [fetchVideoDataAsync, hasTags, lastVideo, query, status, userId, accountId],
     );
 
   useEffect(() => {
@@ -72,8 +74,8 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
 
     useEffect(() => {
         updateData([]);
-        fetchVideoDataAsync("0", status, hasTags, query);
-    }, [fetchVideoDataAsync, status, hasTags, query]);
+        fetchVideoDataAsync("0", status, hasTags, query, userId, accountId);
+    }, [fetchVideoDataAsync, status, hasTags, query, userId, accountId]);
 
 
   const openModal = (index) => {
@@ -86,7 +88,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
   if (feedList.length === 0) {
     if(approvalScreen === true) {
         feedList = <Empty
-            image="tiktok.png"
+            image="/tiktok.png"
             imageStyle={{
                 height: 60,
             }}
@@ -100,7 +102,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
         </Empty>
     } else {
         feedList = <Empty
-            image="tiktok.png"
+            image="/tiktok.png"
             imageStyle={{
                 height: 60,
             }}
@@ -124,7 +126,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
 
   if (loading === true) {
       feedList = <Empty
-          image="tiktok.png"
+          image="/tiktok.png"
           imageStyle={{
               height: 60,
           }}

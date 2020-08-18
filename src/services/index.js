@@ -1,5 +1,5 @@
-export const getUser = () => {
-    return fetch(process.env.REACT_APP_API_HOST + '/api/user', {
+export const getUsers = () => {
+    return fetch(process.env.REACT_APP_API_HOST + '/admin/user', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -11,14 +11,18 @@ export const getUser = () => {
         }
         return response.json()
     }).then(function(json) {
-        return json;
+        return [...json];
     }).catch(function(ex) {
         throw ex;
     });
 }
 
-export const getVideos = (lastVideo, status, hasTags, query) => {
-    return fetch(process.env.REACT_APP_API_HOST + '/api/videos', {
+export const findUserInUsersById = (users, id) => {
+    return users.find(element => element.id.toString() === id);
+}
+
+export const getVideos = (lastVideo, status, hasTags, query, userId, accountId) => {
+    return fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/'+userId+'/account/id/'+accountId+'/content', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -36,7 +40,7 @@ export const getVideos = (lastVideo, status, hasTags, query) => {
         }
         return response.json()
       }).then(function(json) {
-        return json
+        return json.data
       }).catch(function(ex) {
         throw ex;
       })

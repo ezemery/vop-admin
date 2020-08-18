@@ -17,7 +17,7 @@ const LoginForm = (props) => {
         setInvalidEmail(false);
         setLoading(true)
 
-        fetch(process.env.REACT_APP_API_HOST + '/login/go', {
+        fetch(process.env.REACT_APP_API_HOST + '/admin/login', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -44,8 +44,8 @@ const LoginForm = (props) => {
     return (
       <LoginContainer type="flex" justify="space-around" align="middle">
         <Col lg={24} sm={12} align="middle">
-            <Card 
-              title={<div className="text-align"><img src="vop-black-300.png" style={{ width: 150 }} alt="Tokshop" /></div>}
+            <Card
+              title={<div className="text-align"><img src="/vop-black-300.png" style={{ width: 150 }} alt="Tokshop" /></div>}
               bordered={false} style={{ width: 300 }}>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
