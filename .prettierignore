@@ -4,4 +4,3 @@ dist
 coverage
 *.svg
 /README.md
-build
