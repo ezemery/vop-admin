@@ -15,7 +15,7 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const Frame = (props) => {
   const { userId, accountId } = useParams();
-  const {users} = React.useContext(UserStore);
+  const {users, fetchUserDataAsync} = React.useContext(UserStore);
   const user = findUserInUsersById(users, userId)
   const [toggle, setToggle] = useState(false)
   const appID = "rlquh92b";
@@ -28,8 +28,6 @@ const Frame = (props) => {
   let location = useLocation();
   const history = useHistory();
 
-
-
   const logout = () => {
     fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
       method: 'GET',
@@ -40,7 +38,9 @@ const Frame = (props) => {
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      history.push('/login');
+      fetchUserDataAsync().then(() => {
+        history.push("/");
+      })
     }).catch(function(ex) {
       console.log('parsing failed', ex)
     });
