@@ -1,29 +1,27 @@
 import React from 'react';
 import { Row, Col } from 'antd';
-import {Route, Switch, useHistory} from "react-router-dom";
+import {Route, Switch, useHistory, useParams} from "react-router-dom";
 import 'whatwg-fetch'
 import SetupUsername from "./SetupUsername";
-import SetupCreate from "./SetupCreate";
 import SetupTags from "./SetupTags";
 
-const SetupScreen = (props) => {
+const SetupScreen = () => {
 
     const history = useHistory();
 
-    const usernameComplete = () => history.push('/setup/tags');
-    const tagComplete = () => window.location.href = "/";
+    const { userId, accountId } = useParams();
+
+    const usernameComplete = () => history.push(`/user/id/${userId}/account/id/${accountId}/setup/tags`);
+    const tagComplete = () => window.location.href = `/user/id/${userId}/account/id/${accountId}`;
 
     return (
         <Row type="flex" justify="space-around" align="middle" style={{minHeight: "100%"}}>
             <Col md={12} sm={12}>
                 <Switch>
-                    <Route path="/setup/create">
-                        <SetupCreate/>
-                    </Route>
-                    <Route path="/setup/username">
+                    <Route path="/user/id/:userId/account/id/:accountId/setup/username">
                         <SetupUsername complete={usernameComplete} showSteps={true}/>
                     </Route>
-                    <Route path="/setup/tags">
+                    <Route path="/user/id/:userId/account/id/:accountId/setup/tags">
                         <SetupTags initialTags={[]} complete={tagComplete} showSteps={true}/>
                     </Route>
                 </Switch>

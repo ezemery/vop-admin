@@ -1,8 +1,11 @@
 import {Modal, Input, List, Avatar, Button, AutoComplete, Icon } from "antd";
 import {Col, Row, Grid} from "react-flexbox-grid";
 import React, {useState} from "react";
+import {useParams} from "react-router-dom";
 
 const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) => {
+
+    const { userId, accountId } = useParams();
 
     const currentItem = data[currentIndex];
     const [products, setProducts] = useState([]);
@@ -26,7 +29,7 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
     };
 
     const searchProducts = (query) => {
-        fetch(process.env.REACT_APP_API_HOST + '/api/product/search', {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/product/search`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -39,7 +42,6 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
             return response.json()
         }).then(function(json) {
             setProducts(json.data.products.edges);
-            console.log(json)
         }).catch(function(ex) {
 
         })
@@ -48,23 +50,21 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
 
     const SetInfo = (status) => {
         removeItem(currentIndex);
-        fetch(process.env.REACT_APP_API_HOST + '/api/video/update', {
-            method: 'POST',
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/content/id/${currentItem.id}`, {
+            method: 'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: currentItem.id,
                 status: status,
                 products: selectedProducts
             })
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log(json.length)
         }).catch(function(ex) {
-            console.log('parsing failed', ex)
+
         });
         setSelectedProducts([]);
     };
@@ -85,12 +85,11 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
             image_url: customImage,
             url: customUrl,
         };
-        console.log(newItem);
         setSelectedProducts(oldArray => [...oldArray, newItem]);
     };
 
     const productMeta = () => {
-        fetch(process.env.REACT_APP_API_HOST + '/api/product/meta', {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/product/meta`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -102,7 +101,6 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log(json)
             setCustomImage(json.image);
             setCustomTitle(json.title);
         }).catch(function(ex) {

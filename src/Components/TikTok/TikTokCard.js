@@ -3,6 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import NumericLabel from 'react-pretty-numbers';
 import { Col } from 'react-flexbox-grid';
+import {useParams} from "react-router-dom";
 const { Meta } = Card;
 
 
@@ -10,24 +11,24 @@ const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
 
   const [play, setPlay] = useState(false);
 
+  const { userId, accountId } = useParams();
+
   const SetInfo = (status) => {
-    removeItem(currentIndex);
-    fetch(process.env.REACT_APP_API_HOST + '/api/video/update', {
-      method: 'POST',
+    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/content/id/${item.id}`, {
+      method: 'PUT',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        id: item.id,
         status: status
       })
     }).then(function(response) {
       return response.json()
     }).then(function(json) {
-      console.log(json.length)
+      removeItem(currentIndex);
     }).catch(function(ex) {
-      console.log('parsing failed', ex)
+      
     })
 
   };

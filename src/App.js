@@ -1,11 +1,8 @@
 import React from 'react';
-import Frame from './Components/Frame/Frame';
-import '@shopify/polaris/dist/styles.css';
+import {Switch, Route, useHistory, useLocation} from 'react-router-dom';
 import enTranslations from '@shopify/polaris/locales/en.json';
 import {AppProvider} from '@shopify/polaris';
-import 'tailwindcss/dist/base.min.css';
-
-import {Switch, Route, useHistory, useLocation} from 'react-router-dom';
+import Frame from './Components/Frame/Frame';
 import TikTokList from './Components/TikTok/TikTokList';
 import Login from './Components/LoginForm/LoginForm';
 import SetupScreen from './Components/Setup/SetupScreen';
@@ -14,10 +11,26 @@ import Settings from './Components/Settings/Settings';
 import EmailConfirm from './Components/EmailConfirm/EmailConfirm';
 import PasswordReset from './Components/PasswordReset/PasswordReset';
 import {UserStore, VideoStore} from './Context/store';
-import {getUser} from './services';
+import {getUsers} from './services';
 import {getVideos} from './services';
+import 'tailwindcss/dist/base.min.css';
+import '@shopify/polaris/dist/styles.css';
 
 const App = () => {
+  const [v, setVideoState] = React.useState({
+    videos: {},
+    loading: false,
+    error: false,
+    fetchVideoDataAsync: fetchVideoDataAsync,
+  });
+
+  const [u, setUserState] = React.useState({
+    user: {},
+    loading: false,
+    error: false,
+    fetchUserDataAsync: fetchUserDataAsync,
+  });
+  
   const history = useHistory();
   let location = useLocation();
 
@@ -34,7 +47,7 @@ const App = () => {
   const fetchUserDataAsync = async () => {
     setUserState({...u, loading: true});
     try {
-      const user = await getUser();
+      const user = await getUsers();
       setUserState({...u, user: user, loading: false, error: false});
       if (user.setup_complete === false && location.pathname === '/') {
         history.push('/setup/create');
@@ -43,20 +56,6 @@ const App = () => {
       setUserState({...u, error: true});
     }
   };
-
-  const [v, setVideoState] = React.useState({
-    videos: {},
-    loading: false,
-    error: false,
-    fetchVideoDataAsync: fetchVideoDataAsync,
-  });
-
-  const [u, setUserState] = React.useState({
-    user: {},
-    loading: false,
-    error: false,
-    fetchUserDataAsync: fetchUserDataAsync,
-  });
 
   const theme = {
     colors: {

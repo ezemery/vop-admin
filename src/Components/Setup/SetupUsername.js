@@ -2,6 +2,7 @@ import React,{ useState }  from 'react';
 import { Steps, Icon, Input, Button, Card, Row, Col, Statistic, Alert } from 'antd';
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
+import {useParams} from "react-router-dom";
 
 const { Step } = Steps;
 
@@ -11,14 +12,14 @@ const SetupUsername = ({complete, showSteps, username}) => {
     const [showDetails, setShowDetails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const onSubmit = data => { LoadUser() };
-    const onSubmitValid = data => { saveUsername() };
+
+    const { userId, accountId } = useParams();
 
     const LoadUser = () => {
         setShowDetails(false)
         setLoading(true)
         setError(null)
-        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/user', {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -37,13 +38,13 @@ const SetupUsername = ({complete, showSteps, username}) => {
                 setError("Unable to find username")
             }
         }).catch(function(ex) {
+            setLoading(false)
             setError("Error validating username")
         })
 
     };
-
     const saveUsername = () => {
-        fetch(process.env.REACT_APP_API_HOST + '/api/tiktok/user_save', {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user_save`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -55,17 +56,18 @@ const SetupUsername = ({complete, showSteps, username}) => {
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log('parsed json', json);
             if (json === "Success") {
                 complete();
                 setShowDetails(false)
             }
         }).catch(function(ex) {
-            console.log('parsing failed', ex)
+    
         })
 
     };
-
+    
+    const onSubmit = () => { LoadUser() };
+    const onSubmitValid = data => { saveUsername() };
     return (
         <Card title="Setup Username" bordered={false}>
             <OnboardingSteps>

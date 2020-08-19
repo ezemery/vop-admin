@@ -1,44 +1,41 @@
 import {Col, Row, Card,Typography, Empty, Button} from 'antd';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
-import { Link } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {UserStore} from "../../Context/store"
 import {EmbedContainer} from "./styles"
 import VopEmbed from '@vop/embed'
+import {findUserInUsersById} from "../../services";
 
 const { Text, Title } = Typography;
 
-const Embed = (props) => {
+const Embed = () => {
     const [loading, setLoading] = useState(true);
     const [embedAvailable, setEmbedAvailable] = useState(false);
-    const {user,fetchUserDataAsync} = React.useContext(UserStore);
+    const { userId } = useParams();
+    const {users} = React.useContext(UserStore);
+    const user = findUserInUsersById(users, userId)
 
     useEffect(() => {
-        fetchUserDataAsync();
-      }, [fetchUserDataAsync]);
-
-
-    useEffect(() => {
-            fetch(process.env.REACT_APP_API_HOST + '/b/feed?app_id='+user.id, {
+        if(user) {
+            fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + user.id, {
                 credentials: 'include',
                 method: 'GET',
-            }).then(function(response) {
+            }).then(function (response) {
                 return response.json()
-            }).then(function(json) {
+            }).then(function (json) {
                 if (json.data.length > 0) {
                     setEmbedAvailable(true)
                 }
 
-            }).catch(function(ex) {
-                console.log('parsing failed', ex)
+            }).catch(function (ex) {
             });
             setLoading(false);
-
-
+        }
     },[user]);
 
     let embedPreview = (<Empty
-        image="tiktok.png"
+        image="/tiktok.png"
         imageStyle={{
             height: 60,
         }}
@@ -66,28 +63,28 @@ const Embed = (props) => {
 
 
 
-    return (
+    return user ? (
         <EmbedContainer>
         <div hidden={loading}>
             <Row>
-                <Col lg={24} md={12} sm={12} >&nbsp;
+                <Col lg={24} md={24} sm={24} >&nbsp;
                 </Col>
             </Row>
             <Row>
-                <Col lg={24} md={12} sm={12}>&nbsp;
+                <Col lg={24} md={24} sm={24}>&nbsp;
                 </Col>
             </Row>
             <Row>
-                <Col lg={24} xs={12}>
+                <Col lg={24} xs={24}>
                     {embedPreview}
                 </Col>
             </Row>
             <Row>
-                <Col lg={24} md={12} sm={12}>&nbsp;
+                <Col lg={24} md={24} sm={24}>&nbsp;
                 </Col>
             </Row>
             <Row hidden={!embedAvailable}>
-                <Col lg={24} xs={12}>
+                <Col lg={24} xs={24}>
                     <Card className="text-align">
 
                         <Title level={2}>Embed your TokShop feed</Title>
@@ -96,18 +93,23 @@ const Embed = (props) => {
                         <br/>
                         <Text code>&#x3C;div data-tokshop-id=&#x22;{user.id}&#x22;&#x3E;&#x3C;/div&#x3E;</Text><br />
                         <Text code>&lt;script src=&quot;https://cdn.tokshop.com/tokshop.v2.js&quot; async=&quot;async&quot; &gt;&lt;/script&gt;</Text><br />
-
                         <br/>
                         <Text>&nbsp;</Text>
                         <br/>
-                        <Text>For installation instructions for Shopify please see here <a target="_blank" rel="noopener noreferrer" href="https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store">https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store</a></Text><br />
+                        <Text>For installation instructions for Shopify please see here 
+                            <a 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                href="https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store">https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store</a>
+                        </Text>
+                        <br />
                         <br/>
                     </Card>
                 </Col>
             </Row>
         </div>
     </EmbedContainer>
-    );
+    ) : <></>;
 
 };
 

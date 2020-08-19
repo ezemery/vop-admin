@@ -11,38 +11,13 @@ export default function PasswordReset() {
     const [validate, setvalidate] = React.useState("");
     const [help, setHelp] = React.useState("");
     const [password, setPassword] = React.useState("");
-    
-
-    const formSubmit = (e) => {
-        e.preventDefault();
-        if(password.length === 0){
-            setHelp("Password fields cannot be empty")
-            setvalidate("warning");
-            return;
-        }
-            resetPassword(password);
-      };
-    
-      const changePassword = (e) => {
-        setPassword(e.target.value);
-      }
-      const checkPassword = (e) => {
-        if(e.target.value !== password){
-            setvalidate("error");
-            setHelp("Passwords do not match")
-        }else{
-            setvalidate("success");
-            setHelp("Passwords match")
-        }
-      }
-      const resetPassword = (password) => {
+    const resetPassword = (password) => {
         setvalidate("validating");
         const token = window.location.href.split("/").slice("-1");
-        console.log(token)
         const data = {
             "new_password" : password
          }
-        fetch(process.env.REACT_APP_API_HOST + `/api/password/reset/${token[0]}`, {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/password/reset/${token[0]}`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -62,7 +37,7 @@ export default function PasswordReset() {
             setTimeout(()=>{
                 history.push('/login');
             }, 200)
-           
+
         }).catch(function(ex) {
             setvalidate("error");
             setHelp("An error occured while processing your request")
@@ -70,16 +45,40 @@ export default function PasswordReset() {
 
       }
 
+    const formSubmit = (e) => {
+        e.preventDefault();
+        if(password.length === 0){
+            setHelp("Password fields cannot be empty")
+            setvalidate("warning");
+            return;
+        }
+            resetPassword(password);
+      };
+
+      const changePassword = (e) => {
+        setPassword(e.target.value);
+      }
+      const checkPassword = (e) => {
+        if(e.target.value !== password){
+            setvalidate("error");
+            setHelp("Passwords do not match")
+        }else{
+            setvalidate("success");
+            setHelp("Passwords match")
+        }
+      }
+     
+
     return (
         <ResetContainer>
         <div className="reset-container">
             <Row className="logo-div">
-             <div className="logo"> <img src="/../vop-black-300.png" alt="Tokshop" /></div>
+             <div className="logo"> <img src="/vop-black-300.png" alt="Tokshop" /></div>
             </Row>
             <Row className="reset-title_container">
                 <Col lg={24} sm={12}>
                      <Title level={3} style={{textAlign:"center"}}>Reset your password </Title>
-                </Col>   
+                </Col>
             </Row>
             <Row type="flex" justify="center" align="middle" className="full-height">
                     <Form
@@ -112,7 +111,7 @@ export default function PasswordReset() {
                                     </Button>
                                 </Form.Item>
                             </Col>
-                        </Form>  
+                        </Form>
             </Row>
         </div>
      </ResetContainer>
