@@ -4,32 +4,19 @@ import enTranslations from '@shopify/polaris/locales/en.json';
 import {AppProvider} from '@shopify/polaris';
 import Frame from './Components/Frame/Frame';
 import TikTokList from './Components/TikTok/TikTokList';
-import Login from './Components/LoginForm/LoginForm';
+import Login from './Components/Auth/LoginForm';
 import SetupScreen from './Components/Setup/SetupScreen';
 import Embed from './Components/Embed/Embed';
 import Settings from './Components/Settings/Settings';
-import EmailConfirm from './Components/EmailConfirm/EmailConfirm';
-import PasswordReset from './Components/PasswordReset/PasswordReset';
+import EmailConfirm from './Components/Auth/EmailConfirm';
+import PasswordReset from './Components/Auth/PasswordReset';
 import {UserStore, VideoStore} from './Context/store';
 import {getUsers} from './services';
 import {getVideos} from './services';
-import 'tailwindcss/dist/base.min.css';
 import '@shopify/polaris/dist/styles.css';
-
+import 'tailwindcss/dist/base.min.css';
 const App = () => {
-  const [v, setVideoState] = React.useState({
-    videos: {},
-    loading: false,
-    error: false,
-    fetchVideoDataAsync: fetchVideoDataAsync,
-  });
 
-  const [u, setUserState] = React.useState({
-    user: {},
-    loading: false,
-    error: false,
-    fetchUserDataAsync: fetchUserDataAsync,
-  });
   
   const history = useHistory();
   let location = useLocation();
@@ -56,7 +43,19 @@ const App = () => {
       setUserState({...u, error: true});
     }
   };
+  const [v, setVideoState] = React.useState({
+    videos: {},
+    loading: false,
+    error: false,
+    fetchVideoDataAsync: fetchVideoDataAsync,
+  });
 
+  const [u, setUserState] = React.useState({
+    user: {},
+    loading: false,
+    error: false,
+    fetchUserDataAsync: fetchUserDataAsync,
+  });
   const theme = {
     colors: {
       topBar: {
