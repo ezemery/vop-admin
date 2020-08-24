@@ -1,14 +1,14 @@
 import React, {useState, useCallback} from 'react';
-// import { Form, Icon, Input, Button, Card, Row, Col } from 'antd';
 import {
   FormLayout,
   TextField,
   Icon,
   Button,
-  Checkbox,
+  Heading,
   Form,
 } from '@shopify/polaris';
 import {EmailMajorMonotone, LockMajorMonotone} from '@shopify/polaris-icons';
+import {Link, useHistory} from 'react-router-dom';
 import {useForm, Controller} from 'react-hook-form';
 import {Icons} from '../Icons';
 import {
@@ -29,12 +29,10 @@ import {
 
 export const EmailConfirm = (props) => {
   const history = useHistory();
-
   const {handleSubmit, control} = useForm();
-  const [checked, setChecked] = useState(false);
-  const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
-  const [invalidEmail, setInvalidEmail] = useState(false);
+  const [help, setHelp] = React.useState("");
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState("")
 
   const LogoSVG = () => (
     <Logo viewBox="0 0 105 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,7 +55,15 @@ export const EmailConfirm = (props) => {
     </Logo>
   );
 
-  const Forgot = () => (
+  const Confirm = useCallback(() => (
+    <SVGIcon viewBox="0 0 157 157" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M112.562 57.5209C110.011 54.9664 105.864 54.9664 103.313 57.5209L75.2292 85.601L63.4999 73.875C60.9487 71.3205 56.8013 71.3205 54.25 73.875C51.6955 76.4296 51.6955 80.5704 54.25 83.125L70.6042 99.4791C71.8798 100.758 73.5545 101.396 75.2292 101.396C76.9038 101.396 78.5785 100.758 79.8541 99.4791L112.562 66.7708C115.117 64.2163 115.117 60.0754 112.562 57.5209Z" fill="#5C6AC4"/>
+    <path d="M150.458 71.9583C146.847 71.9583 143.917 74.889 143.917 78.5C143.917 114.571 114.571 143.917 78.5 143.917C42.4292 143.917 13.0833 114.571 13.0833 78.5C13.0833 42.4292 42.4292 13.0833 78.5 13.0833C96.0611 13.0833 112.546 19.9455 124.923 32.4074C127.464 34.975 131.609 34.9881 134.173 32.4401C136.737 29.8954 136.75 25.7545 134.206 23.1902C119.356 8.23596 99.5707 0 78.5 0C35.2138 0 0 35.2138 0 78.5C0 121.786 35.2138 157 78.5 157C121.786 157 157 121.786 157 78.5C157 74.889 154.069 71.9583 150.458 71.9583Z" fill="#B3BCF5"/>
+    </SVGIcon>
+
+  ),[])
+
+  const Forgot = useCallback(() => (
     <SVGIcon
       viewBox="0 0 167 176"
       fill="none"
@@ -88,18 +94,65 @@ export const EmailConfirm = (props) => {
         fill="#B3BCF5"
       />
     </SVGIcon>
-  );
-  const onSubmit = (data) => {
-    setInvalidEmail(false);
-    setLoading(true);
+  ),[]);
 
-    fetch(`${process.env.REACT_APP_API_HOST}/login/go`, {
-      method: 'POST',
+  const EmailSent = ()=>{
+    if(emailSent){
+      return (
+        <>
+        <AnimateText size="extraLarge">Account recovery</AnimateText>
+        <SmallText>
+        We have sent a reset link to your email address <Heading>{emailSent}</Heading>Please go to your inbox and click the reset link to complete your account recovery process.
+        </SmallText>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+        <FormLayout>
+          <Button primary fullWidth url="/email/confirm">
+            Resend Email
+          </Button>
+        </FormLayout>
+      </Form>
+      </>
+      )
+    }
+    return (
+      <>
+      <AnimateText size="extraLarge">Forgot Password</AnimateText>
+      <SmallText>
+        Enter your registered email address below and we’ll help you recover
+        your account.
+      </SmallText>
+      <Form onSubmit={handleSubmit(onSubmit)}>
+      <FormLayout>
+        <Controller
+            as={TextField}
+            control={control}
+            prefix={<Icon source={EmailMajorMonotone} />}
+            error={help ? help : null}
+            label="Email"
+            placeholder="Email"
+            labelHidden
+            type="email"
+            name="email"
+          />
+        <Button primary fullWidth submit loading={loading}>
+          Send Email
+        </Button>
+      </FormLayout>
+    </Form>
+    </>
+    )
+  }
+
+  const onSubmit = (data) => {
+    setLoading(true);
+    const {email} = data;
+
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/password/forgot/${email}`, {
+      method: 'GET',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
     })
       .then((response) => {
         if (!response.ok) {
@@ -108,15 +161,17 @@ export const EmailConfirm = (props) => {
         return response.json();
       })
       .then((json) => {
-        if (json.success) {
-          history.push('/');
+        if(json.error){
+          setHelp(json.message)
           return;
-        }
-        throw new Error('Network response was not ok');
+      }
+        console.log(emailSent)
+        setEmailSent(email)
+        return;
       })
       .catch((ex) => {
         setLoading(false);
-        setInvalidEmail(true);
+        setHelp("An error occured while processing your request")
       });
   };
 
@@ -125,30 +180,9 @@ export const EmailConfirm = (props) => {
       <LeftSide>
         <LogoSVG />
         <LoginForm>
-          <AnimateText size="extraLarge">Forgot Password</AnimateText>
+           <EmailSent/>
           <SmallText>
-            Enter your registered email address below and we’ll help you recover
-            your account.
-          </SmallText>
-          <Form>
-            <FormLayout>
-              <TextField
-                type="email"
-                label="Email"
-                labelHidden
-                onChange={() => {}}
-                value=""
-                prefix={<Icon source={EmailMajorMonotone} />}
-                placeholder="Email"
-                error=""
-              />
-              <Button primary fullWidth>
-                Send Email
-              </Button>
-            </FormLayout>
-          </Form>
-          <SmallText>
-            Go back to <Button plain>Login</Button>
+            Go back to <Button plain url="/login">Login</Button>
           </SmallText>
         </LoginForm>
         <CompanyDesc>
@@ -157,106 +191,8 @@ export const EmailConfirm = (props) => {
       </LeftSide>
       <RightSide>
         <Box />
-        <Forgot />
+        {emailSent ? <Confirm/> : <Forgot />}
       </RightSide>
     </LoginContainer>
   );
 };
-
-// import React from 'react'
-// import {Form, Input, Button, Row, Col, Typography} from 'antd';
-// import { Link } from "react-router-dom";
-// import {EmailContainer} from "./styles"
-
-// const { Title } = Typography;
-
-// export default function EmailConfirm() {
-
-//     const [validate, setvalidate] = React.useState("");
-//     const [help, setHelp] = React.useState("");
-//     const [email, setEmail] = React.useState("");
-//     const sendEmail = (email) => {
-
-//         setvalidate("validating");
-//         fetch(process.env.REACT_APP_API_HOST + `/admin/password/forgot/${email}`, {
-//             method: 'GET',
-//             credentials: 'include',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             }
-//         }).then(function(response) {
-//             return response.json();
-//         }).then(function(json) {
-//             if(json.error){
-//                 setHelp(json.message)
-//                 setvalidate("error");
-//                 return;
-//             }
-//             setHelp(json.message)
-//             setvalidate("success");
-
-//         }).catch(function(ex) {
-//             setvalidate("error");
-//             setHelp("An error occured while processing your request")
-//         });
-
-//       }
-//       const formSubmit = (e) => {
-//         e.preventDefault();
-//         if(email.length === 0){
-//             setHelp("Email field cannot be empty")
-//             setvalidate("warning");
-//             return;
-//         }
-//             sendEmail(email);
-//       };
-
-//       const changeEmail = (e) => {
-//         setEmail(e.target.value);
-//       }
-
-//     return (
-//         <EmailContainer>
-//             <div className="email-container">
-//                 <Row className="logo-div">
-//                 <div className="logo"> <img src="/vop-black-300.png" alt="Tokshop" /></div>
-//                 </Row>
-//                 <Row className="email-title_container">
-//                     <Col lg={24} sm={12}>
-//                         <Title level={3} className="text-align">Enter a registered email address </Title>
-//                     </Col>
-//                 </Row>
-//             <Row type="flex" justify="center" align="middle" className="full-height">
-//                         <Form
-//                             name="basic"
-//                             onSubmit={formSubmit}
-//                             >
-//                                 <Col span={24}>
-//                                     <Form.Item
-//                                         name="email"
-//                                         validateStatus={validate}
-//                                         help={help}
-//                                         hasFeedback
-//                                         rules={[{ required: true, message: 'Fill in your registered email address' }]}
-//                                         >
-//                                         <Input placeholder="Email" id="email" value={email} onChange={changeEmail}/>
-//                                     </Form.Item>
-//                                 </Col>
-//                                 <Col span={24}>
-//                                     <Form.Item >
-//                                         <Button type="primary" htmlType="submit" className="full-width">
-//                                             Submit
-//                                         </Button>
-//                                     </Form.Item>
-//                                 </Col>
-//                                 <Col lg={24} sm={12} className="text-align" >
-//                                     <Link className="login-form-forgot" to="/login">
-//                                     &lt; Back to Login
-//                                 </Link>
-//                                 </Col>
-//                             </Form>
-//                 </Row>
-//             </div>
-//         </EmailContainer>
-//     )
-// }

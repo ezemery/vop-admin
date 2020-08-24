@@ -77,7 +77,7 @@ export const Invite = (props) => {
     </Logo>
   );
 
-  const Confetti = () => (
+  const Confetti = useCallback(() => (
     <SVGIcon
       width="157"
       height="157"
@@ -149,7 +149,7 @@ export const Invite = (props) => {
         </clipPath>
       </defs>
     </SVGIcon>
-  );
+  ),[]);
 
   const Login = () => (
     <InviteForm>

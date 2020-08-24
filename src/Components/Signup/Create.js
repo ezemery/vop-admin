@@ -100,7 +100,7 @@ export const Create = (props) => {
         <LoginForm>
           <AnimateText size="large">Let’s get to know you!</AnimateText>
           <SmallText>Enter your basic info and a password.</SmallText>
-          <Form>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <FormLayout>
               <TextField
                 type="text"
@@ -148,7 +148,7 @@ export const Create = (props) => {
             </FormLayout>
           </Form>
           <SmallText>
-            Already have an account <Button plain>Sign In</Button>
+            Already have an account <Button plain url="/login">Sign In</Button>
           </SmallText>
         </LoginForm>
         <CompanyDesc>

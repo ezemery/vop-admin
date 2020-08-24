@@ -132,7 +132,7 @@ export const Login = (props) => {
                   checked={checked}
                   onChange={handleChange}
                 />
-                <Button plain>Forgotten Password</Button>
+                <Button url="/email/confirm/" plain>Forgotten Password</Button>
               </FormContent>
               <Button primary fullWidth submit loading={loading}>
                 Login
@@ -140,7 +140,7 @@ export const Login = (props) => {
             </FormLayout>
           </Form>
           <SmallText>
-            Don&apos;t have a Vop account? <Button plain>Sign Up</Button>
+            Don&apos;t have a Vop account? <Button url="/create" plain>Sign Up</Button>
           </SmallText>
         </LoginForm>
         <CompanyDesc>

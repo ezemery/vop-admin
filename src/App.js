@@ -84,15 +84,8 @@ const App = () => {
               <Route path="/password/reset/">
                 <PasswordReset />
               </Route>
-<<<<<<< Updated upstream
-              <Route path="/manage">
-                <Frame>
-                  <TikTokList defaultStatus="approve" key="manage" />
-                </Frame>
-=======
-              <Route path="/setup">
+              <Route path="/create">
                 <Create />
->>>>>>> Stashed changes
               </Route>
               <Route path="/account">
                 <Account />

@@ -34,8 +34,9 @@ export const PasswordReset = (props) => {
   const {handleSubmit, control} = useForm();
   const [checked, setChecked] = useState(false);
   const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
-  const [invalidEmail, setInvalidEmail] = useState(false);
+  const [help, setHelp] = React.useState("");
   const [loading, setLoading] = useState(false);
+
 
   const LogoSVG = () => (
     <Logo viewBox="0 0 105 44" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -58,7 +59,7 @@ export const PasswordReset = (props) => {
     </Logo>
   );
 
-  const Forgot = () => (
+  const Forgot = useCallback(() => (
     <SVGIcon
       viewBox="0 0 174 157"
       fill="none"
@@ -72,19 +73,25 @@ export const PasswordReset = (props) => {
       <path d="M119.103 146.172H108.276V157H119.103V146.172Z" fill="#5C6AC4" />
       <path d="M140.758 146.172H129.931V157H140.758V146.172Z" fill="#5C6AC4" />
     </SVGIcon>
-  );
+  ),[]);
 
   const onSubmit = (data) => {
-    setInvalidEmail(false);
     setLoading(true);
-
-    fetch(`${process.env.REACT_APP_API_HOST}/login/go`, {
+    const token = window.location.href.split("/").slice("-1");
+    const {new_password, confirm_password} = data
+    if(new_password !== confirm_password ){
+      setHelp("Passwords must be the same")
+      setLoading(false)
+      return;
+    }
+    const password = {new_password}
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/password/reset/${token[0]}`, {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+           'Content-Type': 'application/json'
+       },
+           body: JSON.stringify(password)
     })
       .then((response) => {
         if (!response.ok) {
@@ -93,15 +100,18 @@ export const PasswordReset = (props) => {
         return response.json();
       })
       .then((json) => {
-        if (json.success) {
-          history.push('/');
-          return;
-        }
-        throw new Error('Network response was not ok');
-      })
+          if(json.error){
+                setHelp(json.message)
+                return;
+            }
+              setTimeout(()=>{
+                  history.push('/login');
+              }, 200)
+            throw new Error('Network response was not ok');
+          })
       .catch((ex) => {
         setLoading(false);
-        setInvalidEmail(true);
+        setHelp("An error occured while processing your request")
       });
   };
 
@@ -115,29 +125,30 @@ export const PasswordReset = (props) => {
             Your password has been reset. Please create a new password to log
             into your account.
           </SmallText>
-          <Form>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <FormLayout>
-              <TextField
-                type="password"
+            <Controller
+                as={TextField}
+                control={control}
+                prefix={<Icon source={LockMajorMonotone} />}
                 label="New Password"
-                labelHidden
-                onChange={() => {}}
-                value=""
-                prefix={<Icon source={LockMajorMonotone} />}
                 placeholder="New Password"
-                error=""
-              />
-              <TextField
-                type="password"
-                label="Verify Password"
                 labelHidden
-                onChange={() => {}}
-                value=""
-                prefix={<Icon source={LockMajorMonotone} />}
-                placeholder="Verify Password"
-                error=""
+                type="password"
+                name="new_password"
+                error={help ? help : null}
               />
-              <Button primary fullWidth>
+               <Controller
+                as={TextField}
+                control={control}
+                prefix={<Icon source={LockMajorMonotone} />}
+                label="Confirm Password"
+                placeholder="Confirm Password"
+                labelHidden
+                type="password"
+                name="confirm_password"
+              />
+              <Button primary fullWidth submit loading={loading}>
                 Reset Password
               </Button>
             </FormLayout>

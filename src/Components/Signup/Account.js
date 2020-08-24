@@ -101,7 +101,7 @@ export const Account = (props) => {
             make it easy to identify which account is which, we need you to
             choose an account name.
           </SmallText>
-          <Form>
+          <Form  onSubmit={handleSubmit(onSubmit)}>
             <FormLayout>
               <TextField
                 type="text"
