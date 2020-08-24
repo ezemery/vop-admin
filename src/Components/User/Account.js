@@ -4,11 +4,12 @@ import {
     Route,
     useRouteMatch,
 } from "react-router-dom";
-import AccountId from "./AccountId";
+import {AccountId} from "./";
 
-const Account = () => {
+export const Account = () => {
 
     let { path } = useRouteMatch();
+    console.log("path in account",path)
 
     return (
         <Switch>
@@ -21,5 +22,3 @@ const Account = () => {
         </Switch>
     );
 };
-
-export default Account;

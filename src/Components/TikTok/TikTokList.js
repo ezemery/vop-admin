@@ -1,17 +1,17 @@
 import {Card, Input, Select, Empty, Button} from 'antd';
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import TikTokCard from "./TikTokCard";
+import {TikTokCard} from "./";
 import { Row, Col } from 'react-flexbox-grid';
 import InfiniteScroll from 'react-infinite-scroller';
-import TikTokModal from "./TikTokModal";
+import {TikTokModal} from "./";
 import {useHistory, useParams} from "react-router-dom";
 import {VideoStore} from "../../Context/store";
 
 const InputGroup = Input.Group;
 const { Option } = Select;
 
-const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) => {
+export const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) => {
   const {videos, error, fetchVideoDataAsync} = React.useContext(VideoStore);
 
   const history = useHistory();
@@ -200,4 +200,3 @@ const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) => {
   )
 };
 
-export default TikTokList;

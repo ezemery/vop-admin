@@ -3,7 +3,7 @@ import {Col, Row, Grid} from "react-flexbox-grid";
 import React, {useState} from "react";
 import {useParams} from "react-router-dom";
 
-const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) => {
+export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) => {
 
     const { userId, accountId } = useParams();
 
@@ -215,4 +215,3 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
     </Modal>);
 };
 
-export default TikTokModal;

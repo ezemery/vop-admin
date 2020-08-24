@@ -9,7 +9,7 @@ import {findUserInUsersById} from "../../services";
 
 const { Text, Title } = Typography;
 
-const Embed = () => {
+export const Embed = () => {
     const [loading, setLoading] = useState(true);
     const [embedAvailable, setEmbedAvailable] = useState(false);
     const { userId } = useParams();
@@ -112,5 +112,3 @@ const Embed = () => {
     ) : <></>;
 
 };
-
-export default Embed;

@@ -1,15 +1,15 @@
 import React from 'react';
-import {Switch, Route, useHistory, useLocation} from 'react-router-dom';
+import {Switch, Route, useHistory, useLocation, Redirect} from 'react-router-dom';
 import enTranslations from '@shopify/polaris/locales/en.json';
 import {AppProvider} from '@shopify/polaris';
-import Frame from './Components/Frame/Frame';
-import TikTokList from './Components/TikTok/TikTokList';
-import Login from './Components/Auth/LoginForm';
-import SetupScreen from './Components/Setup/SetupScreen';
-import Embed from './Components/Embed/Embed';
-import Settings from './Components/Settings/Settings';
-import EmailConfirm from './Components/Auth/EmailConfirm';
-import PasswordReset from './Components/Auth/PasswordReset';
+import {AppFrame} from './Components/Frame';
+import {Login} from './Components/Login';
+import {EmailConfirm} from './Components/EmailConfirm';
+import {Create} from './Components/Signup';
+import {Account} from './Components/Signup';
+import {Invite} from './Components/Invite';
+import {PasswordReset} from './Components/PasswordReset';
+import {User} from "./Components/User";
 import {UserStore, VideoStore} from './Context/store';
 import {getUsers} from './services';
 import {getVideos} from './services';
@@ -36,13 +36,11 @@ const App = () => {
     try {
       const user = await getUsers();
       setUserState({...u, user: user, loading: false, error: false});
-      if (user.setup_complete === false && location.pathname === '/') {
-        history.push('/setup/create');
-      }
     } catch (error) {
       setUserState({...u, error: true});
     }
   };
+  
   const [v, setVideoState] = React.useState({
     videos: {},
     loading: false,
@@ -86,33 +84,27 @@ const App = () => {
               <Route path="/password/reset/">
                 <PasswordReset />
               </Route>
-              <Route path="/setup">
-                <SetupScreen />
-              </Route>
+<<<<<<< Updated upstream
               <Route path="/manage">
                 <Frame>
                   <TikTokList defaultStatus="approve" key="manage" />
                 </Frame>
+=======
+              <Route path="/setup">
+                <Create />
+>>>>>>> Stashed changes
               </Route>
-              <Route path="/settings">
-                <Frame>
-                  <Settings />
-                </Frame>
+              <Route path="/account">
+                <Account />
               </Route>
-              <Route path="/embed">
-                <Frame>
-                  <Embed />
-                </Frame>
+              <Route path="/invite">
+                <Invite />
+              </Route> 
+              <Route exact path="/user">
+                  <User/>
               </Route>
               <Route exact path="/">
-                <Frame>
-                  <TikTokList
-                    defaultStatus="new"
-                    key="index"
-                    hideSearch={true}
-                    approvalScreen={true}
-                  />
-                </Frame>
+                <Redirect to="/user" />
               </Route>
             </Switch>
           </div>

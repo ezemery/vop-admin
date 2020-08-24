@@ -9,7 +9,7 @@ import {useParams} from "react-router-dom";
 const { Step } = Steps;
 const { Search } = Input;
 
-const SetupTags = ({complete, showSteps, initialTags}) => {
+export const SetupTags = ({complete, showSteps, initialTags}) => {
 
     const [tags, setTags] = useState(initialTags);
     
@@ -143,5 +143,3 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
         </Card>
     );
 };
-
-export default SetupTags

@@ -4,19 +4,18 @@ import {
     Route,
     useRouteMatch, useParams, Redirect,
 } from "react-router-dom";
-import Account from "./Account";
+import {Account} from "./";
 import {UserStore} from "../../Context/store";
 import {findUserInUsersById} from "../../services";
 
-const UserId = () => {
+export const UserId = () => {
 
     let { path, url } = useRouteMatch();
-
     const { userId } = useParams();
-    const {users} = React.useContext(UserStore);
-    const user = findUserInUsersById(users, userId)
-
-    return user ? (
+    const {user} = React.useContext(UserStore);
+    const foundUser = findUserInUsersById(user, userId)
+    console.log("foundUser in UserId", foundUser, "path",path, "url",url)
+    return foundUser ? (
         <Switch>
             <Route exact path={path}>
                 <Redirect to={`${url}/account/id/`+userId} />
@@ -28,4 +27,3 @@ const UserId = () => {
     ) : <Redirect to="/" />;
 };
 
-export default UserId;

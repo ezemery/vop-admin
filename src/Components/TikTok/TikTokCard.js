@@ -7,7 +7,7 @@ import {useParams} from "react-router-dom";
 const { Meta } = Card;
 
 
-const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
+export const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
 
   const [play, setPlay] = useState(false);
 
@@ -91,5 +91,3 @@ const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
       </Col>
   )
 };
-
-export default TikTokCard;

@@ -14,7 +14,7 @@ import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {UserStore} from '../../Context/store';
 
-export default function AppFrame(props) {
+export const AppFrame = (props) => {
   const defaultState = useRef({
     emailFieldValue: 'dharma@jadedpixel.com',
     nameFieldValue: 'Jaded Pixel',

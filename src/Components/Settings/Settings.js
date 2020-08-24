@@ -2,13 +2,13 @@ import {Tag} from 'antd';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {Col, Row} from "react-flexbox-grid";
-import SetupUsername from "../Setup/SetupUsername";
-import SetupTags from "../Setup/SetupTags";
+import {SetupUsername} from "../Setup";
+import {SetupTags} from "../Setup";
 import {UserStore} from "../../Context/store";
 import {useParams} from "react-router-dom";
 import {findUserInUsersById} from "../../services";
 
-const Settings = () => {
+export const Settings = () => {
     const { userId } = useParams();
     const {users} = React.useContext(UserStore);
     const user = findUserInUsersById(users, userId)
@@ -55,5 +55,3 @@ const Settings = () => {
     ) : <></>;
 
 };
-
-export default Settings;

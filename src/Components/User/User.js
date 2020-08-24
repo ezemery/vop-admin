@@ -4,19 +4,18 @@ import {
     Route,
     useRouteMatch, Redirect,
 } from "react-router-dom";
-import UserId from "./UserId";
+import {UserId} from "./";
 import {UserStore} from "../../Context/store";
 
-const User = () => {
+export const User = () => {
 
     let { path } = useRouteMatch();
-
-    const {users} = React.useContext(UserStore);
-
-    return users.length === 0 ? <Redirect to="/login" /> : (
+    const {user} = React.useContext(UserStore);
+    console.log("path",path, "user", user)
+    return user.length === 0 ? <Redirect to="/login" /> : (
         <Switch>
             <Route exact path={path}>
-                { users.length > 1 ? <>Select a User</> : <Redirect to={`${path}/id/`+users[0].id} /> }
+                { user.length > 1 ? <>Select a User</> : <Redirect to={`${path}/id/`+user[0].id} /> }
             </Route>
             <Route path={`${path}/id/:userId`}>
                 <UserId />
@@ -25,4 +24,3 @@ const User = () => {
     );
 };
 
-export default User;

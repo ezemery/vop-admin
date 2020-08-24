@@ -9,7 +9,6 @@ import {
   Form,
 } from '@shopify/polaris';
 import {EmailMajorMonotone, LockMajorMonotone} from '@shopify/polaris-icons';
-import {Link, useHistory} from 'react-router-dom';
 import {useForm, Controller} from 'react-hook-form';
 import {Icons} from '../Icons';
 import {

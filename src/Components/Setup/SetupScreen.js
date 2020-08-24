@@ -2,10 +2,10 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import {Route, Switch, useHistory, useParams} from "react-router-dom";
 import 'whatwg-fetch'
-import SetupUsername from "./SetupUsername";
-import SetupTags from "./SetupTags";
+import {SetupUsername} from "./";
+import {SetupTags} from "./";
 
-const SetupScreen = () => {
+export const SetupScreen = () => {
 
     const history = useHistory();
 
@@ -30,4 +30,3 @@ const SetupScreen = () => {
     );
 };
 
-export default SetupScreen

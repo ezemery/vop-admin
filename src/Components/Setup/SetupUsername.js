@@ -6,7 +6,7 @@ import {useParams} from "react-router-dom";
 
 const { Step } = Steps;
 
-const SetupUsername = ({complete, showSteps, username}) => {
+export const SetupUsername = ({complete, showSteps, username}) => {
 
     const [newUsername, setNewUsername] = useState(username);
     const [showDetails, setShowDetails] = useState(false);
@@ -125,5 +125,3 @@ const SetupUsername = ({complete, showSteps, username}) => {
         </Card>
     );
 };
-
-export default SetupUsername
