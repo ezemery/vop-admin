@@ -1,8 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Switch, Route, useHistory, useLocation, Redirect} from 'react-router-dom';
 import enTranslations from '@shopify/polaris/locales/en.json';
-import {AppProvider} from '@shopify/polaris';
-import {AppFrame} from './Components/Frame';
+import {AppProvider,Loading,Frame} from '@shopify/polaris';
 import {Login} from './Components/Login';
 import {EmailConfirm} from './Components/EmailConfirm';
 import {Create} from './Components/Signup';
@@ -16,55 +15,56 @@ import {getVideos} from './services';
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
 const App = () => {
-
-  
-  const history = useHistory();
-  let location = useLocation();
-
-  const fetchVideoDataAsync = async (lastVideo, status, hasTags, query) => {
-    setVideoState({...v, loading: true});
-    try {
-      const videos = await getVideos(lastVideo, status, hasTags, query);
-      setVideoState({...v, videos: videos, loading: false, error: false});
-    } catch (error) {
-      setVideoState({...v, error: true});
+  const fetchVideoDataAsync = async (lastVideo, status, hasTags, query, userId, accountId) => {
+    setVideoState({...v, loading:true});
+    try{
+      const videos  =  await getVideos(lastVideo, status, hasTags, query, userId, accountId);
+      setVideoState({...v, videos:videos, loading:false, error:false});
+    }catch(error){
+      setVideoState({...v,error:true});
     }
-  };
+  }
 
   const fetchUserDataAsync = async () => {
-    setUserState({...u, loading: true});
-    try {
-      const user = await getUsers();
-      setUserState({...u, user: user, loading: false, error: false});
-    } catch (error) {
-      setUserState({...u, error: true});
+    setUserState({loading:true, users: [], error: false});
+    try{
+      const users  =  await getUsers();
+      setUserState({users:users, loading:false, error:false});
+    } catch(error){
+      setUserState({loading:false, users: [],  error:true});
     }
   };
-  
+
   const [v, setVideoState] = React.useState({
-    videos: {},
+    videos:{},
     loading: false,
-    error: false,
+    error:false,
     fetchVideoDataAsync: fetchVideoDataAsync,
-  });
+  })
 
   const [u, setUserState] = React.useState({
-    user: {},
-    loading: false,
-    error: false,
-    fetchUserDataAsync: fetchUserDataAsync,
-  });
+    users: [],
+    loading: true,
+    error:false
+  })
+
+  useEffect( () => {
+   fetchUserDataAsync();
+  }, []);
+
+
+
   const theme = {
     colors: {
       topBar: {
-        background: '#000',
+        background: '#212B36',
       },
     },
   };
 
-  return (
+  return u.loading ?  <AppProvider theme={theme} i18n={enTranslations}><Frame><Loading /></Frame></AppProvider>: (
     <AppProvider theme={theme} i18n={enTranslations}>
-      <UserStore.Provider value={u}>
+      <UserStore.Provider value={{...u, fetchUserDataAsync }}>
         <VideoStore.Provider value={v}>
           <div
             className="App"
@@ -93,7 +93,7 @@ const App = () => {
               <Route path="/invite">
                 <Invite />
               </Route> 
-              <Route exact path="/user">
+              <Route path="/user">
                   <User/>
               </Route>
               <Route exact path="/">

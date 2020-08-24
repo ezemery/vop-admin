@@ -17,21 +17,21 @@ export const AccountId = () => {
     let { path } = useRouteMatch();
 
     const { userId } = useParams();
-    const {user} = React.useContext(UserStore);
-    const foundUser = findUserInUsersById(user, userId)
-    console.log("foundUser in accountId", foundUser, "path",path)
+    const {users} = React.useContext(UserStore);
+    const user = findUserInUsersById(users, userId)
+
     return (
         <AppFrame>
             <Switch>
                 <Route exact path={path}>
 
-                    <TikTokList defaultStatus="new" key="index" hideSearch={true} approvalScreen={true} user={foundUser}/>
+                    <TikTokList defaultStatus="new" key="index" hideSearch={true} approvalScreen={true} user={user}/>
                 </Route>
                 <Route path={`${path}/setup`}>
                     <SetupScreen/>
                 </Route>
                 <Route path={`${path}/manage`}>
-                    <TikTokList defaultStatus="approve" key="manage" user={foundUser} />
+                    <TikTokList defaultStatus="approve" key="manage" user={user} />
                 </Route>
                 <Route path={`${path}/settings`}>
                     <Settings/>

@@ -4,12 +4,11 @@ import {
     Route,
     useRouteMatch,
 } from "react-router-dom";
-import {AccountId} from "./";
+import {AccountId} from "./AccountId";
 
 export const Account = () => {
 
     let { path } = useRouteMatch();
-    console.log("path in account",path)
 
     return (
         <Switch>

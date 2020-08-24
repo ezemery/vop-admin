@@ -9,10 +9,11 @@ import {
   TopBar,
   FooterHelp,
 } from '@shopify/polaris';
-import {HomeMajorMonotone, OrdersMajorTwotone} from '@shopify/polaris-icons';
+import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
-import {Link, useHistory, useLocation} from 'react-router-dom';
+import {Link, useHistory, useLocation, useParams} from "react-router-dom";
 import {UserStore} from '../../Context/store';
+import {findUserInUsersById} from "../../services";
 
 export const AppFrame = (props) => {
   const defaultState = useRef({
@@ -55,7 +56,9 @@ export const AppFrame = (props) => {
     [],
   );
 
-  const {user, fetchUserDataAsync} = React.useContext(UserStore);
+  const { userId, accountId } = useParams();
+  const {users, fetchUserDataAsync} = React.useContext(UserStore);
+  const user = findUserInUsersById(users, userId)
   const appID = 'rlquh92b';
   const IntercommUser = {
     user_id: user.id,
@@ -65,12 +68,9 @@ export const AppFrame = (props) => {
   let location = useLocation();
   const history = useHistory();
 
-  useEffect(() => {
-    fetchUserDataAsync();
-  }, [fetchUserDataAsync]);
-
   const handleLogout = () => {
-    fetch(process.env.REACT_APP_API_HOST + '/logout', {
+    console.log("logout")
+    fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/${userId}/logout', {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -138,21 +138,31 @@ export const AppFrame = (props) => {
         items={[
           {
             label: 'Awaiting Approval',
+            url: `/user/id/${userId}/account/id/${accountId}/`,
             icon: HomeMajorMonotone,
             onClick: toggleIsLoading,
           },
           {
             label: 'Manage Content',
-            icon: OrdersMajorTwotone,
+            url: `/user/id/${userId}/account/id/${accountId}/manage`,
+            icon: AppsMajorMonotone,
             onClick: toggleIsLoading,
           },
           {
             label: 'Embed',
-            icon: OrdersMajorTwotone,
+            url: `/user/id/${userId}/account/id/${accountId}/embed`,
+            icon: FeaturedContentMajorMonotone,
+            onClick: toggleIsLoading,
+          },
+          {
+            label: 'Connected Account',
+            url:`/`,
+            icon: CircleTickMajorMonotone,
             onClick: toggleIsLoading,
           },
           {
             label: 'Settings',
+            url: `/user/id/${userId}/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
             onClick: toggleIsLoading,
           },
