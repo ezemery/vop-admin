@@ -22,7 +22,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
   const [modal, setModal] = useState(false);
   const [status, setStatus] = useState(defaultStatus);
   const [query, setQuery] = useState("");
-  const [hasTags, setHasTags] = useState("All");
+  const [hasTags, setHasTags] = useState("");
   const [data, updateData] = useState([]);
   const [lastVideo, setLastVideo] = useState("0");
   const [more, setMore] = useState(false);
@@ -67,14 +67,13 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
       }
       setLoading(false);
     }else{
-      history.push('/login');
       setLoading(false);
     }
   },[videos, error, history])
 
     useEffect(() => {
         updateData([]);
-        fetchVideoDataAsync("0", status, hasTags, query, userId, accountId);
+        fetchVideoDataAsync("", status, hasTags, query, userId, accountId);
     }, [fetchVideoDataAsync, status, hasTags, query, userId, accountId]);
 
 
@@ -172,9 +171,9 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
                 onChange={setHasTags}
                 defaultValue={hasTags}
                 placeholder="Product Tag Status">
-                <Option value="All">All</Option>
-                <Option value="yes">No Tags</Option>
-                <Option value="no">Products with Tags</Option>
+                <Option value="">All</Option>
+                <Option value="false">No Tags</Option>
+                <Option value="true">Products with Tags</Option>
               </Select>
               <Select
                 size="large"
