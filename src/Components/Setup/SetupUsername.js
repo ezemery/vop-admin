@@ -60,7 +60,7 @@ const SetupUsername = ({complete, showSteps, username}) => {
             return response.json()
         }).then(function(json) {
             console.log('parsed json', json);
-            if (json === "Success") {
+            if (json.success === true) {
                 complete();
                 setShowDetails(false)
             }
