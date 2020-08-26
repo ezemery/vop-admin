@@ -37,15 +37,16 @@
     "react-dom": "^16.13.1",
     "react-flexbox-grid": "^2.1.2",
     "react-hook-form": "^5.7.2",
+    "react-hover-video-player": "^6.6.2",
     "react-infinite-scroller": "^1.2.4",
     "react-intercom": "^1.0.15",
     "react-pretty-numbers": "^3.0.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.1",
     "styled-components": "^5.1.1",
+    "tailwindcss": "^1.6.2",
     "twin.macro": "^1.7.0",
-    "whatwg-fetch": "^3.0.0",
-    "tailwindcss": "^1.6.2"
+    "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
     "start": "react-app-rewired start",

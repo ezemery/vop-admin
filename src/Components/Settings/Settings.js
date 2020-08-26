@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import {Col, Row} from "react-flexbox-grid";
 import {SetupUsername} from "../Setup";
 import {SetupTags} from "../Setup";
+import {
+  Page
+  } from '@shopify/polaris';
 import {UserStore} from "../../Context/store";
 import {useParams} from "react-router-dom";
 import {findUserInUsersById} from "../../services";
@@ -26,7 +29,7 @@ export const Settings = () => {
     const tagsComplete = () => setTagsSaved(true);
 
     return user ? (
-        <div>
+        <Page fullWidth title="Settings">
             <Row>
                 <Col lg={24} xs={12}>&nbsp;
                 </Col>
@@ -51,7 +54,7 @@ export const Settings = () => {
                     <Tag color="green">Saved</Tag>
                 </Col>
             </Row>
-        </div>
+        </Page>
     ) : <></>;
 
 };
