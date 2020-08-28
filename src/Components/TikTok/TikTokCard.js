@@ -1,9 +1,9 @@
 import {Card, Icon, Avatar, Tag} from 'antd';
 import React from 'react';
 import { useState } from 'react';
-import NumericLabel from 'react-pretty-numbers';
 import { Col } from 'react-flexbox-grid';
 import {useParams} from "react-router-dom";
+import NumericLabel from "../NumericLabel";
 const { Meta } = Card;
 
 
