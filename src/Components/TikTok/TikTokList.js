@@ -51,16 +51,15 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
 
   useEffect(() => {
     if(!error){
-      setMore(videos.length === 50)
-      if (videos.length > 0) {
-        setLastVideo(videos.slice(-1)[0].video_id)
-        videos.forEach(video => {
+      setMore(videos.has_more)
+      if (videos.data && videos.data.length > 0) {
+        setLastVideo(videos.data.slice(-1)[0].id)
+        videos.data.forEach(video => {
           updateData(oldArray => {
             if (oldArray.find(vid => vid.id === video.id)) {
               return oldArray
             } else {
               return [...oldArray, video]
-
             }
           })
         });

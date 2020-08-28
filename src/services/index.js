@@ -46,7 +46,7 @@ export const getVideos = (lastVideo, status, hasTags, query, userId, accountId) 
         }
         return response.json()
       }).then(function(json) {
-        return json.data
+        return json
       }).catch(function(ex) {
         throw ex;
       })

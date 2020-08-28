@@ -108,7 +108,7 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
             return response.json()
         }).then(function(json) {
             console.log('parsed json', json);
-            if (json === "Success") {
+            if (json.success === true) {
                 complete();
             }
         }).catch(function(ex) {
