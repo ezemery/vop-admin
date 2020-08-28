@@ -4,15 +4,15 @@ import {
     Route,
     useRouteMatch, useParams,
 } from "react-router-dom";
-import TikTokList from "../TikTok/TikTokList";
-import SetupScreen from "../Setup/SetupScreen";
-import Embed from "../Embed/Embed";
-import Settings from "../Settings/Settings";
-import Frame from "../Frame/Frame";
+import {TikTokList} from "../TikTok";
+import {SetupScreen} from "../Setup";
+import {Embed} from "../Embed";
+import {Settings} from "../Settings";
+import {AppFrame} from "../Frame";
 import {UserStore} from "../../Context/store";
 import {findUserInUsersById} from "../../services";
 
-const AccountId = () => {
+export const AccountId = () => {
 
     let { path } = useRouteMatch();
 
@@ -21,7 +21,7 @@ const AccountId = () => {
     const user = findUserInUsersById(users, userId)
 
     return (
-        <Frame>
+        <AppFrame>
             <Switch>
                 <Route exact path={path}>
 
@@ -41,8 +41,6 @@ const AccountId = () => {
                     <Embed/>
                 </Route>
             </Switch>
-        </Frame>
+        </AppFrame>
     );
 };
-
-export default AccountId;

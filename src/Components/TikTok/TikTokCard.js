@@ -7,7 +7,7 @@ import NumericLabel from "../NumericLabel";
 const { Meta } = Card;
 
 
-const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
+export const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
 
   const [play, setPlay] = useState(false);
 
@@ -27,9 +27,8 @@ const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
       return response.json()
     }).then(function(json) {
       removeItem(currentIndex);
-      console.log(json.length)
     }).catch(function(ex) {
-      console.log('parsing failed', ex)
+      
     })
 
   };
@@ -92,5 +91,3 @@ const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
       </Col>
   )
 };
-
-export default TikTokCard;

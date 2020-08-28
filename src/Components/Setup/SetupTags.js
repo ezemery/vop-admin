@@ -9,12 +9,43 @@ import NumericLabel from "../NumericLabel";
 const { Step } = Steps;
 const { Search } = Input;
 
-const SetupTags = ({complete, showSteps, initialTags}) => {
+export const SetupTags = ({complete, showSteps, initialTags}) => {
 
     const [tags, setTags] = useState(initialTags);
-    const onSubmit = data => { saveTags(); };
+    
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const saveTags = () => {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag_save`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tags: tags.map(tag => tag.tag),
+            })
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
+            if (json.success === true) {
+                complete();
+            }
+        }).catch(function(ex) {
+    
+        })
+
+    };
+    const removeTag = index => {
+        return () => {
+            setTags(oldArray => {
+                oldArray.splice(index, 1);
+                return [...oldArray]
+            });
+        };
+    };
+
+    const onSubmit = () => { saveTags(); };
 
     let params = {
         justification: 'L',
@@ -53,15 +84,6 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
         },
         ];
 
-    const removeTag = index => {
-        return () => {
-            setTags(oldArray => {
-                oldArray.splice(index, 1);
-                return [...oldArray]
-            });
-        };
-    };
-
     const AddHashTag = (tag) => {
         setLoading(true)
         setError(null)
@@ -90,29 +112,6 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
             }
         }).catch(function(ex) {
             setError("Unable to fetch tag information")
-        })
-
-    };
-
-    const saveTags = () => {
-        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag_save`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tags: tags.map(tag => tag.tag),
-            })
-        }).then(function(response) {
-            return response.json()
-        }).then(function(json) {
-            console.log('parsed json', json);
-            if (json.success === true) {
-                complete();
-            }
-        }).catch(function(ex) {
-            console.log('parsing failed', ex)
         })
 
     };
@@ -149,5 +148,3 @@ const SetupTags = ({complete, showSteps, initialTags}) => {
         </Card>
     );
 };
-
-export default SetupTags

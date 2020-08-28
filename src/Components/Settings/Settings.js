@@ -2,13 +2,13 @@ import {Tag} from 'antd';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import {Col, Row} from "react-flexbox-grid";
-import SetupUsername from "../Setup/SetupUsername";
-import SetupTags from "../Setup/SetupTags";
+import {SetupUsername} from "../Setup";
+import {SetupTags} from "../Setup";
 import {UserStore} from "../../Context/store";
 import {useParams} from "react-router-dom";
 import {findUserInUsersById} from "../../services";
 
-const Settings = (props) => {
+export const Settings = () => {
     const { userId } = useParams();
     const {users} = React.useContext(UserStore);
     const user = findUserInUsersById(users, userId)
@@ -21,8 +21,6 @@ const Settings = (props) => {
             user.tags && setInitialTags(user.tags.map(tag => {return {tag: tag, views: 0, videos: 0}}))
         }
     }, [user]);
-
-    console.log("initialTags", initialTags)
 
     const usernameComplete = () => setUsernameSaved(true);
     const tagsComplete = () => setTagsSaved(true);
@@ -57,5 +55,3 @@ const Settings = (props) => {
     ) : <></>;
 
 };
-
-export default Settings;

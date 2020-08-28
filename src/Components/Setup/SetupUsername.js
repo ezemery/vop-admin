@@ -6,14 +6,12 @@ import {useParams} from "react-router-dom";
 
 const { Step } = Steps;
 
-const SetupUsername = ({complete, showSteps, username}) => {
+export const SetupUsername = ({complete, showSteps, username}) => {
 
     const [newUsername, setNewUsername] = useState(username);
     const [showDetails, setShowDetails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const onSubmit = data => { LoadUser() };
-    const onSubmitValid = data => { saveUsername() };
 
     const { userId, accountId } = useParams();
 
@@ -45,7 +43,6 @@ const SetupUsername = ({complete, showSteps, username}) => {
         })
 
     };
-
     const saveUsername = () => {
         fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user_save`, {
             method: 'POST',
@@ -59,17 +56,18 @@ const SetupUsername = ({complete, showSteps, username}) => {
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log('parsed json', json);
             if (json.success === true) {
                 complete();
                 setShowDetails(false)
             }
         }).catch(function(ex) {
-            console.log('parsing failed', ex)
+    
         })
 
     };
-
+    
+    const onSubmit = () => { LoadUser() };
+    const onSubmitValid = data => { saveUsername() };
     return (
         <Card title="Setup Username" bordered={false}>
             <OnboardingSteps>
@@ -127,5 +125,3 @@ const SetupUsername = ({complete, showSteps, username}) => {
         </Card>
     );
 };
-
-export default SetupUsername
