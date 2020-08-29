@@ -4,11 +4,11 @@ import {
     Route,
     useRouteMatch, useParams, Redirect,
 } from "react-router-dom";
-import Account from "./Account";
+import {Account} from "./Account";
 import {UserStore} from "../../Context/store";
 import {findUserInUsersById} from "../../services";
 
-const UserId = () => {
+export const UserId = () => {
 
     let { path, url } = useRouteMatch();
 
@@ -27,5 +27,3 @@ const UserId = () => {
         </Switch>
     ) : <Redirect to="/" />;
 };
-
-export default UserId;

@@ -3,7 +3,7 @@ import {Col, Row, Grid} from "react-flexbox-grid";
 import React, {useState} from "react";
 import {useParams} from "react-router-dom";
 
-const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) => {
+export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) => {
 
     const { userId, accountId } = useParams();
 
@@ -42,7 +42,6 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
             return response.json()
         }).then(function(json) {
             setProducts(json.data.products.edges);
-            console.log(json)
         }).catch(function(ex) {
 
         })
@@ -64,9 +63,8 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log(json.length)
         }).catch(function(ex) {
-            console.log('parsing failed', ex)
+
         });
         setSelectedProducts([]);
     };
@@ -87,7 +85,6 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
             image_url: customImage,
             url: customUrl,
         };
-        console.log(newItem);
         setSelectedProducts(oldArray => [...oldArray, newItem]);
     };
 
@@ -104,7 +101,6 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            console.log(json)
             setCustomImage(json.image);
             setCustomTitle(json.title);
         }).catch(function(ex) {
@@ -219,4 +215,3 @@ const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) =>
     </Modal>);
 };
 
-export default TikTokModal;

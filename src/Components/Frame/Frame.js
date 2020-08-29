@@ -1,124 +1,206 @@
-import { Layout, Menu, Icon } from 'antd';
-import React, {useState} from 'react';
+import React, {useCallback, useRef, useState, useEffect} from 'react';
+import {
+  ActionList,
+  Card,
+  Frame,
+  Layout,
+  Loading,
+  Navigation,
+  TopBar,
+  FooterHelp,
+} from '@shopify/polaris';
+import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
-import {FrameContainer} from './styles'
-import {UserStore} from "../../Context/store"
-
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-} from '@ant-design/icons';
+import {UserStore} from '../../Context/store';
 import {findUserInUsersById} from "../../services";
 
-const { Header, Content, Footer, Sider } = Layout;
-
-const Frame = (props) => {
+export const AppFrame = (props) => {
   const { userId, accountId } = useParams();
   const {users, fetchUserDataAsync} = React.useContext(UserStore);
   const user = findUserInUsersById(users, userId)
-  const [toggle, setToggle] = useState(false)
-  const appID = "rlquh92b";
 
-  console.log(users, user, userId)
-
-  const toggleClick = () => {
-    setToggle(!toggle);
+  const UsernameInitials = () => {
+    return user.username.toUpperCase().slice(0,1);
   }
+  const UsernameCapitalize = () => {
+    return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+  }
+  const appID = 'rlquh92b';
+  const IntercommUser = {
+    user_id: user.id,
+    email: user.email,
+    name: user.username,
+  };
+
   let location = useLocation();
   const history = useHistory();
 
-  const logout = () => {
-    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
+  const skipToContentRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchActive, setSearchActive] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [userMenuActive, setUserMenuActive] = useState(false);
+  const [mobileNavigationActive, setMobileNavigationActive] = useState(false);
+
+  const handleSearchResultsDismiss = useCallback(() => {
+    setSearchActive(false);
+    setSearchValue('');
+  }, []);
+  const handleSearchFieldChange = useCallback((value) => {
+    setSearchValue(value);
+    setSearchActive(value.length > 0);
+  }, []);
+
+  const toggleUserMenuActive = useCallback(
+    () => setUserMenuActive((userMenuActive) => !userMenuActive),
+    [],
+  );
+  const toggleMobileNavigationActive = useCallback(
+    () =>
+      setMobileNavigationActive(
+        (mobileNavigationActive) => !mobileNavigationActive,
+      ),
+    [],
+  );
+  const toggleIsLoading = useCallback(
+    () => setIsLoading((isLoading) => !isLoading),
+    [],
+  );
+
+  const handleLogout = () => {
+    console.log("logout")
+    fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/${userId}/logout', {
       method: 'GET',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      fetchUserDataAsync().then(() => {
-        history.push("/");
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(function (response) {
+        return response.json();
       })
-    }).catch(function(ex) {
-      console.log('parsing failed', ex)
-    });
+      .then(function (json) {
+        history.push('/login');
+      })
+      .catch(function (ex) {
+        console.log('parsing failed', ex);
+      });
   };
 
-  return (
-  <FrameContainer>
-    <Layout className="min-height">
-      <Sider
-        breakpoint="lg"
-        collapsedWidth="0"
-        trigger={null}
-        onBreakpoint={broken => {
-          if(broken){
-            toggleClick();
-          }
-        }}
+  const userMenuActions = [
+    {
+      items: [{content: 'Community forums'}],
+    },
+  ];
 
-        collapsible
-        collapsed={toggle}
-        className="slider"
-        >
-
-        <div className="logo">
-          <img src="/vop-black-300.png" alt="Vop Logo"/>
-        </div>
-
-        <Menu selectedKeys={[location.pathname]} mode="inline">
-          <Menu.Item key="/">
-            <Icon type="check" />
-            <span>Awaiting Approval</span>
-            <Link to={`/user/id/${userId}/account/id/${accountId}/`} />
-          </Menu.Item>
-          <Menu.Item key="/manage">
-            <Icon type="edit" />
-            <span>Manage Content</span>
-            <Link to={`/user/id/${userId}/account/id/${accountId}/manage`} />
-          </Menu.Item>
-          <Menu.Item key="/embed">
-            <Icon type="export" />
-            <span>Embed</span>
-            <Link to={`/user/id/${userId}/account/id/${accountId}/embed`} />
-          </Menu.Item>
-          <Menu.Item key="/settings">
-            <Icon type="setting" />
-            <span>Settings</span>
-            <Link to={`/user/id/${userId}/account/id/${accountId}/settings`} />
-          </Menu.Item>
-          <Menu.Item key="5" onClick={logout}>
-            <Icon type="user" />
-            <span>Logout</span>
-          </Menu.Item>
-        </Menu>
-      </Sider>
-      <Layout>
-        <Header  style={{ padding: 0,  background: '#fff' }}>
-              {React.createElement(toggle ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                style: { fontSize: "18px", lineHeight: "64px", padding: "0 24px", cursor: "pointer", transition: "color 0.3s"},
-                onClick: toggleClick,
-              })}
-          </Header>
-          <Content className="content">
-            {React.cloneElement(props.children, { user: user })}
-          </Content>
-        <Footer className="text-align">Vop ©2020. Made with <span role="img" aria-label="love">❤️</span> in SF</Footer>
-      </Layout>
-      { user ? <Intercom appID={appID} {...{
-        user_id: user.id,
-        email: user.email,
-        name: user.username
-      }}/> : <></> }
-
-    </Layout>
-    </FrameContainer>
+  const userMenuMarkup = (
+    <TopBar.UserMenu
+      actions={userMenuActions}
+      name={UsernameCapitalize()}
+      initials={UsernameInitials()}
+      open={userMenuActive}
+      onToggle={toggleUserMenuActive}
+    />
   );
 
-};
+  const searchResultsMarkup = (
+    <Card>
+      <ActionList items={[{content: 'help center'}]} />
+    </Card>
+  );
 
-export default Frame;
+  const searchFieldMarkup = (
+    <TopBar.SearchField
+      onChange={handleSearchFieldChange}
+      value={searchValue}
+      placeholder="Search"
+    />
+  );
 
+  const topBarMarkup = (
+    <TopBar
+      showNavigationToggle
+      userMenu={userMenuMarkup}
+      searchResultsVisible={searchActive}
+      searchField={searchFieldMarkup}
+      searchResults={searchResultsMarkup}
+      onSearchResultsDismiss={handleSearchResultsDismiss}
+      onNavigationToggle={toggleMobileNavigationActive}
+    />
+  );
 
+  const navigationMarkup = (
+    <Navigation location="/">
+      <Navigation.Section
+        separator
+        items={[
+          {
+            label: 'Awaiting Approval',
+            url: `/user/id/${userId}/account/id/${accountId}/`,
+            icon: HomeMajorMonotone,
+            onClick: toggleIsLoading,
+          },
+          {
+            label: 'Manage Content',
+            url: `/user/id/${userId}/account/id/${accountId}/manage`,
+            icon: AppsMajorMonotone,
+            onClick: toggleIsLoading,
+          },
+          {
+            label: 'Embed',
+            url: `/user/id/${userId}/account/id/${accountId}/embed`,
+            icon: FeaturedContentMajorMonotone,
+            onClick: toggleIsLoading,
+          },
+          {
+            label: 'Connected Account',
+            url:`/user/id/${userId}/account/id/${accountId}/connect`,
+            icon: CircleTickMajorMonotone,
+            onClick: toggleIsLoading,
+          },
+          {
+            label: 'Settings',
+            url: `/user/id/${userId}/account/id/${accountId}/settings`,
+            icon: OrdersMajorTwotone,
+            onClick: toggleIsLoading,
+          },
+          {
+            label: 'Logout',
+            icon: LogOutMinor,
+            onClick: handleLogout,
+          },
+        ]}
+      />
+    </Navigation>
+  );
+
+  const loadingMarkup = isLoading ? <Loading /> : null;
+
+  const skipToContentTarget = (
+    <a id="SkipToContentTarget" ref={skipToContentRef} tabIndex={-1} />
+  );
+
+  return (
+    <div style={{height: '100vh'}}>
+      <Frame
+        topBar={topBarMarkup}
+        navigation={navigationMarkup}
+        showMobileNavigation={mobileNavigationActive}
+        onNavigationDismiss={toggleMobileNavigationActive}
+        skipToContentTarget={skipToContentRef.current}
+      >
+        {loadingMarkup}
+        {React.cloneElement(props.children, {user: user})}
+        <FooterHelp>
+          Vop ©2020. Made with{' '}
+          <span role="img" aria-label="love">
+            ❤️
+          </span>{' '}
+          in SF
+        </FooterHelp>
+        <Intercom appID={appID} {...IntercommUser} />
+      </Frame>
+    </div>
+  );
+}

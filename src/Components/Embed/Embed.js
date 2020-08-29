@@ -2,6 +2,9 @@ import {Col, Row, Card,Typography, Empty, Button} from 'antd';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
 import {Link, useParams} from "react-router-dom";
+import {
+    Page
+    } from '@shopify/polaris';
 import {UserStore} from "../../Context/store"
 import {EmbedContainer} from "./styles"
 import VopEmbed from '@vop/embed'
@@ -9,7 +12,7 @@ import {findUserInUsersById} from "../../services";
 
 const { Text, Title } = Typography;
 
-const Embed = (props) => {
+export const Embed = () => {
     const [loading, setLoading] = useState(true);
     const [embedAvailable, setEmbedAvailable] = useState(false);
     const { userId } = useParams();
@@ -29,7 +32,6 @@ const Embed = (props) => {
                 }
 
             }).catch(function (ex) {
-                console.log('parsing failed', ex)
             });
             setLoading(false);
         }
@@ -65,7 +67,7 @@ const Embed = (props) => {
 
 
     return user ? (
-        <EmbedContainer>
+        <Page fullWidth title="Embed your Vop Feed">
         <div hidden={loading}>
             <Row>
                 <Col lg={24} md={24} sm={24} >&nbsp;
@@ -94,19 +96,22 @@ const Embed = (props) => {
                         <br/>
                         <Text code>&#x3C;div data-tokshop-id=&#x22;{user.id}&#x22;&#x3E;&#x3C;/div&#x3E;</Text><br />
                         <Text code>&lt;script src=&quot;https://cdn.tokshop.com/tokshop.v2.js&quot; async=&quot;async&quot; &gt;&lt;/script&gt;</Text><br />
-
                         <br/>
                         <Text>&nbsp;</Text>
                         <br/>
-                        <Text>For installation instructions for Shopify please see here <a target="_blank" rel="noopener noreferrer" href="https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store">https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store</a></Text><br />
+                        <Text>For installation instructions for Shopify please see here 
+                            <a 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                href="https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store">https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store</a>
+                        </Text>
+                        <br />
                         <br/>
                     </Card>
                 </Col>
             </Row>
         </div>
-    </EmbedContainer>
+    </Page>
     ) : <></>;
 
 };
-
-export default Embed;

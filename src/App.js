@@ -1,18 +1,32 @@
 import React, {useEffect} from 'react';
-import {
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
-import Login from "./Components/LoginForm/LoginForm";
-import EmailConfirm from "./Components/EmailConfirm/EmailConfirm";
-import PasswordReset from "./Components/PasswordReset/PasswordReset";
-import {UserStore, VideoStore} from "./Context/store";
-import {getUsers} from "./services"
-import {getVideos} from "./services"
-import User from "./Components/User/User";
-
+import {Switch, Route, useHistory, useLocation, Redirect} from 'react-router-dom';
+import enTranslations from '@shopify/polaris/locales/en.json';
+import {AppProvider,Loading,Frame} from '@shopify/polaris';
+import {Login} from './Components/Login';
+import {EmailConfirm} from './Components/EmailConfirm';
+import {Create} from './Components/Signup';
+import {Account} from './Components/Signup';
+import {Invite} from './Components/Invite';
+import {PasswordReset} from './Components/PasswordReset';
+import {User} from "./Components/User";
+import {UserStore, VideoStore} from './Context/store';
+import {getUsers} from './services';
+import {getVideos} from './services';
+import '@shopify/polaris/dist/styles.css';
+import 'tailwindcss/dist/base.min.css';
 const App = () => {
+
+  const [v, setVideoState] = React.useState({
+    videos:{},
+    loading: false,
+    error:false
+  })
+
+  const [u, setUserState] = React.useState({
+    users: [],
+    loading: true,
+    error:false
+  })
 
   const fetchVideoDataAsync = async (lastVideo, status, hasTags, query, userId, accountId) => {
     setVideoState({...v, loading:true});
@@ -34,37 +48,50 @@ const App = () => {
     }
   };
 
-  const [v, setVideoState] = React.useState({
-    videos:{},
-    loading: false,
-    error:false,
-    fetchVideoDataAsync: fetchVideoDataAsync,
-  })
-
-  const [u, setUserState] = React.useState({
-    users: [],
-    loading: true,
-    error:false
-  })
-
   useEffect( () => {
    fetchUserDataAsync();
   }, []);
 
-  return u.loading ? <>Loading</> : (
-    <UserStore.Provider value={{...u, fetchUserDataAsync }}>
-      <VideoStore.Provider value={v}>
-          <div className="App" style={{minHeight: "100vh", width: "100vw", backgroundColor: "#EEE"}}>
+
+  const theme = {
+    colors: {
+      topBar: {
+        background: '#212B36',
+      },
+    },
+  };
+
+  return u.loading ?  <AppProvider theme={theme} i18n={enTranslations}><Frame><Loading /></Frame></AppProvider>: (
+    <AppProvider theme={theme} i18n={enTranslations}>
+      <UserStore.Provider value={{...u, fetchUserDataAsync }}>
+        <VideoStore.Provider value={{...v,fetchVideoDataAsync}}>
+          <div
+            className="App"
+            style={{
+              minHeight: '100vh',
+              width: '100vw',
+              backgroundColor: '#EEE',
+            }}
+          >
             <Switch>
               <Route path="/login">
-                <Login/>
+                <Login />
               </Route>
               <Route path="/email/confirm">
-                  <EmailConfirm/>
+                <EmailConfirm />
               </Route>
               <Route path="/password/reset/">
-                  <PasswordReset/>
+                <PasswordReset />
               </Route>
+              <Route path="/create">
+                <Create />
+              </Route>
+              <Route path="/account">
+                <Account />
+              </Route>
+              <Route path="/invite">
+                <Invite />
+              </Route> 
               <Route path="/user">
                   <User/>
               </Route>
@@ -73,8 +100,9 @@ const App = () => {
               </Route>
             </Switch>
           </div>
-    </VideoStore.Provider>
-  </UserStore.Provider>
+        </VideoStore.Provider>
+      </UserStore.Provider>
+    </AppProvider>
   );
 };
 

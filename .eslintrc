@@ -1,0 +1,17 @@
+ {
+    "extends": ["airbnb"],
+    "rules": {
+      "react/jsx-filename-extension": "off",
+      "react/prop-types":"off",
+      "react/jsx-indent":"off",
+      "import/export":"off",
+      "max-len":"off",
+      "no-unused-vars":"off",
+      "import/prefer-default-export":"off"
+    },
+    "env": {
+      "browser": true,
+      "amd": true,
+      "node": true
+    }
+  }

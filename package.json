@@ -2,8 +2,27 @@
   "name": "vop-admin",
   "version": "1.0.0",
   "private": true,
+  "devDependencies": {
+    "@shopify/eslint-plugin": "^37.0.1",
+    "@shopify/prettier-config": "^1.1.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^4.0.8",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5"
+  },
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
+    "@emotion/core": "^10.0.34",
+    "@emotion/styled": "^10.0.27",
+    "@shopify/polaris": "^5.1.0",
+    "@shopify/polaris-icons": "^3.12.0",
+    "@tailwindcss/ui": "^0.5.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -18,12 +37,15 @@
     "react-dom": "^16.13.1",
     "react-flexbox-grid": "^2.1.2",
     "react-hook-form": "^5.7.2",
+    "react-hover-video-player": "^6.6.2",
     "react-infinite-scroller": "^1.2.4",
     "react-intercom": "^1.0.15",
     "react-pretty-numbers": "^3.0.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.1",
     "styled-components": "^5.1.1",
+    "tailwindcss": "^1.6.2",
+    "twin.macro": "^1.7.0",
     "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
@@ -31,6 +53,21 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
+  },
+  "prettier": "@shopify/prettier-config",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "babelMacros": {
+    "twin": {
+      "config": "tailwind.config.js",
+      "preset": "emotion",
+      "debugProp": true,
+      "debugPlugins": false,
+      "debug": false
+    }
   },
   "eslintConfig": {
     "extends": "react-app"

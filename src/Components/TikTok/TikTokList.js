@@ -1,18 +1,22 @@
-import {Card, Input, Select, Empty, Button} from 'antd';
+import {Card, Input, Select, Empty} from 'antd';
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import TikTokCard from "./TikTokCard";
+import {TikTokCard} from "./TikTokCard";
 import { Row, Col } from 'react-flexbox-grid';
 import InfiniteScroll from 'react-infinite-scroller';
-import TikTokModal from "./TikTokModal";
+import {TikTokModal} from "./TikTokModal";
+import {EmptyState, Button, Page} from '@shopify/polaris';
 import {useHistory, useParams} from "react-router-dom";
 import {VideoStore} from "../../Context/store";
+import {UserStore} from "../../Context/store";
+import {findUserInUsersById} from "../../services";
 
 const InputGroup = Input.Group;
 const { Option } = Select;
 
-const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => {
+export const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) => {
   const {videos, error, fetchVideoDataAsync} = React.useContext(VideoStore);
+  console.log("videos", videos , "users",user)
 
   const history = useHistory();
 
@@ -39,6 +43,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
         setStatus(defaultStatus)
     }, [defaultStatus]);
 
+
     const loadFunc = useCallback(
         () => {
             if (lastVideo === "0") {
@@ -46,7 +51,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
             }
             fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId)
         },
-        [fetchVideoDataAsync, hasTags, lastVideo, query, status, userId, accountId],
+        [hasTags, lastVideo, query, status, userId, accountId],
     );
 
   useEffect(() => {
@@ -75,7 +80,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
     useEffect(() => {
         updateData([]);
         fetchVideoDataAsync("0", status, hasTags, query, userId, accountId);
-    }, [fetchVideoDataAsync, status, hasTags, query, userId, accountId]);
+    }, [status, hasTags, query,userId, accountId]);
 
 
   const openModal = (index) => {
@@ -83,40 +88,33 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
     setModal(true);
   };
 
-  let feedList = data.map((item, idx) => <TikTokCard item={item} removeItem={removeItem} currentIndex={idx} key={item.id} openModal={openModal}/>);
+  let feedList = data.map((item, idx) => 
+  <TikTokCard item={item} removeItem={removeItem} currentIndex={idx} key={item.id} openModal={openModal} user={user}/>);
 
   if (feedList.length === 0) {
     if(approvalScreen === true) {
-        feedList = <Empty
-            image="/tiktok.png"
-            imageStyle={{
-                height: 60,
-            }}
-            description={
-                <span><br />
-        <b>You are all done!</b> New videos from TikTok will be imported when they are available.
-      </span>
-            }
-        >
-            <Button type="primary" onClick={loadFunc}>Check for Videos</Button>
-        </Empty>
+        feedList = ( <EmptyState
+                heading="You are all done"
+                image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+              >
+                <p>New videos from TikTok will be imported when they are available.</p><br/>
+                <Button primary loading={loading} onClick={loadFunc}>
+                Check for Videos
+              </Button>
+              </EmptyState>
+              )
     } else {
-        feedList = <Empty
-            image="/tiktok.png"
-            imageStyle={{
-                height: 60,
-            }}
-            description={
-                <span><br />
-        <b >No Videos.</b> Use the filters above to find more videos.
-      </span>
-            }
-        >
-        </Empty>
+        feedList = <EmptyState
+        heading="No Videos"
+        image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+      >
+        <p>Use the filters above to find more videos.</p>
+      </EmptyState>
+      
     }
-
   } else {
-    feedList =       <InfiniteScroll
+    feedList = 
+    <InfiniteScroll
         pageStart={0}
         loadMore={loadFunc}
         hasMore={more}
@@ -140,7 +138,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
   }
 
   return (
-    <div>
+    <Page fullWidth title={approvalScreen?"Awaiting Approval": "Manage Content"}>
       <Row>
         <Col span={24}>&nbsp;
         </Col>
@@ -194,9 +192,7 @@ const TikTokList = ({item, defaultStatus, hideSearch, approvalScreen, user}) => 
       <br />
           { feedList }
       {(data.length > 0) ? <TikTokModal user={user} setModal={setModal} data={data} currentIndex={currentIndex} modal={modal} key={currentIndex} removeItem={removeItem}/> : ""}
-
-    </div>
+      </Page>
   )
 };
 
-export default TikTokList;
