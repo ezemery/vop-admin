@@ -9,27 +9,39 @@ import {
   TopBar,
   FooterHelp,
 } from '@shopify/polaris';
-import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone} from '@shopify/polaris-icons';
+import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
 import {UserStore} from '../../Context/store';
 import {findUserInUsersById} from "../../services";
 
 export const AppFrame = (props) => {
-  const defaultState = useRef({
-    emailFieldValue: 'dharma@jadedpixel.com',
-    nameFieldValue: 'Jaded Pixel',
-  });
-  const skipToContentRef = useRef(null);
+  const { userId, accountId } = useParams();
+  const {users, fetchUserDataAsync} = React.useContext(UserStore);
+  const user = findUserInUsersById(users, userId)
 
+  const UsernameInitials = () => {
+    return user.username.toUpperCase().slice(0,1);
+  }
+  const UsernameCapitalize = () => {
+    return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+  }
+  const appID = 'rlquh92b';
+  const IntercommUser = {
+    user_id: user.id,
+    email: user.email,
+    name: user.username,
+  };
+
+  let location = useLocation();
+  const history = useHistory();
+
+  const skipToContentRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [userMenuActive, setUserMenuActive] = useState(false);
   const [mobileNavigationActive, setMobileNavigationActive] = useState(false);
-  const [storeName, setStoreName] = useState(
-    defaultState.current.nameFieldValue,
-  );
 
   const handleSearchResultsDismiss = useCallback(() => {
     setSearchActive(false);
@@ -55,18 +67,6 @@ export const AppFrame = (props) => {
     () => setIsLoading((isLoading) => !isLoading),
     [],
   );
-
-  const { userId, accountId } = useParams();
-  const {users, fetchUserDataAsync} = React.useContext(UserStore);
-  const user = findUserInUsersById(users, userId)
-  const appID = 'rlquh92b';
-  const IntercommUser = {
-    user_id: user.id,
-    email: user.email,
-    name: user.username,
-  };
-  let location = useLocation();
-  const history = useHistory();
 
   const handleLogout = () => {
     console.log("logout")
@@ -97,9 +97,8 @@ export const AppFrame = (props) => {
   const userMenuMarkup = (
     <TopBar.UserMenu
       actions={userMenuActions}
-      name="Dharma"
-      detail={storeName}
-      initials="D"
+      name={UsernameCapitalize()}
+      initials={UsernameInitials()}
       open={userMenuActive}
       onToggle={toggleUserMenuActive}
     />
@@ -156,7 +155,7 @@ export const AppFrame = (props) => {
           },
           {
             label: 'Connected Account',
-            url:`/`,
+            url:`/user/id/${userId}/account/id/${accountId}/connect`,
             icon: CircleTickMajorMonotone,
             onClick: toggleIsLoading,
           },
@@ -168,7 +167,7 @@ export const AppFrame = (props) => {
           },
           {
             label: 'Logout',
-            icon: OrdersMajorTwotone,
+            icon: LogOutMinor,
             onClick: handleLogout,
           },
         ]}

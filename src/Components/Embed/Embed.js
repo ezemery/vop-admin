@@ -2,6 +2,9 @@ import {Col, Row, Card,Typography, Empty, Button} from 'antd';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
 import {Link, useParams} from "react-router-dom";
+import {
+    Page
+    } from '@shopify/polaris';
 import {UserStore} from "../../Context/store"
 import {EmbedContainer} from "./styles"
 import VopEmbed from '@vop/embed'
@@ -64,7 +67,7 @@ export const Embed = () => {
 
 
     return user ? (
-        <EmbedContainer>
+        <Page fullWidth title="Embed your Vop Feed">
         <div hidden={loading}>
             <Row>
                 <Col lg={24} md={24} sm={24} >&nbsp;
@@ -108,7 +111,7 @@ export const Embed = () => {
                 </Col>
             </Row>
         </div>
-    </EmbedContainer>
+    </Page>
     ) : <></>;
 
 };

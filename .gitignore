@@ -5,3 +5,6 @@ build
 yarn.lock
 .env
 .vscode/settings.json
+.DS_Store
+src/.DS_Store
+src/Components/.DS_Store

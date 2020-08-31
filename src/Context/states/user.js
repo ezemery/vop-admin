@@ -1,8 +1,7 @@
 const UserState = {
     user: {},
     loading: false,
-    error:false,
-    fetchUserDataAsync: ()=>{}
+    error:false
 }
 
 export default UserState;

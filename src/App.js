@@ -15,6 +15,19 @@ import {getVideos} from './services';
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
 const App = () => {
+
+  const [v, setVideoState] = React.useState({
+    videos:{},
+    loading: false,
+    error:false
+  })
+
+  const [u, setUserState] = React.useState({
+    users: [],
+    loading: true,
+    error:false
+  })
+
   const fetchVideoDataAsync = async (lastVideo, status, hasTags, query, userId, accountId) => {
     setVideoState({...v, loading:true});
     try{
@@ -35,23 +48,9 @@ const App = () => {
     }
   };
 
-  const [v, setVideoState] = React.useState({
-    videos:{},
-    loading: false,
-    error:false,
-    fetchVideoDataAsync: fetchVideoDataAsync,
-  })
-
-  const [u, setUserState] = React.useState({
-    users: [],
-    loading: true,
-    error:false
-  })
-
   useEffect( () => {
    fetchUserDataAsync();
   }, []);
-
 
 
   const theme = {
@@ -65,7 +64,7 @@ const App = () => {
   return u.loading ?  <AppProvider theme={theme} i18n={enTranslations}><Frame><Loading /></Frame></AppProvider>: (
     <AppProvider theme={theme} i18n={enTranslations}>
       <UserStore.Provider value={{...u, fetchUserDataAsync }}>
-        <VideoStore.Provider value={v}>
+        <VideoStore.Provider value={{...v,fetchVideoDataAsync}}>
           <div
             className="App"
             style={{
