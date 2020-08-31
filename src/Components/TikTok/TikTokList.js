@@ -59,7 +59,6 @@ export const TikTokList = ({
   const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
   const loadFunc = useCallback(async () => {
-    setIsLoading()
     await videoFetch.fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId);
   }, [hasTags, lastVideo, query, status, userId, accountId]);
 
