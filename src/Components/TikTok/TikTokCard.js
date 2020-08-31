@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import NumericLabel from 'react-pretty-numbers';
+import NumericLabel from "../NumericLabel";
 import { Col } from 'react-flexbox-grid';
 import {useParams} from "react-router-dom";
 import {VideoCard} from "../Cards"

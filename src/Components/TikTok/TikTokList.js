@@ -26,7 +26,7 @@ export const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) =>
   const [modal, setModal] = useState(false);
   const [status, setStatus] = useState(defaultStatus);
   const [query, setQuery] = useState("");
-  const [hasTags, setHasTags] = useState("All");
+  const [hasTags, setHasTags] = useState("");
   const [data, updateData] = useState([]);
   const [lastVideo, setLastVideo] = useState("0");
   const [more, setMore] = useState(false);
@@ -56,32 +56,29 @@ export const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) =>
 
   useEffect(() => {
     if(!error){
-      setMore(videos.length === 50)
-      if (videos.length > 0) {
-        setLastVideo(videos.slice(-1)[0].video_id)
-        videos.forEach(video => {
+      setMore(videos.has_more)
+      if (videos.data && videos.data.length > 0) {
+        setLastVideo(videos.data.slice(-1)[0].id)
+        videos.data.forEach(video => {
           updateData(oldArray => {
             if (oldArray.find(vid => vid.id === video.id)) {
               return oldArray
             } else {
               return [...oldArray, video]
-
             }
           })
         });
       }
       setLoading(false);
     }else{
-      history.push('/login');
       setLoading(false);
     }
   },[videos, error, history])
 
     useEffect(() => {
         updateData([]);
-        fetchVideoDataAsync("0", status, hasTags, query, userId, accountId);
+        fetchVideoDataAsync("", status, hasTags, query, userId, accountId);
     }, [status, hasTags, query,userId, accountId]);
-
 
   const openModal = (index) => {
     setCurrentIndex(index);
@@ -170,9 +167,9 @@ export const TikTokList = ({defaultStatus, hideSearch, approvalScreen, user}) =>
                 onChange={setHasTags}
                 defaultValue={hasTags}
                 placeholder="Product Tag Status">
-                <Option value="All">All</Option>
-                <Option value="yes">No Tags</Option>
-                <Option value="no">Products with Tags</Option>
+                <Option value="">All</Option>
+                <Option value="false">No Tags</Option>
+                <Option value="true">Products with Tags</Option>
               </Select>
               <Select
                 size="large"

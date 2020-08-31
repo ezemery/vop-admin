@@ -32,7 +32,7 @@ export const SetupUsername = ({complete, showSteps, username}) => {
             return response.json()
         }).then(function(json) {
             setLoading(false)
-            if (json.found) {
+            if (json.statusCode === 0) {
                 setShowDetails(json)
             } else {
                 setError("Unable to find username")
@@ -56,7 +56,7 @@ export const SetupUsername = ({complete, showSteps, username}) => {
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            if (json === "Success") {
+            if (json.success === true) {
                 complete();
                 setShowDetails(false)
             }
@@ -108,13 +108,13 @@ export const SetupUsername = ({complete, showSteps, username}) => {
                         <div style={{height:"10px"}} />
                         <Row gutter={16}>
                             <Col span={8}>
-                                <Statistic title="Likes" value={showDetails.likes} />
+                                <Statistic title="Likes" value={showDetails.body.userData.heart} />
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Followers" value={showDetails.followers}/>
+                                <Statistic title="Followers" value={showDetails.body.userData.fans}/>
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Following" value={showDetails.following} />
+                                <Statistic title="Following" value={showDetails.body.userData.following} />
                             </Col>
                         </Row>
                         <div style={{height:"10px"}} />

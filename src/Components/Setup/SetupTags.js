@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Steps, Input, Button, Card, Table, Alert} from 'antd';
-import NumericLabel from 'react-pretty-numbers';
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
+import NumericLabel from "../NumericLabel";
 
 
 const { Step } = Steps;
@@ -28,7 +28,7 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            if (json === "Success") {
+            if (json.success === true) {
                 complete();
             }
         }).catch(function(ex) {
@@ -100,8 +100,13 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
             return response.json()
         }).then(function(json) {
             setLoading(false)
-            if (json.tag) {
-                setTags(oldArray => [...oldArray, json]);
+            if (json.body) {
+                setTags(oldArray => [...oldArray, {
+                   id: json.body.challengeData.challengeId,
+                    tag: json.body.challengeData.challengeName,
+                    posts: json.body.challengeData.posts,
+                    views: json.body.challengeData.views
+                }]);
             } else {
                 setError("Unable to find tag")
             }
