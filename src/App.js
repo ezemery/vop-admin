@@ -23,40 +23,12 @@ import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
 
 const App = () => {
-  const [v, setVideoState] = React.useState({
-    videos: {},
-    loading: false,
-    error: false,
-  });
 
   const [u, setUserState] = React.useState({
     users: [],
     loading: true,
     error: false,
   });
-
-  const fetchVideoDataAsync = async (
-    lastVideo,
-    status,
-    hasTags,
-    query,
-    userId,
-    accountId,
-  ) => {
-    try {
-      const videos = await getVideos(
-        lastVideo,
-        status,
-        hasTags,
-        query,
-        userId,
-        accountId,
-      );
-      setVideoState({videos, loading: false, error: false});
-    } catch (error) {
-      setVideoState({videos: [], loading: true, error: true});
-    }
-  };
 
   const fetchUserDataAsync = async () => {
     try {
@@ -110,7 +82,6 @@ const App = () => {
     </AppProvider>
   ) : (
     <UserStore.Provider value={{...u, fetchUserDataAsync}}>
-      <VideoStore.Provider value={{...v, fetchVideoDataAsync}}>
         <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
           <div
             className="App"
@@ -148,7 +119,6 @@ const App = () => {
             </Switch>
           </div>
         </AppProvider>
-      </VideoStore.Provider>
     </UserStore.Provider>
   );
 };

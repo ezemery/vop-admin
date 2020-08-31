@@ -1,11 +1,11 @@
 import {Col, Row, Card,Typography, Empty, Button} from 'antd';
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import { useState } from 'react';
 import {Link, useParams} from "react-router-dom";
 import {
     Page
     } from '@shopify/polaris';
-import {UserStore} from "../../Context/store"
+import {FrameStore, UserStore} from "../../Context/store"
 import {EmbedContainer} from "./styles"
 import VopEmbed from '@vop/embed'
 import {findUserInUsersById} from "../../services";
@@ -18,6 +18,8 @@ export const Embed = () => {
     const { userId } = useParams();
     const {users} = React.useContext(UserStore);
     const user = findUserInUsersById(users, userId)
+
+    const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
     useEffect(() => {
         if(user) {
@@ -34,6 +36,7 @@ export const Embed = () => {
             }).catch(function (ex) {
             });
             setLoading(false);
+            unsetIsLoading();
         }
     },[user]);
 
@@ -99,10 +102,10 @@ export const Embed = () => {
                         <br/>
                         <Text>&nbsp;</Text>
                         <br/>
-                        <Text>For installation instructions for Shopify please see here 
-                            <a 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                        <Text>For installation instructions for Shopify please see here
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 href="https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store">https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store</a>
                         </Text>
                         <br />
