@@ -90,7 +90,9 @@ export const AppFrame = (props) => {
 
   const userMenuActions = [
     {
-      items: [{content: 'Community forums'}],
+      items: [
+          // {content: 'Community forums'}
+          ],
     },
   ];
 
@@ -131,39 +133,39 @@ export const AppFrame = (props) => {
   );
 
   const navigationMarkup = (
-    <Navigation location="/">
+    <Navigation location={location.pathname}>
       <Navigation.Section
         separator
         items={[
           {
             label: 'Awaiting Approval',
-            url: `/user/id/${userId}/account/id/${accountId}/`,
+            url: `/user/id/${userId}/account/id/${accountId}/awaiting`,
             icon: HomeMajorMonotone,
-            onClick: toggleIsLoading,
+            // onClick: toggleIsLoading,
           },
           {
             label: 'Manage Content',
             url: `/user/id/${userId}/account/id/${accountId}/manage`,
             icon: AppsMajorMonotone,
-            onClick: toggleIsLoading,
+            // onClick: toggleIsLoading,
           },
           {
             label: 'Embed',
             url: `/user/id/${userId}/account/id/${accountId}/embed`,
             icon: FeaturedContentMajorMonotone,
-            onClick: toggleIsLoading,
+            // onClick: toggleIsLoading,
           },
-          {
-            label: 'Connected Account',
-            url:`/user/id/${userId}/account/id/${accountId}/connect`,
-            icon: CircleTickMajorMonotone,
-            onClick: toggleIsLoading,
-          },
+          // {
+          //   label: 'Connected Account',
+          //   url:`/user/id/${userId}/account/id/${accountId}/connect`,
+          //   icon: CircleTickMajorMonotone,
+          //   // onClick: toggleIsLoading,
+          // },
           {
             label: 'Settings',
             url: `/user/id/${userId}/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
-            onClick: toggleIsLoading,
+            // onClick: toggleIsLoading,
           },
           {
             label: 'Logout',
