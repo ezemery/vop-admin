@@ -1,14 +1,6 @@
 import React, {useState, useCallback} from 'react';
 // import { Form, Icon, Input, Button, Card, Row, Col } from 'antd';
-import {
-  FormLayout,
-  TextField,
-  Icon,
-  Button,
-  Checkbox,
-  DisplayText,
-  Form,
-} from '@shopify/polaris';
+import {FormLayout, TextField, Icon, Button, Form} from '@shopify/polaris';
 import {
   EmailMajorMonotone,
   LockMajorMonotone,
@@ -36,9 +28,8 @@ export const Create = (props) => {
   const history = useHistory();
 
   const {handleSubmit, control} = useForm();
-  const [checked, setChecked] = useState(false);
-  const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
   const [invalidEmail, setInvalidEmail] = useState(false);
+  const [invalidPassword, setInvalidPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const LogoSVG = () => (
@@ -65,14 +56,24 @@ export const Create = (props) => {
   const onSubmit = (data) => {
     setInvalidEmail(false);
     setLoading(true);
+    if (data.password !== data.confirm_password) {
+      setInvalidPassword(true);
+      setLoading(false);
+      return;
+    }
+    setInvalidPassword(false);
+    const body = {
+      email: data.email,
+      password: data.password,
+    };
 
-    fetch(`${process.env.REACT_APP_API_HOST}/login/go`, {
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/register/create`, {
       method: 'POST',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
     })
       .then((response) => {
         if (!response.ok) {
@@ -81,8 +82,10 @@ export const Create = (props) => {
         return response.json();
       })
       .then((json) => {
-        if (json.success) {
-          history.push('/');
+        setInvalidEmail(false);
+        console.log(json);
+        if (json.success || json.created_at) {
+          history.push('/login');
           return;
         }
         throw new Error('Network response was not ok');
@@ -102,53 +105,61 @@ export const Create = (props) => {
           <SmallText>Enter your basic info and a password.</SmallText>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <FormLayout>
-              <TextField
-                type="text"
-                label="Name"
-                labelHidden
-                onChange={() => {}}
-                value=""
+              <Controller
+                as={TextField}
+                control={control}
                 prefix={<Icon source={CustomersMajorMonotone} />}
+                label="Name"
                 placeholder="Name"
-                error=""
-              />
-              <TextField
-                type="email"
-                label="Email"
                 labelHidden
-                onChange={() => {}}
-                value=""
+                type="text"
+                name="name"
+              />
+
+              <Controller
+                as={TextField}
+                control={control}
                 prefix={<Icon source={EmailMajorMonotone} />}
+                error={invalidEmail ? 'Incorrect email or password' : null}
+                label="Email"
                 placeholder="Email"
-                error=""
+                labelHidden
+                type="email"
+                name="email"
               />
-              <TextField
-                type="password"
+
+              <Controller
+                as={TextField}
+                control={control}
+                prefix={<Icon source={LockMajorMonotone} />}
+                error={invalidPassword ? 'Password does not match' : null}
                 label="Password"
-                labelHidden
-                onChange={() => {}}
-                value=""
-                prefix={<Icon source={LockMajorMonotone} />}
                 placeholder="Password"
-                error=""
-              />
-              <TextField
-                type="password"
-                label="Confirm Password"
                 labelHidden
-                onChange={() => {}}
-                value=""
-                prefix={<Icon source={LockMajorMonotone} />}
-                placeholder="Confirm Password"
-                error=""
+                type="password"
+                name="password"
               />
-              <Button primary fullWidth>
+              <Controller
+                as={TextField}
+                control={control}
+                prefix={<Icon source={LockMajorMonotone} />}
+                label="Confirm Password"
+                placeholder="Confirm Password"
+                labelHidden
+                type="password"
+                name="confirm_password"
+              />
+
+              <Button primary submit fullWidth loading={loading}>
                 Create User
               </Button>
             </FormLayout>
           </Form>
           <SmallText>
-            Already have an account <Button plain url="/login">Sign In</Button>
+            Already have an account{' '}
+            <Button plain url="/login">
+              Sign In
+            </Button>
           </SmallText>
         </LoginForm>
         <CompanyDesc>
@@ -164,48 +175,6 @@ export const Create = (props) => {
         <Box />
         <Background src="./login.png" />
       </RightSide>
-      {/* <Col lg={24} sm={12} align="middle">
-            <Card
-              title={<div className="text-align"><img src="vop-black-300.png" style={{ width: 150 }} alt="Tokshop" /></div>}
-              bordered={false} style={{ width: 300 }}>
-
-                <form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Item
-                    validateStatus={invalidEmail ? "error" : null}
-                    help={invalidEmail ? "Incorrect email or password" : null}>
-                    <Controller as={Input} control={control}
-                                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                placeholder="Email"
-                                name="email"/>
-                </Form.Item>
-                <Form.Item>
-                    <Controller as={Input} control={control}
-                                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                type="password"
-                                placeholder="Password"
-                                name="password"
-                    />
-                </Form.Item>
-                <Form.Item>
-                  <Row>
-                    <Col span={12}>
-
-                      <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
-                        Log in
-                      </Button>
-                    </Col>
-                    <Col span={12}>
-                      <div>
-                        <Link className="login-form-forgot" to="/email/confirm">
-                          Forgot password?
-                        </Link>
-                      </div>
-                    </Col>
-                  </Row>
-                </Form.Item>
-              </form>
-            </Card>
-        </Col> */}
     </LoginContainer>
   );
 };
