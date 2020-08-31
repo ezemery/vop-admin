@@ -1,5 +1,5 @@
 import {Card, Input, Select, Empty} from 'antd';
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useContext, useReducer} from 'react';
 
 import {Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -7,10 +7,28 @@ import {EmptyState, Button, Page} from '@shopify/polaris';
 import {useHistory, useParams} from 'react-router-dom';
 import {TikTokModal} from './TikTokModal';
 import {TikTokCard} from './TikTokCard';
-import {VideoStore} from '../../Context/store';
+import {FrameStore, UserStore, VideoStore} from '../../Context/store';
+import {useVideoFetch} from "../../Hooks/video.hook";
 
 const InputGroup = Input.Group;
 const {Option} = Select;
+
+const videoInitial = [];
+
+function videoReducer(state, action) {
+  switch (action.type) {
+    case 'append':
+      const filtered = action.videos.filter((video) => !state.find((vid) => vid.id === video.id));
+      return [...state, ...filtered];
+    case 'remove':
+      state.splice(action.index, 1);
+      return [...state];
+    case 'reset':
+      return [];
+    default:
+      throw new Error();
+  }
+}
 
 export const TikTokList = ({
   defaultStatus,
@@ -18,8 +36,9 @@ export const TikTokList = ({
   approvalScreen,
   user,
 }) => {
-  const {videos, error, fetchVideoDataAsync} = React.useContext(VideoStore);
   const history = useHistory();
+
+  const videoFetch = useVideoFetch();
 
   const {userId, accountId} = useParams();
 
@@ -28,48 +47,41 @@ export const TikTokList = ({
   const [status, setStatus] = useState(defaultStatus);
   const [query, setQuery] = useState('');
   const [hasTags, setHasTags] = useState('');
-  const [data, updateData] = useState([]);
   const [lastVideo, setLastVideo] = useState('');
   const [more, setMore] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const [data, updateData] = useReducer(videoReducer, videoInitial);
 
   const removeItem = (index) => {
-    updateData((oldArray) => {
-      oldArray.splice(index, 1);
-      return [...oldArray];
-    });
+    updateData({type: 'remove', index: index})
   };
 
-  const loadFunc = useCallback(() => {
-    if (lastVideo === '0') {
-      setLoading(true);
-    }
-    fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId);
+  const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
+
+  const loadFunc = useCallback(async () => {
+    setIsLoading()
+    await videoFetch.fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId);
   }, [hasTags, lastVideo, query, status, userId, accountId]);
 
   useEffect(() => {
-    if (!error) {
-      setMore(videos.has_more);
-      if (videos.data && videos.data.length > 0) {
-        setLastVideo(videos.data.slice(-1)[0].id);
-        videos.data.forEach((video) => {
-          updateData((oldArray) => {
-            if (oldArray.find((vid) => vid.id === video.id)) {
-              return oldArray;
-            }
-            return [...oldArray, video];
-          });
-        });
+      setMore(videoFetch.videos.has_more);
+      if (videoFetch.videos.data) {
+        if (videoFetch.videos.data.length > 0) {
+          setLastVideo(videoFetch.videos.data.slice(-1)[0].id);
+          updateData({type: 'append', videos: videoFetch.videos.data});
+        }
+        unsetIsLoading();
       }
-      setLoading(false);
-    } else {
-      setLoading(false);
-    }
-  }, [videos, error, history]);
 
-  useEffect(() => {
-    updateData([]);
-    fetchVideoDataAsync('', status, hasTags, query, userId, accountId);
+  }, [videoFetch.videos]);
+
+  useEffect( () => {
+    async function fetchData() {
+      updateData({type: 'reset'})
+      setIsLoading()
+      await videoFetch.fetchVideoDataAsync('', status, hasTags, query, userId, accountId);
+    }
+    fetchData();
   }, [status, hasTags, query, userId, accountId]);
 
   const openModal = (index) => {
@@ -99,7 +111,7 @@ export const TikTokList = ({
             New videos from TikTok will be imported when they are available.
           </p>
           <br />
-          <Button primary loading={loading} onClick={loadFunc}>
+          <Button primary onClick={loadFunc}>
             Check for Videos
           </Button>
         </EmptyState>
@@ -127,28 +139,25 @@ export const TikTokList = ({
         }
       >
         <Row gutter={[32]} type="flex">
-          {feedList}
+          <VideoStore.Provider value={videoFetch}>
+            {feedList}
+          </VideoStore.Provider>
         </Row>{' '}
       </InfiniteScroll>
     );
   }
 
-  if (loading === true) {
+  if (isLoading === true) {
     feedList = (
-      <Empty
-        image="/tiktok.png"
-        imageStyle={{
-          height: 60,
-        }}
-        description={
-          <span>
-            <br />
-            <b>Loading ...</b>
-          </span>
-        }
-      />
+        <EmptyState
+            heading="Loading"
+            image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+        >
+          <p>Loading your content.</p>
+        </EmptyState>
     );
   }
+
 
   return (
     <Page

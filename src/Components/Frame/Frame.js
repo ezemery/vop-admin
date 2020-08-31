@@ -12,8 +12,9 @@ import {
 import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
-import {UserStore} from '../../Context/store';
+import {FrameStore, UserStore} from '../../Context/store';
 import {findUserInUsersById} from "../../services";
+import {useFrameContext} from "../../Hooks/frame.hook";
 
 export const AppFrame = (props) => {
   const { userId, accountId } = useParams();
@@ -37,7 +38,6 @@ export const AppFrame = (props) => {
   const history = useHistory();
 
   const skipToContentRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [userMenuActive, setUserMenuActive] = useState(false);
@@ -63,10 +63,7 @@ export const AppFrame = (props) => {
       ),
     [],
   );
-  const toggleIsLoading = useCallback(
-    () => setIsLoading((isLoading) => !isLoading),
-    [],
-  );
+  const frameContext = useFrameContext()
 
   const handleLogout = () => {
     console.log("logout")
@@ -141,19 +138,19 @@ export const AppFrame = (props) => {
             label: 'Awaiting Approval',
             url: `/user/id/${userId}/account/id/${accountId}/awaiting`,
             icon: HomeMajorMonotone,
-            // onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           {
             label: 'Manage Content',
             url: `/user/id/${userId}/account/id/${accountId}/manage`,
             icon: AppsMajorMonotone,
-            // onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           {
             label: 'Embed',
             url: `/user/id/${userId}/account/id/${accountId}/embed`,
             icon: FeaturedContentMajorMonotone,
-            // onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           // {
           //   label: 'Connected Account',
@@ -165,7 +162,7 @@ export const AppFrame = (props) => {
             label: 'Settings',
             url: `/user/id/${userId}/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
-            // onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           {
             label: 'Logout',
@@ -177,7 +174,7 @@ export const AppFrame = (props) => {
     </Navigation>
   );
 
-  const loadingMarkup = isLoading ? <Loading /> : null;
+  const loadingMarkup = frameContext.isLoading ? <Loading /> : null;
 
   const skipToContentTarget = (
     <a id="SkipToContentTarget" ref={skipToContentRef} tabIndex={-1} />
@@ -192,8 +189,11 @@ export const AppFrame = (props) => {
         onNavigationDismiss={toggleMobileNavigationActive}
         skipToContentTarget={skipToContentRef.current}
       >
+
         {loadingMarkup}
-        {React.cloneElement(props.children, {user: user})}
+        <FrameStore.Provider value={frameContext}>
+          {React.cloneElement(props.children, {user: user})}
+        </FrameStore.Provider>
         <FooterHelp>
           Vop ©2020. Made with{' '}
           <span role="img" aria-label="love">
