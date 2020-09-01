@@ -1,57 +1,46 @@
 import React, {useEffect} from 'react';
-import {Switch, Route, useHistory, useLocation, Redirect} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  Link as ReactRouterLink,
+} from 'react-router-dom';
 import enTranslations from '@shopify/polaris/locales/en.json';
-import {AppProvider,Loading,Frame} from '@shopify/polaris';
+import {AppProvider, Loading, Frame} from '@shopify/polaris';
 import {Login} from './Components/Login';
 import {EmailConfirm} from './Components/EmailConfirm';
-import {Create} from './Components/Signup';
-import {Account} from './Components/Signup';
+import {Create, Account} from './Components/Signup';
+
 import {Invite} from './Components/Invite';
 import {PasswordReset} from './Components/PasswordReset';
 import {UserId} from "./Components/User";
 import {UserStore, VideoStore} from './Context/store';
-import {getUsers} from './services';
-import {getVideos} from './services';
+import {getUsers, getVideos, logo} from './services';
+
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
-const App = () => {
+import {Connect} from "./Components/Connect";
 
-  const [v, setVideoState] = React.useState({
-    videos:{},
-    loading: false,
-    error:false
-  })
+const App = () => {
 
   const [u, setUserState] = React.useState({
     users: [],
     loading: true,
-    error:false
-  })
-
-  const fetchVideoDataAsync = async (lastVideo, status, hasTags, query, userId, accountId) => {
-    setVideoState({...v, loading:true});
-    try{
-      const videos  =  await getVideos(lastVideo, status, hasTags, query, userId, accountId);
-      setVideoState({...v, videos:videos, loading:false, error:false});
-    }catch(error){
-      setVideoState({...v,error:true});
-    }
-  }
+    error: false,
+  });
 
   const fetchUserDataAsync = async () => {
-    setUserState({loading:true, users: [], error: false});
-    try{
-      const users  =  await getUsers();
-      setUserState({users:users, loading:false, error:false});
-    } catch(error){
-      setUserState({loading:false, users: [],  error:true});
+    try {
+      const users = await getUsers();
+      setUserState({users, loading: false, error: false});
+    } catch (error) {
+      setUserState({loading: false, users: [], error: true});
     }
   };
 
-  useEffect( () => {
-   fetchUserDataAsync();
+  useEffect(() => {
+    fetchUserDataAsync();
   }, []);
-
 
   const theme = {
     colors: {
@@ -59,12 +48,45 @@ const App = () => {
         background: '#212B36',
       },
     },
+    logo: {
+      width: 60,
+      topBarSource: logo("#FFF"),
+      accessibilityLabel: 'Vop',
+    },
   };
 
-  return u.loading ?  <AppProvider theme={theme} i18n={enTranslations}><Frame><Loading /></Frame></AppProvider>: (
-    <AppProvider theme={theme} i18n={enTranslations}>
-      <UserStore.Provider value={{...u, fetchUserDataAsync }}>
-        <VideoStore.Provider value={{...v,fetchVideoDataAsync}}>
+  const IS_EXTERNAL_LINK_REGEX = /^(?:[a-z][a-z\d+.-]*:|\/\/)/;
+
+  function Link({children, url = '', external, ref, ...rest}) {
+    // react-router only supports links to pages it can handle itself. It does not
+    // support arbirary links, so anything that is not a path-based link should
+    // use a reglar old `a` tag
+    if (external || IS_EXTERNAL_LINK_REGEX.test(url)) {
+      rest.target = '_blank';
+      rest.rel = 'noopener noreferrer';
+      return (
+          <a href={url} {...rest}>
+            {children}
+          </a>
+      );
+    }
+
+    return (
+        <ReactRouterLink to={url} {...rest}>
+          {children}
+        </ReactRouterLink>
+    );
+  }
+
+  return u.loading ? (
+    <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
+      <Frame>
+        <Loading />
+      </Frame>
+    </AppProvider>
+  ) : (
+    <UserStore.Provider value={{...u, fetchUserDataAsync}}>
+        <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
           <div
             className="App"
             style={{
@@ -76,6 +98,9 @@ const App = () => {
             <Switch>
               <Route path="/login">
                 <Login />
+              </Route>
+              <Route path="/connect">
+                <Connect />
               </Route>
               <Route path="/email/confirm">
                 <EmailConfirm />
@@ -100,9 +125,8 @@ const App = () => {
             </Route>
             </Switch>
           </div>
-        </VideoStore.Provider>
-      </UserStore.Provider>
-    </AppProvider>
+        </AppProvider>
+    </UserStore.Provider>
   );
 };
 

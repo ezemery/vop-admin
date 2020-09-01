@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
+import {Switch, Route, useRouteMatch, useParams, Redirect} from 'react-router-dom';
 import {TikTokList} from '../TikTok';
 import {Embed} from '../Embed';
 import {Settings} from '../Settings';
@@ -10,22 +10,27 @@ import {UserStore} from '../../Context/store';
 import {findUserInUsersById} from '../../services';
 
 export const AccountId = () => {
-  const {path} = useRouteMatch();
+  const {path, url} = useRouteMatch();
 
   const {userId} = useParams();
   const {users} = React.useContext(UserStore);
   const user = findUserInUsersById(users, userId);
 
+
+
   return (
     <AppFrame>
       <Switch>
         <Route exact path={path}>
+          <Redirect to={`${url}/awaiting`} />
+        </Route>
+        <Route path={`${path}/awaiting`}>
           <TikTokList
-            defaultStatus="new"
-            key="index"
-            hideSearch
-            approvalScreen
-            user={user}
+              defaultStatus="new"
+              key="index"
+              hideSearch
+              approvalScreen
+              user={user}
           />
         </Route>
         <Route path={`${path}/connect/tiktok`}>
