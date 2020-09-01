@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useContext} from 'react';
 import queryString from 'query-string'
 import {
     Spinner
@@ -20,8 +20,11 @@ import {
     RightSide,
     CompanyDesc,
 } from '../../styles';
+import {UserStore} from "../../../Context/store";
 
 export const ShopifyCallback = (props) => {
+
+    const {fetchUserDataAsync} = React.useContext(UserStore);
 
     const [error, setError] = useState(null);
     const [redirect, setRedirect] = useState(null);
@@ -39,7 +42,7 @@ export const ShopifyCallback = (props) => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(qs)
+        body: JSON.stringify({ query: qs })
     })
         .then((response) => {
             return response.json();
@@ -48,7 +51,9 @@ export const ShopifyCallback = (props) => {
             if (json.status === "failed") {
                 setError(json.message)
             } else {
-                history.push('/');
+                fetchUserDataAsync().then(() => {
+                    history.push('/');
+                });
             }
             console.log(json)
         })

@@ -67,7 +67,7 @@ export const AppFrame = (props) => {
 
   const handleLogout = () => {
     console.log("logout")
-    fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/${userId}/logout', {
+    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -121,10 +121,10 @@ export const AppFrame = (props) => {
     <TopBar
       showNavigationToggle
       userMenu={userMenuMarkup}
-      searchResultsVisible={searchActive}
-      searchField={searchFieldMarkup}
-      searchResults={searchResultsMarkup}
-      onSearchResultsDismiss={handleSearchResultsDismiss}
+      // searchResultsVisible={searchActive}
+      // searchField={searchFieldMarkup}
+      // searchResults={searchResultsMarkup}
+      // onSearchResultsDismiss={handleSearchResultsDismiss}
       onNavigationToggle={toggleMobileNavigationActive}
     />
   );

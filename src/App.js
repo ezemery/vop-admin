@@ -17,7 +17,7 @@ import {Invite} from './Components/Invite';
 import {PasswordReset} from './Components/PasswordReset';
 import {User} from './Components/User';
 import {UserStore, VideoStore} from './Context/store';
-import {getUsers, getVideos} from './services';
+import {getUsers, getVideos, logo} from './services';
 
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
@@ -49,6 +49,11 @@ const App = () => {
       topBar: {
         background: '#212B36',
       },
+    },
+    logo: {
+      width: 60,
+      topBarSource: logo("#FFF"),
+      accessibilityLabel: 'Vop',
     },
   };
 

@@ -5,7 +5,7 @@ import {
 } from '@shopify/polaris';
 import {Icons} from '../../Icons';
 import {
-    Redirect,
+    Redirect, useHistory,
     useLocation
 } from "react-router-dom";
 import {
@@ -20,21 +20,29 @@ import {
     RightSide,
     CompanyDesc,
 } from '../../styles';
+import {UserStore} from "../../../Context/store";
 
 export const ShopifyAuth = (props) => {
+
+    const {fetchUserDataAsync} = React.useContext(UserStore);
 
     const [error, setError] = useState(null);
     const [redirect, setRedirect] = useState(null);
 
     let location = useLocation();
+    const history = useHistory();
 
     const qs = queryString.parse(location.search)
 
-    const callbackUrl = encodeURIComponent(window.location.href.split('?')[0].replace("/connect/shopify/auth", "/connect/shopify/callback"))
+    const callbackUrl = window.location.href.split('?')[0].replace("/connect/shopify/auth", "/connect/shopify/callback")
 
-    fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/shopify/auth?shop=${qs.shop}&redirect=${callbackUrl}`, {
-        method: 'GET',
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/shopify/auth`, {
+        method: 'POST',
         credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query: qs, callback: callbackUrl })
     })
         .then((response) => {
             return response.json();
@@ -43,8 +51,13 @@ export const ShopifyAuth = (props) => {
             if (json.status === "failed") {
                 setError(json.message)
             }
-            if (json.redirect_url) {
-                window.location = json.redirect_url
+            if (json.action === "redirect") {
+                window.location = json.url
+            }
+            if (json.action === "login") {
+                fetchUserDataAsync().then(() => {
+                    history.push('/');
+                });
             }
         })
         .catch((ex) => {
