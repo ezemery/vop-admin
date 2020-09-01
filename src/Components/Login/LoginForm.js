@@ -38,7 +38,17 @@ export const Login = (props) => {
   const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const onSubmit = (data) => {
+    console.log(!data.email);
+
+
+    if(!data.email || !data.password){
+      setLoading(false);
+      setInvalidEmail(true);
+      return;
+    }
+
     setInvalidEmail(false);
     setLoading(true);
 
@@ -118,7 +128,6 @@ export const Login = (props) => {
 
     return <div 
       key={indx}
-      aria-role="login-data"
       style={{
         display: 'flex',
         justifyContent: 'start',
