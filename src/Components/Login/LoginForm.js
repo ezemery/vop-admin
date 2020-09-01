@@ -7,16 +7,17 @@ import {
   Button,
   Checkbox,
   Form,
+  DisplayText,
 } from '@shopify/polaris';
 import {EmailMajorMonotone, LockMajorMonotone} from '@shopify/polaris-icons';
+
 import {Link, useHistory} from 'react-router-dom';
 import {useForm, Controller} from 'react-hook-form';
-import {Icons} from '../Icons';
+import {Icons, LogoSVG} from '../Icons';
 import {UserStore} from '../../Context/store';
 import {
   LoginContainer,
   LoginForm,
-  Logo,
   FormContent,
   Text,
   AnimateText,
@@ -32,36 +33,11 @@ export const Login = (props) => {
   const history = useHistory();
 
   const {handleSubmit, control} = useForm();
-  const {fetchUserDataAsync} = React.useContext(UserStore);
-
+  const {users, fetchUserDataAsync} = React.useContext(UserStore);
   const [checked, setChecked] = useState(false);
   const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const LogoSVG = useCallback(
-    () => (
-      <Logo viewBox="0 0 105 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M87.5501 0.121584C83.2697 0.119611 79.1565 1.71636 76.0825 4.57345C73.0084 7.43052 71.215 11.3234 71.0823 15.4271V39.4778H71.1755C71.3621 40.7329 72.0143 41.8813 73.0126 42.712C74.0109 43.5428 75.2882 44.0002 76.61 44.0002C77.9318 44.0002 79.2089 43.5428 80.2073 42.712C81.2056 41.8813 81.8579 40.7329 82.0445 39.4778V30.8063C84.3057 31.5741 86.7147 31.8589 89.1027 31.6406C91.4908 31.4224 93.8003 30.7063 95.8697 29.5424C97.9391 28.3787 99.7184 26.7953 101.083 24.9032C102.448 23.0109 103.365 20.8556 103.771 18.5879C104.177 16.3203 104.061 13.9948 103.432 11.7745C102.803 9.55413 101.675 7.49242 100.129 5.73357C98.5824 3.9747 96.6538 2.56115 94.4783 1.59179C92.3026 0.622424 89.9326 0.120659 87.5337 0.121584H87.5501ZM87.5501 21.1449C86.4645 21.1449 85.4032 20.8362 84.5005 20.2575C83.5978 19.679 82.8941 18.8568 82.4787 17.8947C82.0632 16.9327 81.9545 15.874 82.1663 14.8527C82.3782 13.8314 82.901 12.8933 83.6687 12.1569C84.4364 11.4206 85.4145 10.9191 86.4792 10.716C87.544 10.5128 88.6478 10.6171 89.6508 11.0156C90.6538 11.4141 91.5112 12.0889 92.1144 12.9548C92.7175 13.8206 93.0395 14.8386 93.0395 15.8799C93.0395 17.2763 92.4611 18.6155 91.4317 19.6028C90.4022 20.5902 89.006 21.1449 87.5501 21.1449Z"
-          fill="black"
-        />
-        <path
-          d="M31.7341 1.09031C30.0029 0.129329 27.9447 -0.133192 26.0118 0.360419C24.0788 0.854027 22.4292 2.06338 21.4253 3.72284L11.2536 20.8553C10.5954 21.9452 10.2455 23.1811 10.2386 24.4405C10.2317 25.7 10.568 26.9395 11.2142 28.0359C11.8604 29.1324 12.794 30.0479 13.9227 30.6917C15.0513 31.3356 16.3357 31.6854 17.6487 31.7066H18.0549H18.2361H18.4556C18.7637 31.6811 19.07 31.6372 19.3723 31.575C20.1434 31.4204 20.8845 31.1503 21.568 30.7746L21.7108 30.6851L21.8041 30.6272C21.9797 30.5219 22.1499 30.4114 22.32 30.2903C23.2108 29.6453 23.9403 28.8178 24.4554 27.8683L34.5227 10.9781C35.017 10.1533 35.337 9.24323 35.4644 8.29981C35.5918 7.35639 35.524 6.39816 35.265 5.47987C35.0061 4.56157 34.5609 3.70124 33.955 2.94805C33.3493 2.19487 32.5946 1.56359 31.7341 1.09031Z"
-          fill="black"
-        />
-        <path
-          d="M14.1543 3.73849C13.6692 2.89625 13.0138 2.15522 12.2266 1.55875C11.4394 0.962254 10.5361 0.522287 9.56951 0.264537C8.60295 0.00679714 7.59252 -0.0635426 6.59727 0.057635C5.60205 0.178811 4.64198 0.489067 3.77322 0.970281C2.90446 1.45148 2.14441 2.09398 1.53756 2.8602C0.930698 3.62642 0.489166 4.50099 0.238811 5.4328C-0.0115494 6.36459 -0.0657297 7.3349 0.079439 8.287C0.224608 9.23912 0.566215 10.1539 1.08428 10.9779L8.68147 23.7614C8.68518 22.4988 9.03339 21.259 9.6915 20.1654L16.8276 8.19798L14.1543 3.73849Z"
-          fill="black"
-        />
-        <path
-          d="M52.5181 0.400146C49.2612 0.400146 46.0772 1.32652 43.3691 3.06211C40.6611 4.79771 38.5504 7.26457 37.3039 10.1508C36.0575 13.0369 35.7313 16.2129 36.3667 19.2767C37.0022 22.3407 38.5705 25.1551 40.8737 27.3642C43.1768 29.5732 46.111 31.0775 49.3055 31.6869C52.5 32.2964 55.8111 31.9836 58.8203 30.7881C61.8293 29.5926 64.4012 27.5681 66.2107 24.9706C68.0204 22.3731 68.9861 19.3193 68.9861 16.1954C68.9861 12.0062 67.2511 7.98861 64.1627 5.02645C61.0745 2.06428 56.8857 0.400146 52.5181 0.400146ZM52.5181 21.4604C51.4325 21.4604 50.3713 21.1516 49.4686 20.573C48.5658 19.9945 47.8622 19.1722 47.4467 18.2102C47.0313 17.2481 46.9225 16.1894 47.1344 15.1681C47.3463 14.1468 47.8691 13.2087 48.6367 12.4724C49.4044 11.736 50.3825 11.2346 51.4474 11.0314C52.5122 10.8283 53.6158 10.9325 54.6189 11.331C55.6219 11.7295 56.4792 12.4044 57.0824 13.2702C57.6855 14.136 58.0075 15.154 58.0075 16.1954C58.0075 17.5916 57.4292 18.9309 56.3997 19.9183C55.3703 20.9056 53.974 21.4604 52.5181 21.4604Z"
-          fill="black"
-        />
-      </Logo>
-    ),
-    [],
-  );
 
   const onSubmit = (data) => {
     setInvalidEmail(false);
@@ -96,52 +72,162 @@ export const Login = (props) => {
         setInvalidEmail(true);
       });
   };
+
+  const Logo = useCallback(
+    () => (
+      <svg
+        width="90"
+        height="39"
+        viewBox="0 0 90 39"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M75.7587 0.104982C72.0547 0.103275 68.4956 1.48497 65.8356 3.95725C63.1755 6.42952 61.6236 9.79809 61.5088 13.3491V34.1606H61.5895C61.7509 35.2466 62.3152 36.2404 63.1791 36.9592C64.043 37.6781 65.1483 38.0738 66.292 38.0738C67.4358 38.0738 68.5409 37.6781 69.4048 36.9592C70.2687 36.2404 70.8331 35.2466 70.9945 34.1606V26.657C72.9512 27.3214 75.0358 27.5678 77.1021 27.3789C79.1687 27.1901 81.1671 26.5705 82.9578 25.5633C84.7485 24.5563 86.2881 23.1862 87.4691 21.5489C88.6501 19.9115 89.4438 18.0465 89.7949 16.0842C90.146 14.122 90.0458 12.1097 89.5013 10.1884C88.957 8.26713 87.9816 6.48309 86.6433 4.96113C85.3051 3.43915 83.6363 2.21598 81.7538 1.37717C79.8711 0.538367 77.8203 0.104182 75.7445 0.104982H75.7587ZM75.7587 18.2968C74.8193 18.2968 73.901 18.0297 73.1198 17.529C72.3387 17.0284 71.7298 16.3168 71.3703 15.4844C71.0108 14.6519 70.9167 13.7358 71.1 12.852C71.2834 11.9683 71.7357 11.1565 72.4 10.5194C73.0643 9.88221 73.9107 9.44829 74.832 9.2725C75.7534 9.09671 76.7085 9.18694 77.5765 9.53177C78.4444 9.87659 79.1863 10.4605 79.7082 11.2098C80.2301 11.959 80.5087 12.8398 80.5087 13.7409C80.5087 14.9493 80.0083 16.108 79.1175 16.9624C78.2267 17.8168 77.0185 18.2968 75.7587 18.2968Z"
+          fill="black"
+        />
+        <path
+          d="M27.4599 0.943066C25.9618 0.111515 24.1808 -0.115649 22.5082 0.311481C20.8356 0.738608 19.4082 1.78508 18.5394 3.22104L9.73777 18.0461C9.16822 18.9892 8.86545 20.0586 8.85947 21.1484C8.85348 22.2383 9.14447 23.3108 9.70363 24.2596C10.2628 25.2083 11.0707 26.0006 12.0473 26.5576C13.024 27.1148 14.1353 27.4175 15.2715 27.4358H15.623H15.7798H15.9698C16.2364 27.4138 16.5014 27.3758 16.763 27.322C17.4302 27.1882 18.0715 26.9545 18.6629 26.6294L18.7865 26.5519L18.8672 26.5018C19.0192 26.4107 19.1665 26.3151 19.3137 26.2103C20.0845 25.6522 20.7158 24.9362 21.1615 24.1145L29.8729 9.49911C30.3006 8.78545 30.5775 7.99792 30.6877 7.18157C30.798 6.36522 30.7393 5.53604 30.5152 4.74143C30.2912 3.94681 29.9059 3.20235 29.3817 2.5506C28.8575 1.89886 28.2045 1.3526 27.4599 0.943066Z"
+          fill="black"
+        />
+        <path
+          d="M12.248 3.23498C11.8281 2.50617 11.2611 1.86495 10.5799 1.34881C9.89868 0.832654 9.11704 0.451943 8.28066 0.228908C7.44428 0.00588168 6.56993 -0.0549845 5.70873 0.0498725C4.84754 0.154728 4.01678 0.423197 3.26503 0.839601C2.51327 1.25599 1.8556 1.81195 1.33048 2.47498C0.805348 3.138 0.423283 3.89478 0.206647 4.70109C-0.00999386 5.50738 -0.056877 6.34701 0.0687399 7.17088C0.194357 7.99477 0.489955 8.78636 0.938246 9.49939L7.51222 20.5611C7.51543 19.4686 7.81674 18.3958 8.38622 17.4495L14.5612 7.09385L12.248 3.23498Z"
+          fill="black"
+        />
+        <path
+          d="M45.4452 0.34668C42.627 0.34668 39.8718 1.14829 37.5284 2.65012C35.1851 4.15196 33.3587 6.28658 32.28 8.78405C31.2016 11.2815 30.9193 14.0297 31.4691 16.6809C32.019 19.3322 33.3761 21.7675 35.3691 23.6792C37.362 25.5906 39.901 26.8923 42.6653 27.4197C45.4295 27.947 48.2946 27.6764 50.8986 26.6419C53.5023 25.6074 55.7278 23.8556 57.2936 21.6079C58.8595 19.3602 59.6952 16.7177 59.6952 14.0145C59.6952 10.3896 58.1939 6.9131 55.5215 4.34989C52.8492 1.78668 49.2246 0.34668 45.4452 0.34668ZM45.4452 18.5704C44.5058 18.5704 43.5875 18.3033 42.8064 17.8026C42.0252 17.302 41.4163 16.5904 41.0568 15.758C40.6973 14.9255 40.6032 14.0094 40.7866 13.1256C40.9699 12.2419 41.4223 11.4301 42.0866 10.793C42.7509 10.1558 43.5973 9.72189 44.5187 9.5461C45.4401 9.3703 46.3951 9.46052 47.263 9.80535C48.1309 10.1502 48.8728 10.7341 49.3948 11.4834C49.9166 12.2326 50.1953 13.1134 50.1953 14.0145C50.1953 15.2227 49.6948 16.3816 48.804 17.236C47.9132 18.0904 46.705 18.5704 45.4452 18.5704Z"
+          fill="black"
+        />
+      </svg>
+    ),
+    [],
+  );
+
+  const switchPath = (id) => (
+    history.push(`/id/${id}`)
+  )
+
+  const UserBody = () => {
+    const Content = () => users.map((user, indx) => {
+      const UsernameInitials = () => {
+        return user.username.toUpperCase().slice(0,1);
+      }
+
+      const UsernameCapitalize = () => {
+        return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+      }
+
+    return <div 
+      key={indx}
+      aria-role="login-data"
+      style={{
+        display: 'flex',
+        justifyContent: 'start',
+        margin: '10px',
+        padding:"10px",
+        alignItems: 'center',
+        borderBottom:"1px solid #DFE3E8",
+        cursor:"pointer"
+      }}
+      onClick={() => switchPath(user.id)}
+      >
+        <div style={{display:"flex", alignItems:"center",justifyContent:"center", marginRight:"10px", width:"30px",height:"30px", padding:"10px", borderRadius:"50%", background:"green", color:"white"}}>{UsernameInitials()}</div>{UsernameCapitalize()}
+    </div>
+    }) 
+
+   return (
+   <div style={{boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",borderRadius: "3px", padding:"50px"}}>
+           <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+         <Logo />
+        </div>
+        
+         <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+         
+          <DisplayText size="medium">
+            Choose an account
+          </DisplayText>
+        </div>
+          <Content/>
+
+  </div>
+  )
+}
+
+  const LoginBody = useCallback(()=>(
+    <>
+    <AnimateText size="extraLarge">Welcome back!</AnimateText>
+    <SmallText>Login to your account using email and password</SmallText>
+    <Form onSubmit={handleSubmit(onSubmit)}>
+      <FormLayout>
+        <Controller
+          as={TextField}
+          control={control}
+          prefix={<Icon source={EmailMajorMonotone} />}
+          error={invalidEmail ? 'Incorrect email or password' : null}
+          label="Email"
+          placeholder="Email"
+          labelHidden
+          type="email"
+          name="email"
+        />
+        <Controller
+          as={TextField}
+          control={control}
+          prefix={<Icon source={LockMajorMonotone} />}
+          label="Password"
+          placeholder="Password"
+          labelHidden
+          type="password"
+          name="password"
+        />
+        <FormContent>
+          <Checkbox
+            label="Stay signed in"
+            checked={checked}
+            onChange={handleChange}
+          />
+          <Button url="/email/confirm/" plain>Forgotten Password</Button>
+        </FormContent>
+        <Button primary fullWidth submit loading={loading}>
+          Login
+        </Button>
+      </FormLayout>
+    </Form>
+    <SmallText>
+      Don&apos;t have a Vop account? <Button url="/create" plain>Sign Up</Button>
+    </SmallText>
+    </>
+  ),[])
+  
+  const View = () =>{
+    if(users.length > 0){
+      return <UserBody/>
+
+    }else{
+        return <LoginBody/>
+    }
+  }
+
   return (
     <LoginContainer>
       <LeftSide>
         <LogoSVG />
         <LoginForm>
-          <AnimateText size="extraLarge">Welcome back!</AnimateText>
-          <SmallText>Login to your account using email and password</SmallText>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <FormLayout>
-              <Controller
-                as={TextField}
-                control={control}
-                prefix={<Icon source={EmailMajorMonotone} />}
-                error={invalidEmail ? 'Incorrect email or password' : null}
-                label="Email"
-                placeholder="Email"
-                labelHidden
-                type="email"
-                name="email"
-              />
-              <Controller
-                as={TextField}
-                control={control}
-                prefix={<Icon source={LockMajorMonotone} />}
-                label="Password"
-                placeholder="Password"
-                labelHidden
-                type="password"
-                name="password"
-              />
-              <FormContent>
-                <Checkbox
-                  label="Stay signed in"
-                  checked={checked}
-                  onChange={handleChange}
-                />
-                <Button url="/email/confirm/" plain>Forgotten Password</Button>
-              </FormContent>
-              <Button primary fullWidth submit loading={loading}>
-                Login
-              </Button>
-            </FormLayout>
-          </Form>
-          <SmallText>
-            Don&apos;t have a Vop account? <Button url="/create" plain>Sign Up</Button>
-          </SmallText>
+           <View/>
         </LoginForm>
         <CompanyDesc>
           <Icons />
@@ -156,48 +242,6 @@ export const Login = (props) => {
         <Box />
         <Background src="./login.png" />
       </RightSide>
-      {/* <Col lg={24} sm={12} align="middle">
-            <Card
-              title={<div className="text-align"><img src="vop-black-300.png" style={{ width: 150 }} alt="Tokshop" /></div>}
-              bordered={false} style={{ width: 300 }}>
-
-                <form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Item
-                    validateStatus={invalidEmail ? "error" : null}
-                    help={invalidEmail ? "Incorrect email or password" : null}>
-                    <Controller as={Input} control={control}
-                                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                placeholder="Email"
-                                name="email"/>
-                </Form.Item>
-                <Form.Item>
-                    <Controller as={Input} control={control}
-                                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                type="password"
-                                placeholder="Password"
-                                name="password"
-                    />
-                </Form.Item>
-                <Form.Item>
-                  <Row>
-                    <Col span={12}>
-
-                      <Button type="primary" htmlType="submit" className="login-form-button" loading={loading}>
-                        Log in
-                      </Button>
-                    </Col>
-                    <Col span={12}>
-                      <div>
-                        <Link className="login-form-forgot" to="/email/confirm">
-                          Forgot password?
-                        </Link>
-                      </div>
-                    </Col>
-                  </Row>
-                </Form.Item>
-              </form>
-            </Card>
-        </Col> */}
     </LoginContainer>
   );
 };

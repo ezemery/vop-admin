@@ -8,7 +8,7 @@ import {Create} from './Components/Signup';
 import {Account} from './Components/Signup';
 import {Invite} from './Components/Invite';
 import {PasswordReset} from './Components/PasswordReset';
-import {User} from "./Components/User";
+import {UserId} from "./Components/User";
 import {UserStore, VideoStore} from './Context/store';
 import {getUsers} from './services';
 import {getVideos} from './services';
@@ -92,12 +92,12 @@ const App = () => {
               <Route path="/invite">
                 <Invite />
               </Route> 
-              <Route path="/user">
-                  <User/>
-              </Route>
               <Route exact path="/">
-                <Redirect to="/user" />
+                <Redirect to="/login" />
               </Route>
+              <Route path={`/id/:userId`}>
+                <UserId />
+            </Route>
             </Switch>
           </div>
         </VideoStore.Provider>
