@@ -21,6 +21,7 @@ import {getUsers, getVideos} from './services';
 
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
+import {Connect} from "./Components/Connect";
 
 const App = () => {
 
@@ -94,6 +95,9 @@ const App = () => {
             <Switch>
               <Route path="/login">
                 <Login />
+              </Route>
+              <Route path="/connect">
+                <Connect />
               </Route>
               <Route path="/email/confirm">
                 <EmailConfirm />
