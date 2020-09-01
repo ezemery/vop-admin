@@ -38,7 +38,6 @@ export const Login = (props) => {
   const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const onSubmit = (data) => {
     setInvalidEmail(false);
     setLoading(true);
@@ -131,8 +130,9 @@ export const Login = (props) => {
       }}
       onClick={() => switchPath(user.id)}
       >
-        <div style={{display:"flex", alignItems:"center",justifyContent:"center", marginRight:"10px", width:"30px",height:"30px", padding:"10px", borderRadius:"50%", background:"green", color:"white"}}>{UsernameInitials()}</div>{UsernameCapitalize()}
-    </div>
+        <div style={{display:"flex", alignItems:"center",justifyContent:"center", marginRight:"10px", width:"30px",height:"30px", padding:"10px", borderRadius:"50%", background:"green", color:"white"}}>{UsernameInitials()}</div>
+           <div>{UsernameCapitalize()} <br/>{user.email}</div>
+       </div>
     }) 
 
    return (
