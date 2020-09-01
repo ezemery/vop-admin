@@ -1,5 +1,5 @@
 const UserState = {
-    user: {},
+    users: [],
     loading: false,
     error:false
 }

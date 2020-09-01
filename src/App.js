@@ -13,7 +13,7 @@ import {Create, Account} from './Components/Signup';
 
 import {Invite} from './Components/Invite';
 import {PasswordReset} from './Components/PasswordReset';
-import {User} from './Components/User';
+import {UserId} from "./Components/User";
 import {UserStore, VideoStore} from './Context/store';
 import {getUsers, getVideos, logo} from './services';
 
@@ -116,13 +116,13 @@ const App = () => {
               </Route>
               <Route path="/invite">
                 <Invite />
-              </Route>
-              <Route path="/user">
-                <User />
-              </Route>
+              </Route> 
               <Route exact path="/">
-                <Redirect to="/user" />
+                <Redirect to="/login" />
               </Route>
+              <Route path={`/id/:userId`}>
+                <UserId />
+            </Route>
             </Switch>
           </div>
         </AppProvider>

@@ -78,7 +78,8 @@ export const AppFrame = (props) => {
         return response.json();
       })
       .then(function (json) {
-        history.push('/login');
+        fetchUserDataAsync();
+        history.push('/');
       })
       .catch(function (ex) {
         console.log('parsing failed', ex);
