@@ -2,8 +2,6 @@ import React, {useEffect} from 'react';
 import {
   Switch,
   Route,
-  useHistory,
-  useLocation,
   Redirect,
   Link as ReactRouterLink,
 } from 'react-router-dom';
