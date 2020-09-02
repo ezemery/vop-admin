@@ -4,6 +4,7 @@ import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
 import NumericLabel from "../NumericLabel";
+import {UserStore} from "../../Context/store";
 
 
 const { Step } = Steps;
@@ -12,7 +13,7 @@ const { Search } = Input;
 export const SetupTags = ({complete, showSteps, initialTags}) => {
 
     const [tags, setTags] = useState(initialTags);
-    
+
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const saveTags = () => {
@@ -32,7 +33,7 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
                 complete();
             }
         }).catch(function(ex) {
-    
+
         })
 
     };
@@ -53,7 +54,9 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
         shortFormat: true,
     };
 
-    const { userId, accountId } = useParams();
+    const { accountId } = useParams();
+    const {user} = React.useContext(UserStore);
+    const userId = user.id
 
     const columns = [
         {

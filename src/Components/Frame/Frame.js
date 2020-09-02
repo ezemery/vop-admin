@@ -17,9 +17,9 @@ import {findUserInUsersById} from "../../services";
 import {useFrameContext} from "../../Hooks/frame.hook";
 
 export const AppFrame = (props) => {
-  const { userId, accountId } = useParams();
-  const {users, fetchUserDataAsync} = React.useContext(UserStore);
-  const user = findUserInUsersById(users, userId)
+  const { accountId } = useParams();
+  const {user, fetchUserDataAsync } = React.useContext(UserStore);
+  const userId = user.id
 
   const UsernameInitials = () => {
     return user.username.toUpperCase().slice(0,1);
@@ -65,25 +65,20 @@ export const AppFrame = (props) => {
   );
   const frameContext = useFrameContext()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("logout")
-    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(function (response) {
-        return response.json();
+    try {
+      const response = await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
-      .then(function (json) {
-        fetchUserDataAsync();
-        history.push('/');
-      })
-      .catch(function (ex) {
-        console.log('parsing failed', ex);
-      });
+      await fetchUserDataAsync();
+    } catch(ex) {
+      console.log('parsing failed', ex);
+    }
   };
 
   const userMenuActions = [
@@ -137,31 +132,31 @@ export const AppFrame = (props) => {
         items={[
           {
             label: 'Awaiting Approval',
-            url: `/user/id/${userId}/account/id/${accountId}/awaiting`,
+            url: `/account/id/${accountId}/awaiting`,
             icon: HomeMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
           {
             label: 'Manage Content',
-            url: `/user/id/${userId}/account/id/${accountId}/manage`,
+            url: `/account/id/${accountId}/manage`,
             icon: AppsMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
           {
             label: 'Embed',
-            url: `/user/id/${userId}/account/id/${accountId}/embed`,
+            url: `/account/id/${accountId}/embed`,
             icon: FeaturedContentMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
           // {
           //   label: 'Connected Account',
-          //   url:`/user/id/${userId}/account/id/${accountId}/connect`,
+          //   url:`/account/id/${accountId}/connect`,
           //   icon: CircleTickMajorMonotone,
           //   // onClick: toggleIsLoading,
           // },
           {
             label: 'Settings',
-            url: `/user/id/${userId}/account/id/${accountId}/settings`,
+            url: `/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
             onClick: frameContext.setIsLoading,
           },

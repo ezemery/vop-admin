@@ -12,9 +12,7 @@ import {useParams} from "react-router-dom";
 import {findUserInUsersById} from "../../services";
 
 export const Settings = () => {
-    const { userId } = useParams();
-    const {users} = React.useContext(UserStore);
-    const user = findUserInUsersById(users, userId)
+    const {user} = React.useContext(UserStore);
     const [usernameSaved, setUsernameSaved] = useState(false);
     const [tagsSaved, setTagsSaved] = useState(false);
     const [initialTags, setInitialTags] = useState([]);

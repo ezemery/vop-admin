@@ -2,10 +2,13 @@ import {Modal, Input, List, Avatar, Button, AutoComplete, Icon } from "antd";
 import {Col, Row, Grid} from "react-flexbox-grid";
 import React, {useState} from "react";
 import {useParams} from "react-router-dom";
+import {UserStore} from "../../Context/store";
 
-export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem, user}) => {
+export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) => {
 
-    const { userId, accountId } = useParams();
+    const { accountId } = useParams();
+    const {user} = React.useContext(UserStore);
+    const userId = user.id
 
     const currentItem = data[currentIndex];
     const [products, setProducts] = useState([]);
