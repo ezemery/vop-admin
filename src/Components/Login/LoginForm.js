@@ -33,7 +33,7 @@ export const Login = (props) => {
   const history = useHistory();
 
   const {handleSubmit, control} = useForm();
-  const {users, fetchUserDataAsync} = React.useContext(UserStore);
+  const {users, fetchUserDataAsync, setActiveUser} = React.useContext(UserStore);
   const [checked, setChecked] = useState(false);
   const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
   const [invalidEmail, setInvalidEmail] = useState(false);
@@ -112,9 +112,10 @@ export const Login = (props) => {
     [],
   );
 
-  const switchPath = (id) => (
-    history.push(`/id/${id}`)
-  )
+  const switchUser = (id) => {
+      setActiveUser(id);
+      history.push(`/account`);
+  }
 
   const UserBody = () => {
     const Content = () => users.map((user, indx) => {
@@ -126,7 +127,7 @@ export const Login = (props) => {
         return user.username.charAt(0).toUpperCase() + user.username.slice(1);
       }
 
-    return <div 
+    return <div
       key={indx}
       style={{
         display: 'flex',
@@ -137,12 +138,12 @@ export const Login = (props) => {
         borderBottom:"1px solid #DFE3E8",
         cursor:"pointer"
       }}
-      onClick={() => switchPath(user.id)}
+      onClick={() => switchUser(user.id)}
       >
         <div style={{display:"flex", alignItems:"center",justifyContent:"center", marginRight:"10px", width:"30px",height:"30px", padding:"10px", borderRadius:"50%", background:"green", color:"white"}}>{UsernameInitials()}</div>
            <div>{UsernameCapitalize()} <br/>{user.email}</div>
        </div>
-    }) 
+    })
 
    return (
    <div style={{boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.15)",borderRadius: "3px", padding:"50px"}}>
@@ -156,7 +157,7 @@ export const Login = (props) => {
         >
          <Logo />
         </div>
-        
+
          <div
           style={{
             display: 'flex',
@@ -165,7 +166,7 @@ export const Login = (props) => {
             alignItems: 'center',
           }}
         >
-         
+
           <DisplayText size="medium">
             Choose an account
           </DisplayText>
@@ -221,7 +222,7 @@ export const Login = (props) => {
     </SmallText>
     </>
   ),[])
-  
+
   const View = () =>{
     if(users.length > 0){
       return <UserBody/>

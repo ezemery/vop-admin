@@ -9,37 +9,25 @@ import enTranslations from '@shopify/polaris/locales/en.json';
 import {AppProvider, Loading, Frame} from '@shopify/polaris';
 import {Login} from './Components/Login';
 import {EmailConfirm} from './Components/EmailConfirm';
-import {Create, Account} from './Components/Signup';
+import {Create} from './Components/Signup';
 
 import {Invite} from './Components/Invite';
 import {PasswordReset} from './Components/PasswordReset';
-import {UserId} from "./Components/User";
+import {Account} from "./Components/Account";
 import {UserStore, VideoStore} from './Context/store';
 import {getUsers, getVideos, logo} from './services';
 
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
 import {Connect} from "./Components/Connect";
+import {useUsers} from "./Hooks/user.hook";
 
 const App = () => {
 
-  const [u, setUserState] = React.useState({
-    users: [],
-    loading: true,
-    error: false,
-  });
-
-  const fetchUserDataAsync = async () => {
-    try {
-      const users = await getUsers();
-      setUserState({users, loading: false, error: false});
-    } catch (error) {
-      setUserState({loading: false, users: [], error: true});
-    }
-  };
+  const userContext = useUsers()
 
   useEffect(() => {
-    fetchUserDataAsync();
+    userContext.fetchUserDataAsync();
   }, []);
 
   const theme = {
@@ -78,14 +66,14 @@ const App = () => {
     );
   }
 
-  return u.loading ? (
+  return userContext.loading ? (
     <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
       <Frame>
         <Loading />
       </Frame>
     </AppProvider>
   ) : (
-    <UserStore.Provider value={{...u, fetchUserDataAsync}}>
+    <UserStore.Provider value={userContext}>
         <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
           <div
             className="App"
@@ -111,18 +99,15 @@ const App = () => {
               <Route path="/create">
                 <Create />
               </Route>
+              <Route path="/invite">
+                <Invite />
+              </Route>
+              <Route exact path="/">
+                <Redirect to="/account"/>
+              </Route>
               <Route path="/account">
                 <Account />
               </Route>
-              <Route path="/invite">
-                <Invite />
-              </Route> 
-              <Route exact path="/">
-                <Redirect to="/login" />
-              </Route>
-              <Route path={`/id/:userId`}>
-                <UserId />
-            </Route>
             </Switch>
           </div>
         </AppProvider>

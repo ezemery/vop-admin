@@ -30,7 +30,7 @@ import {
   CompanyDesc,
 } from '../styles';
 
-export const Account = (props) => {
+export const AccountCreate = (props) => {
   const history = useHistory();
   const {handleSubmit, control} = useForm();
   const [checked, setChecked] = useState(false);

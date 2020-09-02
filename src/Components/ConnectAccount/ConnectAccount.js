@@ -3,9 +3,12 @@ import {EmptyState, Button, Page, Modal, Heading} from '@shopify/polaris';
 import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
 
 import {Social} from './styles';
+import {UserStore} from "../../Context/store";
 
 export const ConnectAccount = () => {
-  const {userId, accountId} = useParams();
+  const {accountId} = useParams();
+  const {user} = React.useContext(UserStore);
+  const userId = user.id
   const [active, setActive] = useState(false);
   const handleChange = useCallback(() => setActive(!active), [active]);
   const activator = (
