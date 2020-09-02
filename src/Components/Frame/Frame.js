@@ -66,7 +66,6 @@ export const AppFrame = (props) => {
   const frameContext = useFrameContext()
 
   const handleLogout = async () => {
-    console.log("logout")
     try {
       const response = await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
         method: 'GET',
@@ -76,6 +75,7 @@ export const AppFrame = (props) => {
         },
       })
       await fetchUserDataAsync();
+      history.push('/login');
     } catch(ex) {
       console.log('parsing failed', ex);
     }
@@ -152,7 +152,7 @@ export const AppFrame = (props) => {
           //   label: 'Connected Account',
           //   url:`/account/id/${accountId}/connect`,
           //   icon: CircleTickMajorMonotone,
-          //   // onClick: toggleIsLoading,
+          //   // onClick: frameContext.setIsLoading,
           // },
           {
             label: 'Settings',

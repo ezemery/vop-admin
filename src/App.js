@@ -87,9 +87,6 @@ const App = () => {
               <Route path="/login">
                 <Login />
               </Route>
-              <Route path="/connect">
-                <Connect />
-              </Route>
               <Route path="/email/confirm">
                 <EmailConfirm />
               </Route>
