@@ -13,9 +13,12 @@ import {MentionMajorMonotone} from '@shopify/polaris-icons';
 import {useForm, Controller} from 'react-hook-form';
 import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
 import {Container, FormField} from './styles';
+import {UserStore} from "../../Context/store";
 
 export const TiktokConnect = () => {
-  const {userId, accountId} = useParams();
+  const {accountId} = useParams();
+    const {user} = React.useContext(UserStore);
+    const userId = user.id
   const [form, setForm] = useState('');
   const [invalidUsername, setInvalidUsername] = useState(false);
   const [loading, setLoading] = useState(false);

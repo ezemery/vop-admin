@@ -34,13 +34,14 @@ export const TikTokList = ({
   defaultStatus,
   hideSearch,
   approvalScreen,
-  user,
 }) => {
   const history = useHistory();
 
   const videoFetch = useVideoFetch();
 
-  const {userId, accountId} = useParams();
+  const {accountId} = useParams();
+  const {user} = React.useContext(UserStore);
+  const userId = user.id
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modal, setModal] = useState(false);

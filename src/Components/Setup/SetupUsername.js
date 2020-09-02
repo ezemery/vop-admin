@@ -3,6 +3,7 @@ import { Steps, Icon, Input, Button, Card, Row, Col, Statistic, Alert } from 'an
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
+import {UserStore} from "../../Context/store";
 
 const { Step } = Steps;
 
@@ -13,7 +14,9 @@ export const SetupUsername = ({complete, showSteps, username}) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const { userId, accountId } = useParams();
+    const { accountId } = useParams();
+    const {user} = React.useContext(UserStore);
+    const userId = user.id
 
     const LoadUser = () => {
         setShowDetails(false)
@@ -61,11 +64,11 @@ export const SetupUsername = ({complete, showSteps, username}) => {
                 setShowDetails(false)
             }
         }).catch(function(ex) {
-    
+
         })
 
     };
-    
+
     const onSubmit = () => { LoadUser() };
     const onSubmitValid = data => { saveUsername() };
     return (

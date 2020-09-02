@@ -7,13 +7,11 @@ import {ConnectAccount, TiktokConnect} from '../ConnectAccount';
 
 import {AppFrame} from '../Frame';
 import {UserStore} from '../../Context/store';
-import {findUserInUsersById} from '../../services';
 
 export const AccountId = () => {
   const {path, url} = useRouteMatch();
-  const {userId} = useParams();
-  const {users} = React.useContext(UserStore);
-  const user = findUserInUsersById(users, userId);
+
+  const {user} = React.useContext(UserStore);
 
 
 

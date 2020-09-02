@@ -3,13 +3,16 @@ import NumericLabel from "../NumericLabel";
 import { Col } from 'react-flexbox-grid';
 import {useParams} from "react-router-dom";
 import {VideoCard} from "../Cards"
+import {UserStore} from "../../Context/store";
 
 
-export const TikTokCard = ({currentIndex, item, openModal, removeItem, user}) => {
+export const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
 
   const [play, setPlay] = useState(false);
 
-  const { userId, accountId } = useParams();
+  const { accountId } = useParams();
+  const {user} = React.useContext(UserStore);
+  const userId = user.id
 
   const SetInfo = (status) => {
     fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/content/id/${item.id}`, {
@@ -26,7 +29,7 @@ export const TikTokCard = ({currentIndex, item, openModal, removeItem, user}) =>
     }).then(function(json) {
       removeItem(currentIndex);
     }).catch(function(ex) {
-      
+
     })
 
   };

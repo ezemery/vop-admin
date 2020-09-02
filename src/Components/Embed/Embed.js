@@ -16,9 +16,7 @@ const { Text, Title } = Typography;
 export const Embed = () => {
     const [loading, setLoading] = useState(true);
     const [embedAvailable, setEmbedAvailable] = useState(false);
-    const { userId } = useParams();
-    const {users} = React.useContext(UserStore);
-    const user = findUserInUsersById(users, userId)
+    const {user} = React.useContext(UserStore);
 
     const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
