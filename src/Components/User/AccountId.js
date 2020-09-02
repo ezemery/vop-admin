@@ -11,7 +11,6 @@ import {findUserInUsersById} from '../../services';
 
 export const AccountId = () => {
   const {path, url} = useRouteMatch();
-
   const {userId} = useParams();
   const {users} = React.useContext(UserStore);
   const user = findUserInUsersById(users, userId);

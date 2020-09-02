@@ -79,7 +79,10 @@ export const AppFrame = (props) => {
       })
       .then(function (json) {
         fetchUserDataAsync();
-        history.push('/');
+        setTimeout(()=>{
+          history.push('/');
+        }, 1000)
+       
       })
       .catch(function (ex) {
         console.log('parsing failed', ex);
@@ -137,31 +140,31 @@ export const AppFrame = (props) => {
         items={[
           {
             label: 'Awaiting Approval',
-            url: `/user/id/${userId}/account/id/${accountId}/awaiting`,
+            url: `/id/${userId}/account/id/${accountId}/awaiting`,
             icon: HomeMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
           {
             label: 'Manage Content',
-            url: `/user/id/${userId}/account/id/${accountId}/manage`,
+            url: `/id/${userId}/account/id/${accountId}/manage`,
             icon: AppsMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
           {
             label: 'Embed',
-            url: `/user/id/${userId}/account/id/${accountId}/embed`,
+            url: `/id/${userId}/account/id/${accountId}/embed`,
             icon: FeaturedContentMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
-          // {
-          //   label: 'Connected Account',
-          //   url:`/user/id/${userId}/account/id/${accountId}/connect`,
-          //   icon: CircleTickMajorMonotone,
-          //   // onClick: toggleIsLoading,
-          // },
+          {
+            label: 'Connected Account',
+            url:`/id/${userId}/account/id/${accountId}/connect`,
+            icon: CircleTickMajorMonotone,
+            onClick: frameContext.setIsLoading,
+          },
           {
             label: 'Settings',
-            url: `/user/id/${userId}/account/id/${accountId}/settings`,
+            url: `/id/${userId}/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
             onClick: frameContext.setIsLoading,
           },

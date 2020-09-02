@@ -1,16 +1,13 @@
 import React, {useCallback, useState} from 'react';
 import {
-  EmptyState,
   Button,
   Page,
-  Modal,
   Heading,
   DisplayText,
   Form,
   FormLayout,
   TextField,
-  Icon,
-  Loading,
+  Icon
 } from '@shopify/polaris';
 import {MentionMajorMonotone} from '@shopify/polaris-icons';
 import {useForm, Controller} from 'react-hook-form';
