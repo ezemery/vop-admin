@@ -12,13 +12,14 @@ import {
 import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
-import {UserStore} from '../../Context/store';
+import {FrameStore, UserStore} from '../../Context/store';
 import {findUserInUsersById} from "../../services";
+import {useFrameContext} from "../../Hooks/frame.hook";
 
 export const AppFrame = (props) => {
-  const { userId, accountId } = useParams();
-  const {users, fetchUserDataAsync} = React.useContext(UserStore);
-  const user = findUserInUsersById(users, userId)
+  const { accountId } = useParams();
+  const {user, fetchUserDataAsync } = React.useContext(UserStore);
+  const userId = user.id
 
   const UsernameInitials = () => {
     return user.username.toUpperCase().slice(0,1);
@@ -37,7 +38,6 @@ export const AppFrame = (props) => {
   const history = useHistory();
 
   const skipToContentRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [userMenuActive, setUserMenuActive] = useState(false);
@@ -63,34 +63,29 @@ export const AppFrame = (props) => {
       ),
     [],
   );
-  const toggleIsLoading = useCallback(
-    () => setIsLoading((isLoading) => !isLoading),
-    [],
-  );
+  const frameContext = useFrameContext()
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     console.log("logout")
-    fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/${userId}/logout', {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(function (response) {
-        return response.json();
+    try {
+      const response = await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
-      .then(function (json) {
-        history.push('/login');
-      })
-      .catch(function (ex) {
-        console.log('parsing failed', ex);
-      });
+      await fetchUserDataAsync();
+    } catch(ex) {
+      console.log('parsing failed', ex);
+    }
   };
 
   const userMenuActions = [
     {
-      items: [{content: 'Community forums'}],
+      items: [
+          // {content: 'Community forums'}
+          ],
     },
   ];
 
@@ -122,48 +117,48 @@ export const AppFrame = (props) => {
     <TopBar
       showNavigationToggle
       userMenu={userMenuMarkup}
-      searchResultsVisible={searchActive}
-      searchField={searchFieldMarkup}
-      searchResults={searchResultsMarkup}
-      onSearchResultsDismiss={handleSearchResultsDismiss}
+      // searchResultsVisible={searchActive}
+      // searchField={searchFieldMarkup}
+      // searchResults={searchResultsMarkup}
+      // onSearchResultsDismiss={handleSearchResultsDismiss}
       onNavigationToggle={toggleMobileNavigationActive}
     />
   );
 
   const navigationMarkup = (
-    <Navigation location="/">
+    <Navigation location={location.pathname}>
       <Navigation.Section
         separator
         items={[
           {
             label: 'Awaiting Approval',
-            url: `/user/id/${userId}/account/id/${accountId}/`,
+            url: `/account/id/${accountId}/awaiting`,
             icon: HomeMajorMonotone,
-            onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           {
             label: 'Manage Content',
-            url: `/user/id/${userId}/account/id/${accountId}/manage`,
+            url: `/account/id/${accountId}/manage`,
             icon: AppsMajorMonotone,
-            onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           {
             label: 'Embed',
-            url: `/user/id/${userId}/account/id/${accountId}/embed`,
+            url: `/account/id/${accountId}/embed`,
             icon: FeaturedContentMajorMonotone,
-            onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
-          {
-            label: 'Connected Account',
-            url:`/user/id/${userId}/account/id/${accountId}/connect`,
-            icon: CircleTickMajorMonotone,
-            onClick: toggleIsLoading,
-          },
+          // {
+          //   label: 'Connected Account',
+          //   url:`/account/id/${accountId}/connect`,
+          //   icon: CircleTickMajorMonotone,
+          //   // onClick: toggleIsLoading,
+          // },
           {
             label: 'Settings',
-            url: `/user/id/${userId}/account/id/${accountId}/settings`,
+            url: `/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
-            onClick: toggleIsLoading,
+            onClick: frameContext.setIsLoading,
           },
           {
             label: 'Logout',
@@ -175,7 +170,7 @@ export const AppFrame = (props) => {
     </Navigation>
   );
 
-  const loadingMarkup = isLoading ? <Loading /> : null;
+  const loadingMarkup = frameContext.isLoading ? <Loading /> : null;
 
   const skipToContentTarget = (
     <a id="SkipToContentTarget" ref={skipToContentRef} tabIndex={-1} />
@@ -190,8 +185,11 @@ export const AppFrame = (props) => {
         onNavigationDismiss={toggleMobileNavigationActive}
         skipToContentTarget={skipToContentRef.current}
       >
+
         {loadingMarkup}
-        {React.cloneElement(props.children, {user: user})}
+        <FrameStore.Provider value={frameContext}>
+          {React.cloneElement(props.children, {user: user})}
+        </FrameStore.Provider>
         <FooterHelp>
           Vop ©2020. Made with{' '}
           <span role="img" aria-label="love">

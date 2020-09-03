@@ -1,7 +1,8 @@
 const UserState = {
-    user: {},
+    users: [],
     loading: false,
-    error:false
+    error:false,
+    user: null,
 }
 
 export default UserState;

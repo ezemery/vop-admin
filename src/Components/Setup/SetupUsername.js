@@ -3,6 +3,7 @@ import { Steps, Icon, Input, Button, Card, Row, Col, Statistic, Alert } from 'an
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
+import {UserStore} from "../../Context/store";
 
 const { Step } = Steps;
 
@@ -13,7 +14,9 @@ export const SetupUsername = ({complete, showSteps, username}) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const { userId, accountId } = useParams();
+    const { accountId } = useParams();
+    const {user} = React.useContext(UserStore);
+    const userId = user.id
 
     const LoadUser = () => {
         setShowDetails(false)
@@ -32,7 +35,7 @@ export const SetupUsername = ({complete, showSteps, username}) => {
             return response.json()
         }).then(function(json) {
             setLoading(false)
-            if (json.found) {
+            if (json.statusCode === 0) {
                 setShowDetails(json)
             } else {
                 setError("Unable to find username")
@@ -56,16 +59,16 @@ export const SetupUsername = ({complete, showSteps, username}) => {
         }).then(function(response) {
             return response.json()
         }).then(function(json) {
-            if (json === "Success") {
+            if (json.success === true) {
                 complete();
                 setShowDetails(false)
             }
         }).catch(function(ex) {
-    
+
         })
 
     };
-    
+
     const onSubmit = () => { LoadUser() };
     const onSubmitValid = data => { saveUsername() };
     return (
@@ -108,13 +111,13 @@ export const SetupUsername = ({complete, showSteps, username}) => {
                         <div style={{height:"10px"}} />
                         <Row gutter={16}>
                             <Col span={8}>
-                                <Statistic title="Likes" value={showDetails.likes} />
+                                <Statistic title="Likes" value={showDetails.body.userData.heart} />
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Followers" value={showDetails.followers}/>
+                                <Statistic title="Followers" value={showDetails.body.userData.fans}/>
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Following" value={showDetails.following} />
+                                <Statistic title="Following" value={showDetails.body.userData.following} />
                             </Col>
                         </Row>
                         <div style={{height:"10px"}} />

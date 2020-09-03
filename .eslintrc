@@ -7,7 +7,8 @@
       "import/export":"off",
       "max-len":"off",
       "no-unused-vars":"off",
-      "import/prefer-default-export":"off"
+      "import/prefer-default-export":"off",
+      "camelcase":"off"
     },
     "env": {
       "browser": true,
