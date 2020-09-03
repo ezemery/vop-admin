@@ -138,7 +138,7 @@ export const ConnectAccount = () => {
               {' '}
               <Button
                 primary
-                url={`/id/${userId}/account/id/${accountId}/connect/tiktok`}
+                url={`/user/id/${userId}/account/id/${accountId}/connect/tiktok`}
               >
                 {' '}
                 Connect Account

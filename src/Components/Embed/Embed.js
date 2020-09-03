@@ -3,8 +3,7 @@ import React, {useContext, useEffect} from 'react';
 import { useState } from 'react';
 import {Link, useParams} from "react-router-dom";
 import {
-    Page,
-    CalloutCard
+    Page
     } from '@shopify/polaris';
 import {FrameStore, UserStore} from "../../Context/store"
 import {EmbedContainer} from "./styles"
@@ -70,16 +69,6 @@ export const Embed = () => {
 
     return user ? (
         <Page fullWidth title="Embed your Vop Feed">
-             <CalloutCard
-                title="Customize the style of your shoppable modal"
-                illustration="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
-                primaryAction={{
-                    content: 'Get Started',
-                    url: '',
-                }}
-                >
-                <p>Choose carousel or page layout, change colors and fonts, and more.</p>
-            </CalloutCard>
         <div hidden={loading}>
             <Row>
                 <Col lg={24} md={24} sm={24} >&nbsp;
