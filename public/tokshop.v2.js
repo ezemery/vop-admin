@@ -868,7 +868,7 @@ body.tokshop-body-stop {
 
     var loadPage = function(id, el,per_page,current_page) {
         // Make a request for a user with a given ID
-        axios.get("https://api.getvop.com/embed/feed/"+ id +"?limit="+ per_page + "&page_count="+ current_page)
+        axios.get("https://api.getvop.com/embed/feed/"+ id +"?limit="+ per_page + "&page="+ current_page)
             .then(function (response) {
                 // handle success
                 videoData = response.data.data;

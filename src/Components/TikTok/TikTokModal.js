@@ -76,7 +76,7 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
         const found = products.find(element => element.node.id === id);
         const newItem = {
             name: found.node.title,
-            image_url: found.node.featuredImage.originalSrc,
+            image_url: (found.node.featuredImage) ? found.node.featuredImage.originalSrc : "",
             url: found.node.product_url,
         };
         setSelectedProducts(oldArray => [...oldArray, newItem]);
@@ -117,7 +117,7 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
             {
                 value: option.node.id,
                 text: <span>
-                    <Avatar src={option.node.featuredImage.originalSrc} />
+                    <Avatar src={(option.node.featuredImage) ? option.node.featuredImage.originalSrc : ""} />
                     {option.node.title}
                 </span>
             }
