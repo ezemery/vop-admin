@@ -22,16 +22,16 @@ export const AppFrame = (props) => {
   const userId = user.id
 
   const UsernameInitials = () => {
-    return user.username.toUpperCase().slice(0,1);
+    return user.name.toUpperCase().slice(0,1);
   }
   const UsernameCapitalize = () => {
-    return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+    return user.name.charAt(0).toUpperCase() + user.name.slice(1);
   }
   const appID = 'rlquh92b';
   const IntercommUser = {
     user_id: user.id,
     email: user.email,
-    name: user.username,
+    name: user.name,
   };
 
   let location = useLocation();
