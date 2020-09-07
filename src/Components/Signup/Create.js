@@ -41,6 +41,7 @@ export const Create = (props) => {
     }
     setInvalidPassword(false);
     const body = {
+      name: data.name,
       email: data.email,
       password: data.password,
     };
@@ -61,7 +62,7 @@ export const Create = (props) => {
       })
       .then((json) => {
         setInvalidEmail(false);
-        if (json.success || json.created_at) {
+        if (json.success || json.createdAt) {
           history.push('/login');
           return;
         }

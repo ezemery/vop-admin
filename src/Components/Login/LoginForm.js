@@ -120,11 +120,11 @@ export const Login = (props) => {
   const UserBody = () => {
     const Content = () => users.map((user, indx) => {
       const UsernameInitials = () => {
-        return user.username.toUpperCase().slice(0,1);
+        return user.name.toUpperCase().slice(0,1);
       }
 
       const UsernameCapitalize = () => {
-        return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+        return user.name.charAt(0).toUpperCase() + user.name.slice(1);
       }
 
     return <div
