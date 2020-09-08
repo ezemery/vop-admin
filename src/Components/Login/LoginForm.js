@@ -74,7 +74,8 @@ export const Login = (props) => {
             history.push('/');
           });
         }
-        // throw new Error('Network response was not ok');
+        setInvalidEmail(true);
+        throw new Error('Network response was not ok');
       })
       .catch((ex) => {
         setLoading(false);
@@ -147,7 +148,7 @@ export const Login = (props) => {
   )
 }
 
-  const LoginBody = useCallback(()=>(
+  const LoginBody =()=>(
     <>
     <AnimateText size="extraLarge">Welcome back!</AnimateText>
     <SmallText>Login to your account using email and password</SmallText>
@@ -191,7 +192,7 @@ export const Login = (props) => {
       Don&apos;t have a Vop account? <Button url="/create" plain>Sign Up</Button>
     </SmallText>
     </>
-  ),[])
+  );
 
   const View = () =>{
     if(users.length > 0){
