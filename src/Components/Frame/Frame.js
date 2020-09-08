@@ -114,14 +114,12 @@ export const AppFrame = (props) => {
             <div className="username">{UsernameCapitalize()}</div>
           </UserProfile>
        
-        {  userMenuActive && <DropdownMenu>
+        <div className="dropdown">
             <Spacing className="initials">{UsernameInitials()}</Spacing>
             <Spacing>{UsernameCapitalize()}</Spacing>
             <Spacing><Button url={`/account/id/${accountId}/settings`} outline>Manage Your Account</Button></Spacing>
-            <Spacing><Button onClick={handleLogout} plain>Logout</Button></Spacing> 
-          </DropdownMenu>
-          }
-
+            <Spacing><Button onClick={handleLogout} plain icon={LogOutMinor}>Logout</Button></Spacing> 
+          </div>
         </UserMenu>
       </MenuBar>
   );
