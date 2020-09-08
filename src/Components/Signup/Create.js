@@ -62,7 +62,7 @@ export const Create = (props) => {
       })
       .then((json) => {
         setInvalidEmail(false);
-        if (json.success || json.createdAt) {
+        if (json.success || json.id) {
           history.push('/login');
           return;
         }
