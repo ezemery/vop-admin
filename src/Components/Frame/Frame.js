@@ -3,17 +3,19 @@ import {
   ActionList,
   Card,
   Frame,
-  Layout,
   Loading,
   Navigation,
   TopBar,
   FooterHelp,
+  Icon,
+  Button
 } from '@shopify/polaris';
-import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor} from '@shopify/polaris-icons';
+import {MenuBar, UserMenu, AccountMenu, MenuIcon, UserProfile, DropdownMenu, Spacing} from "./styles"
+import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor, MobileHamburgerMajorMonotone} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
 import {FrameStore, UserStore} from '../../Context/store';
-import {findUserInUsersById} from "../../services";
+import {findUserInUsersById, logo} from "../../services";
 import {useFrameContext} from "../../Hooks/frame.hook";
 
 export const AppFrame = (props) => {
@@ -22,16 +24,16 @@ export const AppFrame = (props) => {
   const userId = user.id
 
   const UsernameInitials = () => {
-    return user.username.toUpperCase().slice(0,1);
+    return user.name.toUpperCase().slice(0,1);
   }
   const UsernameCapitalize = () => {
-    return user.username.charAt(0).toUpperCase() + user.username.slice(1);
+    return user.name.charAt(0).toUpperCase() + user.name.slice(1);
   }
   const appID = 'rlquh92b';
   const IntercommUser = {
     user_id: user.id,
     email: user.email,
-    name: user.username,
+    name: user.name,
   };
 
   let location = useLocation();
@@ -52,10 +54,11 @@ export const AppFrame = (props) => {
     setSearchActive(value.length > 0);
   }, []);
 
-  const toggleUserMenuActive = useCallback(
+  const toggleDropdown = useCallback(
     () => setUserMenuActive((userMenuActive) => !userMenuActive),
     [],
   );
+  
   const toggleMobileNavigationActive = useCallback(
     () =>
       setMobileNavigationActive(
@@ -81,24 +84,6 @@ export const AppFrame = (props) => {
     }
   };
 
-  const userMenuActions = [
-    {
-      items: [
-          // {content: 'Community forums'}
-          ],
-    },
-  ];
-
-  const userMenuMarkup = (
-    <TopBar.UserMenu
-      actions={userMenuActions}
-      name={UsernameCapitalize()}
-      initials={UsernameInitials()}
-      open={userMenuActive}
-      onToggle={toggleUserMenuActive}
-    />
-  );
-
   const searchResultsMarkup = (
     <Card>
       <ActionList items={[{content: 'help center'}]} />
@@ -114,15 +99,29 @@ export const AppFrame = (props) => {
   );
 
   const topBarMarkup = (
-    <TopBar
-      showNavigationToggle
-      userMenu={userMenuMarkup}
-      // searchResultsVisible={searchActive}
-      // searchField={searchFieldMarkup}
-      // searchResults={searchResultsMarkup}
-      // onSearchResultsDismiss={handleSearchResultsDismiss}
-      onNavigationToggle={toggleMobileNavigationActive}
-    />
+    <MenuBar showNavigationToggle >
+      <AccountMenu>
+        <MenuIcon >
+          <img src={logo("#fff")}/>
+            <div onClick={toggleMobileNavigationActive}>
+            <Icon source={MobileHamburgerMajorMonotone}  />
+            </div>
+          </MenuIcon>
+        </AccountMenu>
+        <UserMenu>
+          <UserProfile onClick={toggleDropdown}>
+            <div className="initials">{UsernameInitials()}</div>
+            <div className="username">{UsernameCapitalize()}</div>
+          </UserProfile>
+       
+        <div className="dropdown">
+            <Spacing className="initials">{UsernameInitials()}</Spacing>
+            <Spacing>{UsernameCapitalize()}</Spacing>
+            <Spacing><Button url={`/account/id/${accountId}/settings`} outline>Manage Your Account</Button></Spacing>
+            <Spacing><Button onClick={handleLogout} plain icon={LogOutMinor}>Logout</Button></Spacing> 
+          </div>
+        </UserMenu>
+      </MenuBar>
   );
 
   const navigationMarkup = (
@@ -160,11 +159,11 @@ export const AppFrame = (props) => {
             icon: OrdersMajorTwotone,
             onClick: frameContext.setIsLoading,
           },
-          {
-            label: 'Logout',
-            icon: LogOutMinor,
-            onClick: handleLogout,
-          },
+          // {
+          //   label: 'Logout',
+          //   icon: LogOutMinor,
+          //   onClick: handleLogout,
+          // },
         ]}
       />
     </Navigation>

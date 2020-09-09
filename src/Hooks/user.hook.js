@@ -31,7 +31,7 @@ function usersReducer(state, action) {
         default:
             return state
     }
-}
+} 
 
 export const useUsers = () => {
 

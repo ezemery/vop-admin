@@ -11,7 +11,7 @@ export const getUsers = () => {
         }
         return response.json()
     }).then(function(json) {
-        return [...json];
+        return [...json.users];
     }).catch(function(ex) {
         throw ex;
     });
