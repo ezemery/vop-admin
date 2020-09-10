@@ -22,7 +22,6 @@ export const AppFrame = (props) => {
   const { accountId } = useParams();
   const {user, fetchUserDataAsync } = React.useContext(UserStore);
   const {account, fetchAccountDataAsync } = React.useContext(AccountStore);
-  console.log("user",user,"account",account)
   const userId = user.id
 
   const UsernameInitials = () => {
@@ -71,7 +70,6 @@ export const AppFrame = (props) => {
   const frameContext = useFrameContext()
 
   const handleLogout = async () => {
-    console.log("logout")
     try {
       const response = await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
         method: 'GET',
