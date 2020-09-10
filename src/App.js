@@ -35,9 +35,9 @@ const App = () => {
     userContext.fetchUserDataAsync();
   }, []);
 
-  // useEffect(() => {
-  //   AccountContext.fetchAccountDataAsync(accountId);
-  // },[userAccount]);
+  useEffect(() => {
+    AccountContext.fetchAccountDataAsync(accountId);
+  },[userAccount]);
 
 
   const theme = {
