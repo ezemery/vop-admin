@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
   Switch,
   Route,
@@ -14,21 +14,31 @@ import {Create} from './Components/Signup';
 import {Invite} from './Components/Invite';
 import {PasswordReset} from './Components/PasswordReset';
 import {Account} from "./Components/Account";
-import {UserStore, VideoStore} from './Context/store';
+import {UserStore, VideoStore, AccountStore} from './Context/store';
 import {getUsers, getVideos, logo} from './services';
 
 import '@shopify/polaris/dist/styles.css';
 import 'tailwindcss/dist/base.min.css';
 import {Connect} from "./Components/Connect";
 import {useUsers} from "./Hooks/user.hook";
+import {useAccounts} from "./Hooks/account.hook";
+
 
 const App = () => {
-
-  const userContext = useUsers()
+  const userContext = useUsers();
+  const {users} = userContext
+  const [userAccount, setUserAccount] = useMemo(()=>[users],[users])
+  const AccountContext = useAccounts();
+  const accountId = userAccount.length > 0 ? userAccount[0]["id"] : null
 
   useEffect(() => {
     userContext.fetchUserDataAsync();
   }, []);
+
+  // useEffect(() => {
+  //   AccountContext.fetchAccountDataAsync(accountId);
+  // },[userAccount]);
+
 
   const theme = {
     colors: {
@@ -74,6 +84,7 @@ const App = () => {
     </AppProvider>
   ) : (
     <UserStore.Provider value={userContext}>
+      <AccountStore.Provider value={AccountContext}>
         <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
           <div
             className="App"
@@ -111,6 +122,7 @@ const App = () => {
             </Switch>
           </div>
         </AppProvider>
+      </AccountStore.Provider>
     </UserStore.Provider>
   );
 };

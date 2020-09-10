@@ -14,13 +14,15 @@ import {MenuBar, UserMenu, AccountMenu, MenuIcon, UserProfile, DropdownMenu, Spa
 import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor, MobileHamburgerMajorMonotone} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
-import {FrameStore, UserStore} from '../../Context/store';
+import {FrameStore, UserStore, AccountStore} from '../../Context/store';
 import {findUserInUsersById, logo} from "../../services";
 import {useFrameContext} from "../../Hooks/frame.hook";
 
 export const AppFrame = (props) => {
   const { accountId } = useParams();
   const {user, fetchUserDataAsync } = React.useContext(UserStore);
+  const {account, fetchAccountDataAsync } = React.useContext(AccountStore);
+  console.log("user",user,"account",account)
   const userId = user.id
 
   const UsernameInitials = () => {
@@ -116,7 +118,8 @@ export const AppFrame = (props) => {
        
         <div className="dropdown">
             <Spacing className="initials">{UsernameInitials()}</Spacing>
-            <Spacing>{UsernameCapitalize()}</Spacing>
+              <Spacing>{UsernameCapitalize()}</Spacing>
+              <Spacing>{user.email}</Spacing>
             <Spacing><Button url={`/account/id/${accountId}/settings`} outline>Manage Your Account</Button></Spacing>
             <Spacing><Button onClick={handleLogout} plain icon={LogOutMinor}>Logout</Button></Spacing> 
           </div>
@@ -187,7 +190,7 @@ export const AppFrame = (props) => {
 
         {loadingMarkup}
         <FrameStore.Provider value={frameContext}>
-          {React.cloneElement(props.children, {user: user})}
+          {React.cloneElement(props.children, {user: user, account: account})}
         </FrameStore.Provider>
         <FooterHelp>
           Vop ©2020. Made with{' '}

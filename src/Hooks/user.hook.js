@@ -17,7 +17,6 @@ function usersReducer(state, action) {
             if (state.user) {
                 existingUser = action.users.find(element => element.id === state.user.id);
             }
-            console.log(existingUser)
             return {...state, users: action.users, user: existingUser}
         case 'loadingComplete':
             return {...state, loading:false}
