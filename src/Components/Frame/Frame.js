@@ -79,6 +79,7 @@ export const AppFrame = (props) => {
         },
       })
       await fetchUserDataAsync();
+      // history.push("/login");
     } catch(ex) {
       console.log('parsing failed', ex);
     }

@@ -26,17 +26,17 @@ import {useAccounts} from "./Hooks/account.hook";
 
 const App = () => {
   const userContext = useUsers();
-  const {users} = userContext
-  const [userAccount, setUserAccount] = useMemo(()=>[users],[users])
+  const {users,user} = userContext
+  const [userAccount, setUserAccount] = useMemo(()=>[user],[user])
   const AccountContext = useAccounts();
-  const accountId = userAccount.length > 0 ? userAccount[0]["id"] : null
+  const userId = userAccount ? userAccount["id"] : null
 
   useEffect(() => {
     userContext.fetchUserDataAsync();
   }, []);
 
   useEffect(() => {
-    AccountContext.fetchAccountDataAsync(accountId);
+    AccountContext.fetchAccountDataAsync(userId);
   },[userAccount]);
 
 
