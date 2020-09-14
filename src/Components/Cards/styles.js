@@ -1,8 +1,7 @@
 import tw, {styled} from 'twin.macro';
 
 export const Card = styled.div`
-    ${tw`flex flex-col justify-between border border-gray-300`}
-    width: 280px;
+    ${tw`flex w-full flex-col justify-between border border-gray-300`}
     height: 550px;
     background:white;
 `

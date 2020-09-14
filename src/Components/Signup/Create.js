@@ -9,6 +9,7 @@ import {
 import {Link, useHistory} from 'react-router-dom';
 import {useForm, Controller} from 'react-hook-form';
 import {Icons, LogoSVG} from '../Icons';
+import {UserStore} from '../../Context/store';
 import {
   LoginContainer,
   LoginForm,
@@ -25,13 +26,13 @@ import {
 
 export const Create = (props) => {
   const history = useHistory();
-
+  const {user, fetchUserDataAsync } = React.useContext(UserStore);
   const {handleSubmit, control} = useForm();
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [invalidPassword, setInvalidPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setInvalidEmail(false);
     setLoading(true);
     if (data.password !== data.confirm_password) {
@@ -45,34 +46,31 @@ export const Create = (props) => {
       email: data.email,
       password: data.password,
     };
-
-    fetch(`${process.env.REACT_APP_API_HOST}/admin/register/create`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
+    try{
+        const response = await fetch(`${process.env.REACT_APP_API_HOST}/admin/register/create`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        })
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        return response.json();
-      })
-      .then((json) => {
+        const json = await response.json();
         setInvalidEmail(false);
         if (json.success || json.id) {
-          history.push('/login');
+          await fetchUserDataAsync();
+          history.push('/');
           return;
         }
         throw new Error('Network response was not ok');
-      })
-      .catch((ex) => {
-        setLoading(false);
-        setInvalidEmail(true);
-      });
-  };
+      }catch(err){
+          setLoading(false);
+          setInvalidEmail(true);
+        }
+      };
 
   return (
     <LoginContainer>

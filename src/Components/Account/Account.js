@@ -7,18 +7,20 @@ import {
 import {AccountId} from "./AccountId";
 import {AccountCreate} from "./AccountCreate";
 import {UserStore} from "../../Context/store";
+import {AccountStore} from "../../Context/store";
 
 export const Account = () => {
 
     const { user } = React.useContext(UserStore);
+    const { account } = React.useContext(AccountStore);
 
     let { path } = useRouteMatch();
 
     return (
         <Switch>
             <Route exact path={path}>
-                {user ?
-                    <Redirect to={`/account/id/${user.id}`}/>
+                {account ?
+                    <Redirect to={`/account/id/${account.id}`}/>
                     :
                     <Redirect to="/login"/>
                 }
