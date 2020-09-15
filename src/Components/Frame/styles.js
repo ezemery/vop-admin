@@ -30,7 +30,7 @@ export const UserMenu = styled.div`
     }
     
     width: 250px;
-    height:200px;
+    height:250px;
     background:white;
     border-radius:2px;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);

@@ -17,6 +17,24 @@ export const getUsers = () => {
     });
 }
 
+export const getAccounts = userId => {
+    return fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function(response) {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json()
+    }).then(function(json) {
+        return [...json.accounts];
+    }).catch(function(ex) {
+        throw ex;
+    });
+}
 export const findUserInUsersById = (users, id) => {
     return users.find(element => element.id.toString() === id);
 }
