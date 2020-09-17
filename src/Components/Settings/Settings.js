@@ -7,12 +7,12 @@ import {SetupTags} from "../Setup";
 import {
   Page
   } from '@shopify/polaris';
-import {FrameStore, UserStore} from "../../Context/store";
+import {AccountStore, FrameStore} from "../../Context/store";
 import {useParams} from "react-router-dom";
 import {findUserInUsersById} from "../../services";
 
 export const Settings = () => {
-    const {user} = React.useContext(UserStore);
+    const {account} = React.useContext(AccountStore);
     const [usernameSaved, setUsernameSaved] = useState(false);
     const [tagsSaved, setTagsSaved] = useState(false);
     const [initialTags, setInitialTags] = useState([]);
@@ -20,18 +20,18 @@ export const Settings = () => {
     const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
     useEffect(() => {
-        if (user) {
-            user.tags && setInitialTags(user.tags.map(tag => {return {tag: tag, views: 0, videos: 0}}))
+        if (account) {
+            account.tags && setInitialTags(account.tags.map(tag => {return {tag: tag, views: 0, videos: 0}}))
         }
         unsetIsLoading();
-    }, [user]);
+    }, [account]);
 
 
 
     const usernameComplete = () => setUsernameSaved(true);
     const tagsComplete = () => setTagsSaved(true);
 
-    return user ? (
+    return account ? (
         <Page fullWidth title="Settings">
             <Row>
                 <Col lg={24} xs={12}>&nbsp;
@@ -39,7 +39,7 @@ export const Settings = () => {
             </Row>
             <Row>
                 <Col lg={24} xs={12}>
-                    <SetupUsername username={user.username} complete={usernameComplete} key={user.username}/>
+                    <SetupUsername username={account.username} complete={usernameComplete} key={account.username}/>
                 </Col>
                 <Col lg={24} xs={12} hidden={!usernameSaved}>
                     <Tag color="green">Saved</Tag>
