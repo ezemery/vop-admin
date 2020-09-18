@@ -27,10 +27,8 @@ import {useAccounts} from "./Hooks/account.hook";
 const App = () => {
   const userContext = useUsers();
   const accountContext = useAccounts();
-  const {account} = accountContext;
   const {user} = userContext;
   const userId = user ? user["id"] : null
-  const accountId = account ? account["id"] : null
   useEffect(() => {
     userContext.fetchUserDataAsync();
   }, []);
