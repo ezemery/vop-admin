@@ -22,7 +22,10 @@ export const AppFrame = (props) => {
   const { accountId } = useParams();
   const {user, fetchUserDataAsync } = React.useContext(UserStore);
   const {account, fetchAccountDataAsync } = React.useContext(AccountStore);
+  const frameContext = useFrameContext();
+  
   const userId = user.id
+  
 
   const UsernameInitials = () => {
     return user.name.toUpperCase().slice(0,1);
@@ -67,7 +70,6 @@ export const AppFrame = (props) => {
       ),
     [],
   );
-  const frameContext = useFrameContext()
 
   const handleLogout = async () => {
     try {

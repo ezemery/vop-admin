@@ -1,72 +1,77 @@
-import React,{ useState }  from 'react';
+import React,{ useState,useContext }  from 'react';
 import { Steps, Icon, Input, Button, Card, Row, Col, Statistic, Alert } from 'antd';
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
-import {UserStore} from "../../Context/store";
+import {UserStore,FrameStore,AccountStore} from "../../Context/store";
 
 const { Step } = Steps;
 
 export const SetupUsername = ({complete, showSteps, username}) => {
-
+    const {user} = React.useContext(UserStore);
+    const {updateContext} = React.useContext(AccountStore);
+    const { unsetIsLoading, setIsLoading } = useContext(FrameStore);
+    const userId = user.id
     const [newUsername, setNewUsername] = useState(username);
     const [showDetails, setShowDetails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const { accountId } = useParams();
-    const {user} = React.useContext(UserStore);
-    const userId = user.id
+    
+    
 
-    const LoadUser = () => {
+    const LoadUser = async () => {
         setShowDetails(false)
         setLoading(true)
         setError(null)
-        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: newUsername,
+        try{
+            const response  =   await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: newUsername,
+                })
             })
-        }).then(function(response) {
-            return response.json()
-        }).then(function(json) {
+            const json = await response.json();
             setLoading(false)
             if (json.statusCode === 0) {
                 setShowDetails(json)
             } else {
                 setError("Unable to find username")
             }
-        }).catch(function(ex) {
+        }catch(error){
             setLoading(false)
             setError("Error validating username")
-        })
-
+        }
     };
-    const saveUsername = () => {
-        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user_save`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: newUsername,
+
+    const saveUsername = async () => {
+        setIsLoading()
+        try{
+            const response = await  fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user_save`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: newUsername,
+                })
             })
-        }).then(function(response) {
-            return response.json()
-        }).then(function(json) {
+
+            const json = await response.json();
             if (json.success === true) {
-                complete();
+                updateContext()
+                unsetIsLoading();
                 setShowDetails(false)
+                complete();
             }
-        }).catch(function(ex) {
+        }catch(error){
 
-        })
-
+        }
     };
 
     const onSubmit = () => { LoadUser() };

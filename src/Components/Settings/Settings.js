@@ -8,25 +8,20 @@ import {
   Page
   } from '@shopify/polaris';
 import {AccountStore, FrameStore} from "../../Context/store";
-import {useParams} from "react-router-dom";
-import {findUserInUsersById} from "../../services";
 
 export const Settings = () => {
     const {account} = React.useContext(AccountStore);
     const [usernameSaved, setUsernameSaved] = useState(false);
     const [tagsSaved, setTagsSaved] = useState(false);
     const [initialTags, setInitialTags] = useState([]);
-
     const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
     useEffect(() => {
         if (account) {
-            account.tags && setInitialTags(account.tags.map(tag => {return {tag: tag, views: 0, videos: 0}}))
+            account.tags && setInitialTags(account.tags.map((tag,indx) => {return {tag: tag, views: 0, posts: 0, key:"indx-"+indx, id:indx}}))
         }
         unsetIsLoading();
     }, [account]);
-
-
 
     const usernameComplete = () => setUsernameSaved(true);
     const tagsComplete = () => setTagsSaved(true);

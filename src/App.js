@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Switch,
   Route,
@@ -26,19 +26,22 @@ import {useAccounts} from "./Hooks/account.hook";
 
 const App = () => {
   const userContext = useUsers();
-  const {users,user} = userContext
-  const [userAccount, setUserAccount] = useMemo(()=>[user],[user])
-  const AccountContext = useAccounts();
-  const userId = userAccount ? userAccount["id"] : null
-
+  const accountContext = useAccounts();
+  const {account} = accountContext;
+  const {user} = userContext;
+  const userId = user ? user["id"] : null
+  const accountId = account ? account["id"] : null
   useEffect(() => {
     userContext.fetchUserDataAsync();
   }, []);
 
   useEffect(() => {
-    AccountContext.fetchAccountDataAsync(userId);
-  },[userAccount]);
+    accountContext.fetchAccountDataAsync(userId);
+  },[userId]);
 
+  const updateContext = async () => {
+    accountContext.fetchAccountDataAsync(userId);
+  }
 
   const theme = {
     colors: {
@@ -84,7 +87,7 @@ const App = () => {
     </AppProvider>
   ) : (
     <UserStore.Provider value={userContext}>
-      <AccountStore.Provider value={AccountContext}>
+      <AccountStore.Provider value={{...accountContext, updateContext}}>
         <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
           <div
             className="App"

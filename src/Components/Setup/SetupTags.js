@@ -1,42 +1,52 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Steps, Input, Button, Card, Table, Alert} from 'antd';
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
 import NumericLabel from "../NumericLabel";
-import {UserStore} from "../../Context/store";
-
+import {UserStore,FrameStore,AccountStore} from "../../Context/store";
 
 const { Step } = Steps;
 const { Search } = Input;
 
 export const SetupTags = ({complete, showSteps, initialTags}) => {
-
+    const {user} = React.useContext(UserStore);
+    const {updateContext} = React.useContext(AccountStore);
+    const { unsetIsLoading, setIsLoading } = useContext(FrameStore);
     const [tags, setTags] = useState(initialTags);
-
+    const { accountId } = useParams();
+    const userId = user.id
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const saveTags = () => {
-        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag_save`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tags: tags.map(tag => tag.tag),
+
+
+    const saveTags = async () => {
+        setIsLoading();
+        try{
+            const response =   await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag_save`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tags: tags.map(tag => tag.tag),
+                })
             })
-        }).then(function(response) {
-            return response.json()
-        }).then(function(json) {
+
+            const json =  await response.json();
+
             if (json.success === true) {
+                updateContext()
+                unsetIsLoading()
                 complete();
             }
-        }).catch(function(ex) {
+        }catch(error){
 
-        })
+        }
 
     };
+
     const removeTag = index => {
         return () => {
             setTags(oldArray => {
@@ -53,10 +63,6 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
         commafy: false,
         shortFormat: true,
     };
-
-    const { accountId } = useParams();
-    const {user} = React.useContext(UserStore);
-    const userId = user.id
 
     const columns = [
         {
@@ -87,36 +93,37 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
         },
         ];
 
-    const AddHashTag = (tag) => {
+    const AddHashTag = async (tag) => {
         setLoading(true)
         setError(null)
-        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tag: tag,
+        try{
+            const response = await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/tag`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tag: tag,
+                })
             })
-        }).then(function(response) {
-            return response.json()
-        }).then(function(json) {
-            setLoading(false)
-            if (json.body) {
-                setTags(oldArray => [...oldArray, {
-                   id: json.body.challengeData.challengeId,
-                    tag: json.body.challengeData.challengeName,
-                    posts: json.body.challengeData.posts,
-                    views: json.body.challengeData.views
-                }]);
-            } else {
-                setError("Unable to find tag")
-            }
-        }).catch(function(ex) {
-            setError("Unable to fetch tag information")
-        })
 
+        const json = await response.json();
+        setLoading(false)
+        if (json.body) {
+            setTags(oldArray => [...oldArray, {
+                id: json.body.challengeData.challengeId,
+                tag: json.body.challengeData.challengeName,
+                posts: json.body.challengeData.posts,
+                views: json.body.challengeData.views,
+                key:json.body.challengeData.challengeId
+            }]);
+        } else {
+            setError("Unable to find tag")
+        }
+    }catch(error){
+        setError("Unable to fetch tag information")
+    }
     };
 
     return (
@@ -142,7 +149,7 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
                 <Alert message={error} type="error" showIcon />
             </div>) : ""}
             <p>&nbsp;</p>
-            <Table columns={columns} dataSource={tags} />
+            <Table columns={columns} dataSource={tags}/>
             <p>&nbsp;</p>
             <Button type="primary" className="login-form-button" onClick={onSubmit}>
                 Save
