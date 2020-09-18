@@ -192,7 +192,7 @@ export const AppFrame = (props) => {
           {React.cloneElement(props.children, {user: user, account: account})}
         </FrameStore.Provider>
         <FooterHelp>
-          Vop ©2020. Made with{' '}
+        Copyright © 2020 Dream Big Labs, Inc. Made with{' '}
           <span role="img" aria-label="love">
             ❤️
           </span>{' '}
