@@ -2,12 +2,13 @@ import {Modal, Input, List, Avatar, Button, AutoComplete, Icon } from "antd";
 import {Col, Row, Grid} from "react-flexbox-grid";
 import React, {useState} from "react";
 import {useParams} from "react-router-dom";
-import {UserStore} from "../../Context/store";
+import {AccountStore, UserStore} from "../../Context/store";
 
 export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) => {
 
     const { accountId } = useParams();
     const {user} = React.useContext(UserStore);
+    const {account} = React.useContext(AccountStore);
     const userId = user.id
 
     const currentItem = data[currentIndex];
@@ -153,7 +154,7 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
             </Col>
             <Col xs={7}>
                 <div style={{width: "300px"}}>&nbsp;</div>
-                {(user.type === "shopify") ? (
+                {(account.type === "shopify") ? (
                 <AutoComplete
                     dataSource={options}
                     onSelect={selectProduct}
