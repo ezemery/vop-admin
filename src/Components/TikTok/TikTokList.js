@@ -3,7 +3,7 @@ import React, {useState, useEffect, useCallback, useContext, useReducer} from 'r
 
 import {Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'react-infinite-scroller';
-import {EmptyState, Button, Page} from '@shopify/polaris';
+import {EmptyState, Button, Page, Banner} from '@shopify/polaris';
 import {useHistory, useParams} from 'react-router-dom';
 import {TikTokModal} from './TikTokModal';
 import {TikTokCard} from './TikTokCard';
@@ -55,6 +55,30 @@ export const TikTokList = ({
 
   const removeItem = (index) => {
     updateData({type: 'remove', index: index})
+  };
+
+  const [fetchLoading, setFetchLoading] = useState(false);
+  const [showFetchMessage, setShowFetchMessage] = useState(false);
+
+  const fetchVideos = () => {
+    setFetchLoading(true)
+    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/import`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      if (json.success === true) {
+        setFetchLoading(false)
+        setShowFetchMessage(true)
+      }
+    }).catch(function(ex) {
+        setFetchLoading(false)
+    })
+
   };
 
   const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
@@ -163,7 +187,14 @@ export const TikTokList = ({
     <Page
       fullWidth
       title={approvalScreen ? 'Awaiting Approval' : 'Manage Content'}
+      primaryAction={{content: 'Check for Videos', onAction: fetchVideos, loading: fetchLoading}}
     >
+      {showFetchMessage ? <Banner
+          title="We are now checking for videos, this can take up to 5 minutes. Please click the button below after this time."
+          status="success"
+          action={{content: 'Refresh page', onAction: async () => {setShowFetchMessage(false); await loadFunc()}}}
+
+      /> : <></>}
       <Row>
         <Col span={24}>&nbsp;</Col>
       </Row>
