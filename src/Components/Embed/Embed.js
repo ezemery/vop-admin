@@ -91,7 +91,7 @@ export const Embed = () => {
                 <Col lg={24} xs={24}>
                     <Card className="text-align">
 
-                        <Title level={2}>Embed your TokShop feed</Title>
+                        <Title level={2}>Embed your Vop feed</Title>
 
                         <Text>Paste the code sample below in to your e-commerce page or system to enable Tokshop on your store.</Text><br />
                         <br/>
