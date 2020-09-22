@@ -11,7 +11,7 @@ const { Search } = Input;
 
 export const SetupTags = ({complete, showSteps, initialTags}) => {
     const {user} = React.useContext(UserStore);
-    const {updateContext} = React.useContext(AccountStore);
+    const {updateActiveAccount} = React.useContext(AccountStore);
     const { unsetIsLoading, setIsLoading } = useContext(FrameStore);
     const [tags, setTags] = useState(initialTags);
     const { accountId } = useParams();
@@ -37,7 +37,7 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
             const json =  await response.json();
 
             if (json.success === true) {
-                updateContext()
+                await updateActiveAccount(userId);
                 unsetIsLoading()
                 complete();
             }

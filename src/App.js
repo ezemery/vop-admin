@@ -27,6 +27,7 @@ import {useAccounts} from "./Hooks/account.hook";
 const App = () => {
   const userContext = useUsers();
   const accountContext = useAccounts();
+  console.log("accountContext", accountContext)
   const {user} = userContext;
   const userId = user ? user["id"] : null
   useEffect(() => {
@@ -36,10 +37,6 @@ const App = () => {
   useEffect(() => {
     accountContext.fetchAccountDataAsync(userId);
   },[userId]);
-
-  const updateContext = async () => {
-    accountContext.fetchAccountDataAsync(userId);
-  }
 
   const theme = {
     colors: {
@@ -85,7 +82,7 @@ const App = () => {
     </AppProvider>
   ) : (
     <UserStore.Provider value={userContext}>
-      <AccountStore.Provider value={{...accountContext, updateContext}}>
+      <AccountStore.Provider value={accountContext}>
         <AppProvider theme={theme} i18n={enTranslations} linkComponent={Link}>
           <div
             className="App"

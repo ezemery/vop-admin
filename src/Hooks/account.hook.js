@@ -48,9 +48,21 @@ export const useAccounts= () => {
         setAccountState({type: 'setActiveAccount', id})
     };
 
+    const updateActiveAccount = async (id) => {
+        try {
+            const accounts = await getAccounts(id);
+            if (accounts.length === 1) {
+                setAccountState({type: 'setAccounts', account: accounts[0], accounts: accounts})
+            }
+        } catch (error) {
+            setAccountState({type: 'error'})
+        }
+    };
+
     return {
         ...a,
         fetchAccountDataAsync,
-        setActiveAccount
+        setActiveAccount,
+        updateActiveAccount
     };
 };

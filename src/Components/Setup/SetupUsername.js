@@ -9,7 +9,7 @@ const { Step } = Steps;
 
 export const SetupUsername = ({complete, showSteps, username}) => {
     const {user} = React.useContext(UserStore);
-    const {updateContext} = React.useContext(AccountStore);
+    const {updateActiveAccount} = React.useContext(AccountStore);
     const { unsetIsLoading, setIsLoading } = useContext(FrameStore);
     const userId = user.id
     const [newUsername, setNewUsername] = useState(username);
@@ -64,7 +64,7 @@ export const SetupUsername = ({complete, showSteps, username}) => {
 
             const json = await response.json();
             if (json.success === true) {
-                updateContext()
+                await updateActiveAccount(userId);
                 unsetIsLoading();
                 setShowDetails(false)
                 complete();
