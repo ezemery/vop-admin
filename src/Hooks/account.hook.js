@@ -10,8 +10,14 @@ const accountsInitial = {
 
 function accountsReducer(state, action) {
     switch (action.type) {
+        case 'setAccount':
+            return {...state, account: action.account}
         case 'setAccounts':
-            return {...state, account: action.account,  accounts: action.accounts}
+            let existingAccount = null;
+            if (state.account) {
+                existingAccount = action.accounts.find(element => element.id === state.account.id);
+            }
+            return {...state, accounts: action.accounts, account: existingAccount}
         case 'setActiveAccount':
             const activeAccount = state.accounts.find(element => element.id === action.id);
             return {...state, account: activeAccount}
@@ -35,8 +41,9 @@ export const useAccounts= () => {
         try {
             const accounts = await getAccounts(userId);
             if (accounts.length === 1) {
-                setAccountState({type: 'setAccounts', account: accounts[0], accounts: accounts})
+                setAccountState({type: 'setAccount', account: accounts[0]})
             }
+            setAccountState({type: 'setAccounts', accounts: accounts})
             setAccountState({type: 'loadingComplete'})
         } catch (error) {
             setAccountState({type: 'error'})
@@ -52,8 +59,9 @@ export const useAccounts= () => {
         try {
             const accounts = await getAccounts(id);
             if (accounts.length === 1) {
-                setAccountState({type: 'setAccounts', account: accounts[0], accounts: accounts})
+                setAccountState({type: 'setAccount', account: accounts[0]})
             }
+            setAccountState({type: 'setAccounts', accounts: accounts})
         } catch (error) {
             setAccountState({type: 'error'})
         }
