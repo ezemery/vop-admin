@@ -131,8 +131,8 @@ export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
             />
             <Text> <Tiktok/> <div style={{textAlign:"center", marginRight:"10px", marginLeft:"10px"}}>{user.username} </div><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></Text>
             <ButtonGroup>
-                <Button onClick={() => SetInfo("approve")} style={{borderRight:"1px solid #e2e8f0"}}> <Icon source={CircleTickMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Approve</div> </Button>
-                <Button onClick={() => SetInfo("reject")}><Icon source={CircleCancelMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Reject</div> </Button>
+                <Button onClick={() => SetInfo("reject")}><Icon source={CircleCancelMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Dismiss</div> </Button>
+                <Button onClick={() => openModal(currentIndex)} style={{borderRight:"1px solid #e2e8f0"}}> <Icon source={CircleTickMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Start Approval</div> </Button>
             </ButtonGroup>
             
         </Card>
