@@ -1,5 +1,5 @@
-import React, {useState, useCallback} from 'react';
-import {EmptyState, Button, Page, Modal, Heading} from '@shopify/polaris';
+import React, {useState, useCallback, useEffect} from 'react';
+import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar} from '@shopify/polaris';
 import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
 
 import {Social} from '../styles';
@@ -11,6 +11,40 @@ export const ConnectAccount = () => {
   const userId = user.id
   const [active, setActive] = useState(false);
   const handleChange = useCallback(() => setActive(!active), [active]);
+  const [connectedAccount, setConnectedAccount] = useState(null);
+  const [queryValue, setQueryValue] = useState(null);
+
+  const handleFiltersQueryChange = useCallback(
+    (value) => setQueryValue(value),
+    [],
+  );
+  const handleQueryValueRemove = useCallback(() => setQueryValue(null), []);
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/list`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json)
+        if (json.importers) {
+          setConnectedAccount(json.importers)
+        }
+        throw new Error('Network response was not ok');
+      })
+      .catch((ex) => {
+       
+      });
+  }, [])
+
   const activator = (
     <Button primary onClick={handleChange}>
       {' '}
@@ -110,7 +144,53 @@ export const ConnectAccount = () => {
     [],
   );
   return (
-    <Page fullWidth title="Connect Account">
+    <Page fullWidth title="Connect Account"  primaryAction={connectedAccount ? {content: 'Add a new account', onAction: handleChange}: ""}>
+      {connectedAccount ? <div>
+        <ResourceList
+          resourceName={{singular: 'social account', plural: 'social accounts'}}
+          filterControl={
+            <Filters
+              filters={[]}
+              queryValue={queryValue}
+              onQueryChange={handleFiltersQueryChange}
+              onQueryClear={handleQueryValueRemove}
+              onClearAll={handleQueryValueRemove}
+            />
+          }
+          items={[
+            {
+              id: 341,
+              url: 'customers/341',
+              name: 'Mae Jemison',
+              location: 'Decatur, USA',
+            },
+            {
+              id: 256,
+              url: 'customers/256',
+              name: 'Ellen Ochoa',
+              location: 'Los Angeles, USA',
+            },
+          ]}
+          renderItem={(item) => {
+            const {id, url, name, location} = item;
+            const media = <Avatar customer size="medium" name={name} />;
+
+            return (
+              <ResourceList.Item
+                id={id}
+                url={url}
+                media={media}
+                accessibilityLabel={`View details for ${name}`}
+              >
+                <h3>
+                  <TextStyle variation="strong">{name}</TextStyle>
+                </h3>
+                <div>{location}</div>
+              </ResourceList.Item>
+            );
+          }}
+        />
+      </div> :
       <EmptyState
         heading="Pull Content from your existing social media account"
         image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
@@ -118,7 +198,7 @@ export const ConnectAccount = () => {
         <p>Connect your social accounts.</p>
         <br />
         {activator}
-      </EmptyState>
+      </EmptyState>}
 
       <Modal
         open={active}

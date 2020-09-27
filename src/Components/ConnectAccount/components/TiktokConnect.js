@@ -101,7 +101,6 @@ export const TiktokConnect = () => {
         return response.json();
       })
       .then((json) => {
-        console.log(json)
         if (json.success) {
           setLoading(false);
           nextScreen("tags")
@@ -143,7 +142,6 @@ export const TiktokConnect = () => {
         return response.json();
       })
       .then((json) => {
-        console.log(json)
         if (json.success) {
           setLoading(false);
           nextScreen("connected")
