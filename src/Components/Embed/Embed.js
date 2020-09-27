@@ -30,7 +30,6 @@ export const Embed = () => {
                 if (json.data.length > 0) {
                     setEmbedAvailable(true)
                 }
-
             }).catch(function (ex) {
             });
             setLoading(false);

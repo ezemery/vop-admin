@@ -149,12 +149,12 @@ export const AppFrame = (props) => {
             icon: FeaturedContentMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
-          // {
-          //   label: 'Connected Account',
-          //   url:`/account/id/${accountId}/connect`,
-          //   icon: CircleTickMajorMonotone,
-          //   // onClick: toggleIsLoading,
-          // },
+          {
+            label: 'Connect Account',
+            url:`/account/id/${accountId}/connect`,
+            icon: CircleTickMajorMonotone,
+            onClick: frameContext.setIsLoading,
+          },
           {
             label: 'Settings',
             url: `/account/id/${accountId}/settings`,

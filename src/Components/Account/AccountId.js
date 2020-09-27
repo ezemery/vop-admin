@@ -42,7 +42,7 @@ export const AccountId = () => {
         <Route path={`${path}/embed`}>
           <Embed />
         </Route>
-        <Route path={`${path}/connect`}>
+        <Route exact path={`${path}/connect`}>
           <ConnectAccount />
         </Route>
       </Switch>

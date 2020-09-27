@@ -2,8 +2,8 @@ import React, {useState, useCallback} from 'react';
 import {EmptyState, Button, Page, Modal, Heading} from '@shopify/polaris';
 import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
 
-import {Social} from './styles';
-import {UserStore} from "../../Context/store";
+import {Social} from '../styles';
+import {UserStore} from "../../../Context/store";
 
 export const ConnectAccount = () => {
   const {accountId} = useParams();
@@ -138,14 +138,14 @@ export const ConnectAccount = () => {
               {' '}
               <Button
                 primary
-                url={`/user/id/${userId}/account/id/${accountId}/connect/tiktok`}
+                url={`/account/id/${accountId}/connect/tiktok`}
               >
                 {' '}
                 Connect Account
               </Button>
             </div>
           </Social>
-          <Social>
+          {/* <Social>
             <div style={{display: 'flex'}}>
               <Snapchat />
               <div style={{marginLeft: '20px'}}>
@@ -161,7 +161,7 @@ export const ConnectAccount = () => {
                 Connect Account
               </Button>
             </div>
-          </Social>
+          </Social> */}
         </Modal.Section>
       </Modal>
     </Page>
