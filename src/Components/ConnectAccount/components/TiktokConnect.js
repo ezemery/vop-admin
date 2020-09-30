@@ -33,7 +33,6 @@ export const TiktokConnect = () => {
   const [inputValue, setInputValue] = useState('');
   const {register, handleSubmit, control} = useForm();
   const [textFieldValue, setTextFieldValue] = useState('');
-
   const handleTextFieldChange = useCallback(
     (value) => setTextFieldValue(value),
     [],
@@ -103,7 +102,7 @@ export const TiktokConnect = () => {
       .then((json) => {
         if (json.success) {
           setLoading(false);
-          nextScreen("tags")
+          nextScreen("connected")
         }
         setInvalidUsername(true);
         throw new Error('Network response was not ok');
@@ -120,11 +119,11 @@ export const TiktokConnect = () => {
     history.push(`/account/id/${accountId}/connect`)
   };
 
-  const setTags = () => {
+  const setTags = ({tag}) => {
     setInvalidUsername(false);
     setLoading(true);
     
-    const data = { platform: "tiktok", type: "tag", data: JSON.stringify(selectedOptions)}
+    const data = { platform: "tiktok", type: "tag", data: tag}
 
     fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
       method: 'POST',
@@ -177,6 +176,7 @@ export const TiktokConnect = () => {
     ),
     [],
   );
+
   const Logo = useCallback(
     () => (
       <svg
@@ -244,6 +244,7 @@ export const TiktokConnect = () => {
     ),
     [],
   );
+  
   const Selection = () => (
       <FormField>
         <div
@@ -268,7 +269,18 @@ export const TiktokConnect = () => {
           }}
         >
           <Check />
-          <p style={{marginLeft: '10px'}}> Connect your store to Tiktok</p>
+          <p style={{marginLeft: '10px'}}> Connect your Tiktok username</p>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'start',
+            margin: '10px',
+            alignItems: 'center',
+          }}
+        >
+          <Check />
+          <p style={{marginLeft: '10px'}}> Connect your Tiktok tags</p>
         </div>
         <div
           style={{
@@ -278,10 +290,9 @@ export const TiktokConnect = () => {
             alignItems: 'center',
           }}
         >
-          <Button onClick={setDefault}> Cancel</Button>
+          <Button primary onClick={()=> nextScreen("tags")}>  Add Tag</Button>
           <Button primary onClick={()=> nextScreen("username")}>
-            {' '}
-            Connect Account
+            Add Username
           </Button>
         </div>
       </FormField>
@@ -310,7 +321,7 @@ export const TiktokConnect = () => {
           }}
         >
           <DisplayText size="medium">
-            Your Tiktok account has been connected
+            Your account has been connected
           </DisplayText>
         </div>
         <div
@@ -418,7 +429,7 @@ export const TiktokConnect = () => {
         >
           <DisplayText size="medium">Setup Video Tags</DisplayText>
         </div>
-        <Form onSubmit={handleSubmit(addTags)}>
+        <Form onSubmit={handleSubmit(setTags)}>
           <FormLayout>
             <div
               style={{
@@ -437,7 +448,7 @@ export const TiktokConnect = () => {
                 type="text"
                 name="tag"
                 label="Tags"
-                connectedRight={<Button submit>Add</Button>}
+                // connectedRight={<Button submit>Add</Button>}
                
               />
             </div>
@@ -454,7 +465,7 @@ export const TiktokConnect = () => {
               }}
             >
               <Button onClick={setDefault}> Cancel</Button>
-              <Button primary loading={loading} onClick={setTags}>
+              <Button primary submit loading={loading}>
                 {' '}
                 Continue{' '}
               </Button>

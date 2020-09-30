@@ -13,12 +13,48 @@ export const ConnectAccount = () => {
   const handleChange = useCallback(() => setActive(!active), [active]);
   const [connectedAccount, setConnectedAccount] = useState(null);
   const [queryValue, setQueryValue] = useState(null);
+  const [filtered, setFiltered] = useState([])
 
-  const handleFiltersQueryChange = useCallback(
-    (value) => setQueryValue(value),
-    [],
-  );
-  const handleQueryValueRemove = useCallback(() => setQueryValue(null), []);
+  const handleFiltersQueryChange =
+    (value) => {
+      setQueryValue(value)
+      const filter  = connectedAccount.filter((item)=> item.data.includes(value, 0))
+      setFiltered(filter)
+    }
+
+  const handleQueryValueRemove = () =>{ 
+    setQueryValue(null)
+    setFiltered(connectedAccount)
+  };
+
+  const handleDelete = (id) => {
+    console.log(id)
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/id/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json)
+        if (json.success) {
+          const filter  = filtered.filter((item)=> item.id !== id)
+          setFiltered(filter)
+          setConnectedAccount(filter)
+        }
+        throw new Error('Network response was not ok');
+      })
+      .catch((ex) => {
+       
+      });
+  }
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/list`, {
       method: 'GET',
@@ -34,9 +70,9 @@ export const ConnectAccount = () => {
         return response.json();
       })
       .then((json) => {
-        console.log(json)
         if (json.importers) {
           setConnectedAccount(json.importers)
+          setFiltered(json.importers)
         }
         throw new Error('Network response was not ok');
       })
@@ -145,7 +181,7 @@ export const ConnectAccount = () => {
   );
   return (
     <Page fullWidth title="Connect Account"  primaryAction={connectedAccount ? {content: 'Add a new account', onAction: handleChange}: ""}>
-      {connectedAccount ? <div>
+      {connectedAccount && connectedAccount.length !== 0 ? <div>
         <ResourceList
           resourceName={{singular: 'social account', plural: 'social accounts'}}
           filterControl={
@@ -157,35 +193,29 @@ export const ConnectAccount = () => {
               onClearAll={handleQueryValueRemove}
             />
           }
-          items={[
-            {
-              id: 341,
-              url: 'customers/341',
-              name: 'Mae Jemison',
-              location: 'Decatur, USA',
-            },
-            {
-              id: 256,
-              url: 'customers/256',
-              name: 'Ellen Ochoa',
-              location: 'Los Angeles, USA',
-            },
-          ]}
+          items={filtered}
+
           renderItem={(item) => {
-            const {id, url, name, location} = item;
-            const media = <Avatar customer size="medium" name={name} />;
+            const {id, platform, type, data} = item;
+            const media = <Avatar customer size="medium" name={platform} />;
+            const shortcutActions = [
+            {
+              content: 'Delete',
+              accessibilityLabel: `Delete ${data}`,
+              onClick: ()=>{ handleDelete(id)}
+            },
+          ]
 
             return (
               <ResourceList.Item
                 id={id}
-                url={url}
-                media={media}
-                accessibilityLabel={`View details for ${name}`}
+                url={""}
+                accessibilityLabel={`View details for ${data}`}
+                shortcutActions={shortcutActions}
               >
                 <h3>
-                  <TextStyle variation="strong">{name}</TextStyle>
+                  <TextStyle variation="strong">{`${platform}-${type} : `}{data}</TextStyle>
                 </h3>
-                <div>{location}</div>
               </ResourceList.Item>
             );
           }}
