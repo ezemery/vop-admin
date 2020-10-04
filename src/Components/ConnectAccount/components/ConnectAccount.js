@@ -1,19 +1,20 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar} from '@shopify/polaris';
+import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar,Icon,Popover,ActionList} from '@shopify/polaris';
 import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
-
-import {Social} from '../styles';
-import {UserStore} from "../../../Context/store";
+import {MentionMajorMonotone,HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
+import {Social, ConnectList, Resource} from '../styles';
+import {UserStore, FrameStore} from "../../../Context/store";
 
 export const ConnectAccount = () => {
   const {accountId} = useParams();
   const {user} = React.useContext(UserStore);
+  const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
   const userId = user.id
   const [active, setActive] = useState(false);
   const handleChange = useCallback(() => setActive(!active), [active]);
   const [connectedAccount, setConnectedAccount] = useState(null);
   const [queryValue, setQueryValue] = useState(null);
-  const [filtered, setFiltered] = useState([])
+  const [filtered, setFiltered] = useState([]);
 
   const handleFiltersQueryChange =
     (value) => {
@@ -28,7 +29,7 @@ export const ConnectAccount = () => {
   };
 
   const handleDelete = (id) => {
-    console.log(id)
+    setIsLoading()
     fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/id/${id}`, {
       method: 'DELETE',
       credentials: 'include',
@@ -48,6 +49,7 @@ export const ConnectAccount = () => {
           const filter  = filtered.filter((item)=> item.id !== id)
           setFiltered(filter)
           setConnectedAccount(filter)
+          unsetIsLoading()
         }
         throw new Error('Network response was not ok');
       })
@@ -56,6 +58,7 @@ export const ConnectAccount = () => {
       });
   }
   useEffect(() => {
+    setIsLoading()
     fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/list`, {
       method: 'GET',
       credentials: 'include',
@@ -71,8 +74,10 @@ export const ConnectAccount = () => {
       })
       .then((json) => {
         if (json.importers) {
+          console.log(json.importers)
           setConnectedAccount(json.importers)
           setFiltered(json.importers)
+          unsetIsLoading()
         }
         throw new Error('Network response was not ok');
       })
@@ -181,7 +186,7 @@ export const ConnectAccount = () => {
   );
   return (
     <Page fullWidth title="Connect Account"  primaryAction={connectedAccount ? {content: 'Add a new account', onAction: handleChange}: ""}>
-      {connectedAccount && connectedAccount.length !== 0 ? <div>
+      {connectedAccount && connectedAccount.length !== 0 ? <Resource>
         <ResourceList
           resourceName={{singular: 'social account', plural: 'social accounts'}}
           filterControl={
@@ -193,10 +198,11 @@ export const ConnectAccount = () => {
               onClearAll={handleQueryValueRemove}
             />
           }
+          totalItemsCount={filtered.length}
           items={filtered}
 
           renderItem={(item) => {
-            const {id, platform, type, data} = item;
+            const {id, platform, type, data, status, last_finished_at} = item;
             const media = <Avatar customer size="medium" name={platform} />;
             const shortcutActions = [
             {
@@ -210,17 +216,61 @@ export const ConnectAccount = () => {
               <ResourceList.Item
                 id={id}
                 url={""}
-                accessibilityLabel={`View details for ${data}`}
-                shortcutActions={shortcutActions}
               >
-                <h3>
-                  <TextStyle variation="strong">{`${platform}-${type} : `}{data}</TextStyle>
-                </h3>
+                <ConnectList>
+                  <div className="list-item">
+                    {platform === "tiktok" ? 
+                    <> 
+                    <Tiktok /> 
+                    <h3>
+                       <TextStyle variation="strong"> &nbsp; &nbsp;Tiktok</TextStyle>
+                    </h3>
+                     </> : null
+                   }
+                </div>
+                  <div className="list-item">
+                    {type == "tag" ? 
+                  <>
+                  <Icon source={HashtagMajorMonotone}/> HashTag</> : 
+                  type ==="username" ?
+                  <> <Icon source={CustomersMajorMonotone}/> Username</>:null
+                  }
+                  </div>
+
+                  <div className="list-item">
+                    {type == "tag" ? 
+                  <>#{data}</> : 
+                  type ==="username" ?
+                <>@{data}</>:null
+                  }
+                  </div>
+                  <div className="list-item">
+                  <Icon source={PlayCircleMajorMonotone}/>
+                    Video
+                  </div>
+                  <div className="list-item">
+                    {status === "complete" ? <span className="complete">Complete</span>: status === "importing" ? <span className="progress">Import in progress</span>: <span  className="inactive">Inactive</span>}
+                  </div>
+                  <div className="list-item drop">  
+                  <div className="dropdown">
+                    <span>Actions</span>
+                  </div>
+                   <div className="dropdown-content">
+                     <div style={{marginBottom:"5px"}}>
+                        <Button plain icon={RefreshMinor}>Start Import</Button>
+                      </div>
+                      <Button plain destructive icon={DeleteMinor} onClick={()=>{handleDelete(id)}}>
+                        Delete
+                      </Button>
+                    </div>
+                 </div>
+                </ConnectList>
+               
               </ResourceList.Item>
             );
           }}
         />
-      </div> :
+      </Resource> :
       <EmptyState
         heading="Pull Content from your existing social media account"
         image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
