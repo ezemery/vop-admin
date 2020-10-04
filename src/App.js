@@ -27,7 +27,6 @@ import {useAccounts} from "./Hooks/account.hook";
 const App = () => {
   const userContext = useUsers();
   const accountContext = useAccounts();
-  console.log("accountContext", accountContext)
   const {user} = userContext;
   const userId = user ? user["id"] : null
   useEffect(() => {

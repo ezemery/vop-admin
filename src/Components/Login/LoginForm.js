@@ -9,7 +9,7 @@ import {
   Form,
   DisplayText,
 } from '@shopify/polaris';
-import {EmailMajorMonotone, LockMajorMonotone} from '@shopify/polaris-icons';
+import {EmailMajorMonotone, LockMajorMonotone, CustomerPlusMajorMonotone} from '@shopify/polaris-icons';
 import {logo} from '../../services';
 import {Link, useHistory} from 'react-router-dom';
 import {useForm, Controller} from 'react-hook-form';
@@ -27,6 +27,7 @@ import {
   LeftSide,
   RightSide,
   CompanyDesc,
+  NewAccount,
 } from '../styles';
 
 export const Login = (props) => {
@@ -38,6 +39,7 @@ export const Login = (props) => {
   const handleChange = useCallback((newChecked) => setChecked(newChecked), []);
   const [invalidEmail, setInvalidEmail] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [newAccount, setNewAccount] = useState(0)
 
   const onSubmit = (data) => {
     console.log(!data.email);
@@ -81,6 +83,10 @@ export const Login = (props) => {
         setLoading(false);
         setInvalidEmail(true);
       });
+  };
+
+  const chooseAccount = async () => {
+    setNewAccount(1)
   };
 
   const switchUser = (id) => {
@@ -143,7 +149,8 @@ export const Login = (props) => {
           </DisplayText>
         </div>
           <Content/>
-
+          <NewAccount onClick={() => chooseAccount()}><Icon source={CustomerPlusMajorMonotone} /> <p>Choose another account</p> </NewAccount>
+          
   </div>
   )
 }
@@ -208,7 +215,7 @@ export const Login = (props) => {
       <LeftSide>
         <LogoSVG />
         <LoginForm>
-           <View/>
+           {newAccount ? <LoginBody/> :<View/>}
         </LoginForm>
         <CompanyDesc>
           <Icons />
