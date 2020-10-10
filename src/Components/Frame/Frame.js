@@ -11,7 +11,7 @@ import {
   Button
 } from '@shopify/polaris';
 import {MenuBar, UserMenu, AccountMenu, MenuIcon, UserProfile, DropdownMenu, Spacing} from "./styles"
-import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor, MobileHamburgerMajorMonotone} from '@shopify/polaris-icons';
+import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor, MobileHamburgerMajorMonotone, StoreMajorMonotone} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
 import {FrameStore, UserStore, AccountStore} from '../../Context/store';
@@ -158,11 +158,18 @@ export const AppFrame = (props) => {
           //   // onClick: toggleIsLoading,
           // },
           {
+            label: 'Shop',
+            url: `/account/id/${accountId}/shop`,
+            icon: StoreMajorMonotone,
+            onClick: frameContext.setIsLoading,
+          },
+          {
             label: 'Settings',
             url: `/account/id/${accountId}/settings`,
             icon: OrdersMajorTwotone,
             onClick: frameContext.setIsLoading,
           },
+          
           // {
           //   label: 'Logout',
           //   icon: LogOutMinor,
