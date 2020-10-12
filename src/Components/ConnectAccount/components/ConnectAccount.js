@@ -20,7 +20,7 @@ export const ConnectAccount = () => {
 
   const toggleToastSuccessActive = () => setSuccessActive((successActive) => !successActive)
   const toggleToastFailedActive = () => setFailedActive((failedActive) => !failedActive)
-console.log("successActive", successActive,"failedActive",failedActive )
+
   const handleFiltersQueryChange =
     (value) => {
       setQueryValue(value)
@@ -82,11 +82,9 @@ console.log("successActive", successActive,"failedActive",failedActive )
         return response.json();
       })
       .then((json) => {
-        console.log(json)
         if (json.success) {
           unsetIsLoading()
           toggleToastSuccessActive()
-          console.log("here")
         }else{
           toggleToastFailedActive();
           unsetIsLoading();
