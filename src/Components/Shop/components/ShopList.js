@@ -64,7 +64,7 @@ export default function ShopList({handle,title,description}) {
                    
                  </div>
                 <div className="clipboard_copy" onClick={() => copyTextToClipboard(`vop.shop/${handle}`)}> 
-                    <span >vop.shop/{handle}</span><Icon source={ClipboardMinor} />
+                    <span className="copy">vop.shop/{handle}</span><Icon source={ClipboardMinor} />
                 </div>
              </div>
              {toastMarkup}
