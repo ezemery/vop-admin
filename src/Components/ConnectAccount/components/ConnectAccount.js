@@ -1,7 +1,7 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar,Icon,Popover,ActionList} from '@shopify/polaris';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
-import {MentionMajorMonotone,HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
+import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar,Icon,Toast} from '@shopify/polaris';
+import {useParams} from 'react-router-dom';
+import {HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
 import {Social, ConnectList, Resource} from '../styles';
 import {UserStore, FrameStore} from "../../../Context/store";
 
@@ -15,7 +15,12 @@ export const ConnectAccount = () => {
   const [connectedAccount, setConnectedAccount] = useState(null);
   const [queryValue, setQueryValue] = useState(null);
   const [filtered, setFiltered] = useState([]);
+  const [successActive, setSuccessActive] = useState(false);
+  const [failedActive, setFailedActive] = useState(false);
 
+  const toggleToastSuccessActive = () => setSuccessActive((successActive) => !successActive)
+  const toggleToastFailedActive = () => setFailedActive((failedActive) => !failedActive)
+console.log("successActive", successActive,"failedActive",failedActive )
   const handleFiltersQueryChange =
     (value) => {
       setQueryValue(value)
@@ -44,19 +49,55 @@ export const ConnectAccount = () => {
         return response.json();
       })
       .then((json) => {
-        console.log(json)
         if (json.success) {
           const filter  = filtered.filter((item)=> item.id !== id)
           setFiltered(filter)
           setConnectedAccount(filter)
           unsetIsLoading()
+        }else{
+          unsetIsLoading()
+          throw new Error('Network response was not ok');
         }
-        throw new Error('Network response was not ok');
+       
       })
       .catch((ex) => {
        
       });
   }
+
+  const startImport = (id) => {
+    setIsLoading()
+    try{
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/id/${id}/start`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((json) => {
+        console.log(json)
+        if (json.success) {
+          unsetIsLoading()
+          toggleToastSuccessActive()
+          console.log("here")
+        }else{
+          toggleToastFailedActive();
+          unsetIsLoading();
+        }
+      })
+    }catch(ex){
+        toggleToastFailedActive();
+        unsetIsLoading();
+    }
+  }
+
   useEffect(() => {
     setIsLoading()
     fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/list`, {
@@ -74,7 +115,6 @@ export const ConnectAccount = () => {
       })
       .then((json) => {
         if (json.importers) {
-          console.log(json.importers)
           setConnectedAccount(json.importers)
           setFiltered(json.importers)
           unsetIsLoading()
@@ -184,6 +224,15 @@ export const ConnectAccount = () => {
     ),
     [],
   );
+
+  const toastSuccessMarkup = successActive ? (
+    <Toast content="Import started successfully" onDismiss={toggleToastSuccessActive} />
+  ) : null
+
+  const toastFailedMarkup = failedActive ? (
+    <Toast content="Something went wrong, please try again" onDismiss={toggleToastFailedActive} />
+  ) : null;
+
   return (
     <Page fullWidth title="Connect Account"  primaryAction={connectedAccount ? {content: 'Add a new account', onAction: handleChange}: ""}>
       {connectedAccount && connectedAccount.length !== 0 ? <Resource>
@@ -257,7 +306,7 @@ export const ConnectAccount = () => {
                   </div>
                    <div className="dropdown-content">
                      <div style={{marginBottom:"5px"}}>
-                        <Button plain icon={RefreshMinor}>Start Import</Button>
+                        <Button plain icon={RefreshMinor} onClick={()=>{startImport(id)}}>Start Import</Button>
                       </div>
                       <Button plain destructive icon={DeleteMinor} onClick={()=>{handleDelete(id)}}>
                         Delete
@@ -324,6 +373,8 @@ export const ConnectAccount = () => {
           </Social> */}
         </Modal.Section>
       </Modal>
+      {toastSuccessMarkup}
+      {toastFailedMarkup}
     </Page>
   );
 };
