@@ -1,3 +1,3 @@
-export * from '../ConnectAccount/TiktokConnect';
+export * from '../ConnectAccount/components/TiktokConnect';
 export * from './SetupTags';
 export * from './SetupUsername';

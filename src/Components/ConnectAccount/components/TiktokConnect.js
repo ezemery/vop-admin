@@ -11,41 +11,153 @@ import {
   TextField,
   Icon,
   Loading,
+  Tag,
+  TextContainer,
+  Stack
 } from '@shopify/polaris';
-import {MentionMajorMonotone} from '@shopify/polaris-icons';
+import {MentionMajorMonotone,HashtagMajorMonotone} from '@shopify/polaris-icons';
 import {useForm, Controller} from 'react-hook-form';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
-import {Container, FormField} from './styles';
-import {UserStore} from "../../Context/store";
+import {Switch, Route, useRouteMatch,useHistory, useParams} from 'react-router-dom';
+import {Container, FormField} from '../styles';
+import {UserStore} from "../../../Context/store";
 
 export const TiktokConnect = () => {
   const {accountId} = useParams();
-    const {user} = React.useContext(UserStore);
-    const userId = user.id
+  const {user} = React.useContext(UserStore);
+  const userId = user.id
+  const history = useHistory();
   const [form, setForm] = useState('');
   const [invalidUsername, setInvalidUsername] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {handleSubmit, control} = useForm();
-  const setUsername = () => {
-    setForm('username');
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const {register, handleSubmit, control} = useForm();
+  const [textFieldValue, setTextFieldValue] = useState('');
+  const handleTextFieldChange = useCallback(
+    (value) => setTextFieldValue(value),
+    [],
+  );
+
+  const addTags = ({tag}) => {
+    const options = [...selectedOptions];
+    options.push(tag);
+    setSelectedOptions(options);
+  }
+
+  const removeTag = useCallback(
+    (tag) => () => {
+      const options = [...selectedOptions];
+      options.splice(options.indexOf(tag), 1);
+      setSelectedOptions(options);
+    },
+    [selectedOptions],
+  );
+
+  const titleCase = (string) => {
+    return string
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.replace(word[0], word[0].toUpperCase()))
+      .join('');
+  }
+
+  const tagsMarkup = selectedOptions.map((option) => {
+    let tagLabel = '';
+    tagLabel = option.replace('_', ' ');
+    tagLabel = titleCase(tagLabel);
+    return (
+      <Tag key={`option${option}`} onRemove={removeTag(option)}>
+        {tagLabel}
+      </Tag>
+    );
+  });
+
+  const setUsername = ({username}) => {
+    setInvalidUsername(false);
+    setLoading(true);
+
+    if(!username ){
+      setLoading(false);
+      setInvalidUsername(true);
+      return;
+    }
+    
+    const data = { platform: "tiktok", type: "username", data: username}
+
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        setInvalidUsername(false);
+        return response.json();
+      })
+      .then((json) => {
+        if (json.success) {
+          setLoading(false);
+          nextScreen("connected")
+        }
+        setInvalidUsername(true);
+        throw new Error('Network response was not ok');
+      })
+      .catch((ex) => {
+        setLoading(false);
+        setInvalidUsername(true);
+      });
+  
   };
 
   const setDefault = () => {
     setForm('');
+    history.push(`/account/id/${accountId}/connect`)
   };
 
-  const setTags = () => {
-    setForm('tags');
-  };
-
-  const setConnected = () => {
-    setForm('connected');
-  };
-
-  const onSubmit = (data) => {
+  const setTags = ({tag}) => {
     setInvalidUsername(false);
     setLoading(true);
+    
+    const data = { platform: "tiktok", type: "tag", data: tag}
+
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        setInvalidUsername(false);
+        return response.json();
+      })
+      .then((json) => {
+        if (json.success) {
+          setLoading(false);
+          nextScreen("connected")
+        }
+        setInvalidUsername(true);
+        throw new Error('Network response was not ok');
+      })
+      .catch((ex) => {
+        setLoading(false);
+        setInvalidUsername(true);
+      });
   };
+
+  const nextScreen = (value) => {
+    setForm(value);
+  }
+  
 
   const Check = useCallback(
     () => (
@@ -64,6 +176,7 @@ export const TiktokConnect = () => {
     ),
     [],
   );
+
   const Logo = useCallback(
     () => (
       <svg
@@ -131,8 +244,8 @@ export const TiktokConnect = () => {
     ),
     [],
   );
-  const Selection = useCallback(
-    () => (
+  
+  const Selection = () => (
       <FormField>
         <div
           style={{
@@ -156,7 +269,18 @@ export const TiktokConnect = () => {
           }}
         >
           <Check />
-          <p style={{marginLeft: '10px'}}> Connect your store to Tiktok</p>
+          <p style={{marginLeft: '10px'}}> Connect your Tiktok username</p>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'start',
+            margin: '10px',
+            alignItems: 'center',
+          }}
+        >
+          <Check />
+          <p style={{marginLeft: '10px'}}> Connect your Tiktok tags</p>
         </div>
         <div
           style={{
@@ -166,19 +290,15 @@ export const TiktokConnect = () => {
             alignItems: 'center',
           }}
         >
-          <Button onClick={setDefault}> Cancel</Button>
-          <Button primary onClick={setUsername}>
-            {' '}
-            Connect Account
+          <Button primary onClick={()=> nextScreen("tags")}>  Add Tag</Button>
+          <Button primary onClick={()=> nextScreen("username")}>
+            Add Username
           </Button>
         </div>
       </FormField>
-    ),
-    [],
-  );
+    )
 
-  const Connected = useCallback(
-    () => (
+  const Connected = () => (
       <FormField>
         <div
           style={{
@@ -201,7 +321,7 @@ export const TiktokConnect = () => {
           }}
         >
           <DisplayText size="medium">
-            Your Tiktok account has been connected
+            Your account has been connected
           </DisplayText>
         </div>
         <div
@@ -214,18 +334,16 @@ export const TiktokConnect = () => {
         >
           <Button
             primary
-            url={`/user/id/${userId}/account/id/${accountId}/connect`}
+            onClick={setDefault}
           >
             {' '}
             Finish
           </Button>
         </div>
       </FormField>
-    ),
-    [],
-  );
-  const Username = useCallback(
-    () => (
+    );
+
+  const Username = () => (
       <FormField>
         <div
           style={{
@@ -247,7 +365,7 @@ export const TiktokConnect = () => {
         >
           <DisplayText size="medium">Setup Tiktok Username</DisplayText>
         </div>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(setUsername)}>
           <FormLayout>
             <div
               style={{
@@ -267,6 +385,7 @@ export const TiktokConnect = () => {
                 labelHidden
                 type="text"
                 name="username"
+               
               />
             </div>
             <div
@@ -278,7 +397,7 @@ export const TiktokConnect = () => {
               }}
             >
               <Button onClick={setDefault}> Cancel</Button>
-              <Button primary onClick={setTags} loading={loading}>
+              <Button primary submit loading={loading}>
                 {' '}
                 Continue{' '}
               </Button>
@@ -286,12 +405,9 @@ export const TiktokConnect = () => {
           </FormLayout>
         </Form>
       </FormField>
-    ),
-    [],
-  );
+    )
 
-  const Tags = useCallback(
-    () => (
+  const Tags = () => (
       <FormField>
         <div
           style={{
@@ -313,32 +429,52 @@ export const TiktokConnect = () => {
         >
           <DisplayText size="medium">Setup Video Tags</DisplayText>
         </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'start',
-            margin: '10px',
-            alignItems: 'center',
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Button onClick={setDefault}> Cancel</Button>
-          <Button primary onClick={setConnected}>
-            {' '}
-            Continue
-          </Button>
-        </div>
+        <Form onSubmit={handleSubmit(setTags)}>
+          <FormLayout>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                padding: '10px',
+                alignItems: 'center',
+              }}
+            >
+                <Controller
+                as={TextField}
+                control={control}
+                prefix={<Icon source={HashtagMajorMonotone} />}
+                placeholder="Tiktok Tag"
+                labelHidden
+                type="text"
+                name="tag"
+                label="Tags"
+                // connectedRight={<Button submit>Add</Button>}
+               
+              />
+            </div>
+            <TextContainer>
+                <Stack>{tagsMarkup}</Stack>
+            </TextContainer>
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginTop: '30px',
+                alignItems: 'center',
+              }}
+            >
+              <Button onClick={setDefault}> Cancel</Button>
+              <Button primary submit loading={loading}>
+                {' '}
+                Continue{' '}
+              </Button>
+            </div>
+          </FormLayout>
+        </Form>
       </FormField>
-    ),
-    [],
-  );
+    );
+
   const View = () => {
     switch (form) {
       case 'username':
@@ -355,11 +491,11 @@ export const TiktokConnect = () => {
   return (
     <Page
       fullWidth
-      title="Connect Titktok"
+      title="Connect Tiktok"
       breadcrumbs={[
         {
           content: 'Connected Accounts',
-          url: `/user/id/${userId}/account/id/${accountId}/connect`,
+          url: `/account/id/${accountId}/connect`,
         },
       ]}
     >

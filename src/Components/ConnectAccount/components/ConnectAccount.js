@@ -1,16 +1,129 @@
-import React, {useState, useCallback} from 'react';
-import {EmptyState, Button, Page, Modal, Heading} from '@shopify/polaris';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
-
-import {Social} from './styles';
-import {UserStore} from "../../Context/store";
+import React, {useState, useCallback, useEffect} from 'react';
+import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar,Icon,Toast} from '@shopify/polaris';
+import {useParams} from 'react-router-dom';
+import {HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
+import {Social, ConnectList, Resource} from '../styles';
+import {UserStore, FrameStore} from "../../../Context/store";
 
 export const ConnectAccount = () => {
   const {accountId} = useParams();
   const {user} = React.useContext(UserStore);
+  const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
   const userId = user.id
   const [active, setActive] = useState(false);
   const handleChange = useCallback(() => setActive(!active), [active]);
+  const [connectedAccount, setConnectedAccount] = useState(null);
+  const [queryValue, setQueryValue] = useState(null);
+  const [filtered, setFiltered] = useState([]);
+  const [successActive, setSuccessActive] = useState(false);
+  const [failedActive, setFailedActive] = useState(false);
+
+  const toggleToastSuccessActive = () => setSuccessActive((successActive) => !successActive)
+  const toggleToastFailedActive = () => setFailedActive((failedActive) => !failedActive)
+
+  const handleFiltersQueryChange =
+    (value) => {
+      setQueryValue(value)
+      const filter  = connectedAccount.filter((item)=> item.data.includes(value, 0))
+      setFiltered(filter)
+    }
+
+  const handleQueryValueRemove = () =>{ 
+    setQueryValue(null)
+    setFiltered(connectedAccount)
+  };
+
+  const handleDelete = (id) => {
+    setIsLoading()
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/id/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((json) => {
+        if (json.success) {
+          const filter  = filtered.filter((item)=> item.id !== id)
+          setFiltered(filter)
+          setConnectedAccount(filter)
+          unsetIsLoading()
+        }else{
+          unsetIsLoading()
+          throw new Error('Network response was not ok');
+        }
+       
+      })
+      .catch((ex) => {
+       
+      });
+  }
+
+  const startImport = (id) => {
+    setIsLoading()
+    try{
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/id/${id}/start`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((json) => {
+        if (json.success) {
+          unsetIsLoading()
+          toggleToastSuccessActive()
+        }else{
+          toggleToastFailedActive();
+          unsetIsLoading();
+        }
+      })
+    }catch(ex){
+        toggleToastFailedActive();
+        unsetIsLoading();
+    }
+  }
+
+  useEffect(() => {
+    setIsLoading()
+    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/list`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((json) => {
+        if (json.importers) {
+          setConnectedAccount(json.importers)
+          setFiltered(json.importers)
+          unsetIsLoading()
+        }
+        throw new Error('Network response was not ok');
+      })
+      .catch((ex) => {
+       
+      });
+  }, [])
+
   const activator = (
     <Button primary onClick={handleChange}>
       {' '}
@@ -109,8 +222,102 @@ export const ConnectAccount = () => {
     ),
     [],
   );
+
+  const toastSuccessMarkup = successActive ? (
+    <Toast content="Import started successfully" onDismiss={toggleToastSuccessActive} />
+  ) : null
+
+  const toastFailedMarkup = failedActive ? (
+    <Toast content="Something went wrong, please try again" onDismiss={toggleToastFailedActive} />
+  ) : null;
+
   return (
-    <Page fullWidth title="Connect Account">
+    <Page fullWidth title="Connect Account"  primaryAction={connectedAccount ? {content: 'Add a new account', onAction: handleChange}: ""}>
+      {connectedAccount && connectedAccount.length !== 0 ? <Resource>
+        <ResourceList
+          resourceName={{singular: 'social account', plural: 'social accounts'}}
+          filterControl={
+            <Filters
+              filters={[]}
+              queryValue={queryValue}
+              onQueryChange={handleFiltersQueryChange}
+              onQueryClear={handleQueryValueRemove}
+              onClearAll={handleQueryValueRemove}
+            />
+          }
+          totalItemsCount={filtered.length}
+          items={filtered}
+
+          renderItem={(item) => {
+            const {id, platform, type, data, status, last_finished_at} = item;
+            const media = <Avatar customer size="medium" name={platform} />;
+            const shortcutActions = [
+            {
+              content: 'Delete',
+              accessibilityLabel: `Delete ${data}`,
+              onClick: ()=>{ handleDelete(id)}
+            },
+          ]
+
+            return (
+              <ResourceList.Item
+                id={id}
+                url={""}
+              >
+                <ConnectList>
+                  <div className="list-item">
+                    {platform === "tiktok" ? 
+                    <> 
+                    <Tiktok /> 
+                    <h3>
+                       <TextStyle variation="strong"> &nbsp; &nbsp;Tiktok</TextStyle>
+                    </h3>
+                     </> : null
+                   }
+                </div>
+                  <div className="list-item">
+                    {type == "tag" ? 
+                  <>
+                  <Icon source={HashtagMajorMonotone}/> HashTag</> : 
+                  type ==="username" ?
+                  <> <Icon source={CustomersMajorMonotone}/> Username</>:null
+                  }
+                  </div>
+
+                  <div className="list-item">
+                    {type == "tag" ? 
+                  <>#{data}</> : 
+                  type ==="username" ?
+                <>@{data}</>:null
+                  }
+                  </div>
+                  <div className="list-item">
+                  <Icon source={PlayCircleMajorMonotone}/>
+                    Video
+                  </div>
+                  <div className="list-item">
+                    {status === "complete" ? <span className="complete">Complete</span>: status === "importing" ? <span className="progress">Import in progress</span>: <span  className="inactive">Inactive</span>}
+                  </div>
+                  <div className="list-item drop">  
+                  <div className="dropdown">
+                    <span>Actions</span>
+                  </div>
+                   <div className="dropdown-content">
+                     <div style={{marginBottom:"5px"}}>
+                        <Button plain icon={RefreshMinor} onClick={()=>{startImport(id)}}>Start Import</Button>
+                      </div>
+                      <Button plain destructive icon={DeleteMinor} onClick={()=>{handleDelete(id)}}>
+                        Delete
+                      </Button>
+                    </div>
+                 </div>
+                </ConnectList>
+               
+              </ResourceList.Item>
+            );
+          }}
+        />
+      </Resource> :
       <EmptyState
         heading="Pull Content from your existing social media account"
         image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
@@ -118,7 +325,7 @@ export const ConnectAccount = () => {
         <p>Connect your social accounts.</p>
         <br />
         {activator}
-      </EmptyState>
+      </EmptyState>}
 
       <Modal
         open={active}
@@ -138,14 +345,14 @@ export const ConnectAccount = () => {
               {' '}
               <Button
                 primary
-                url={`/user/id/${userId}/account/id/${accountId}/connect/tiktok`}
+                url={`/account/id/${accountId}/connect/tiktok`}
               >
                 {' '}
                 Connect Account
               </Button>
             </div>
           </Social>
-          <Social>
+          {/* <Social>
             <div style={{display: 'flex'}}>
               <Snapchat />
               <div style={{marginLeft: '20px'}}>
@@ -161,9 +368,11 @@ export const ConnectAccount = () => {
                 Connect Account
               </Button>
             </div>
-          </Social>
+          </Social> */}
         </Modal.Section>
       </Modal>
+      {toastSuccessMarkup}
+      {toastFailedMarkup}
     </Page>
   );
 };
