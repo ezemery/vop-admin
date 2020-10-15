@@ -1,13 +1,33 @@
-import React,{useState, useCallback} from 'react'
-import {ShopContent} from '../styles'
+import React,{useState, useCallback, useEffect} from 'react'
+import {ShopContent, ProductImage} from '../styles'
 import {DisplayText,Icon, Toast} from '@shopify/polaris';
+import { useHistory} from 'react-router-dom';
 import { ClipboardMinor } from '@shopify/polaris-icons';
 import tw, {styled} from 'twin.macro';
 
-export default function ShopList({handle,title,description}) {
+export default function ShopList({handle,title,description, account_id, id}) {
+    const [thumbnails, setThumbnails] = useState();
     const [active, setActive] = useState(false);
     const toggleActive = useCallback(() => setActive((active) => !active), []);
+    const history = useHistory();
 
+      useEffect(()=>{
+        fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + account_id, {
+          credentials: 'include',
+          method: 'GET',
+      }).then(function (response) {
+          return response.json()
+      }).then(function (json) {
+          setThumbnails(json.data)
+      }).catch(function (ex) {
+      });
+      }, [])
+    
+
+    const showMore = (id)  =>  {
+      console.log("id", id)
+      history.push(`/account/id/${account_id}/shop/${id}`)
+    }
     const fallbackCopyTextToClipboard = (text) =>  {
         var textArea = document.createElement("textarea");
         textArea.value = text;
@@ -68,8 +88,8 @@ export default function ShopList({handle,title,description}) {
                 </div>
              </div>
              {toastMarkup}
-            
-            <div></div>
+            <div onClick={()=>showMore(id)} style={{display:"flex",justifyContent:"flex-end", cursor:"pointer"}}>{thumbnails && thumbnails.map((item, indx)=> <ProductImage key={indx} src={item.cover_img}></ProductImage>)}</div>
+          
         </ShopContent>
     )
 }

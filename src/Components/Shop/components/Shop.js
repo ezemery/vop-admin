@@ -10,6 +10,7 @@ export const Shop = () => {
   const {user} = React.useContext(UserStore);
   const userId = user.id;
   const [shops, setShops]  = useState([])
+  console.log("shops", shops)
   const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
 
   const addShop = () => {
