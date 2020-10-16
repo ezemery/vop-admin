@@ -1,17 +1,20 @@
 import React,{useState, useCallback, useEffect} from 'react'
-import {ShopContent, ProductImage} from '../styles'
-import {DisplayText,Icon, Toast} from '@shopify/polaris';
+import {ShopContent, ProductImage, ThumbnailContent} from '../styles'
+import {DisplayText,Icon, Thumbnail, Toast} from '@shopify/polaris';
 import { useHistory} from 'react-router-dom';
 import { ClipboardMinor } from '@shopify/polaris-icons';
+import {FrameStore} from "../../../Context/store";
 import tw, {styled} from 'twin.macro';
 
 export default function ShopList({handle,title,description, account_id, id}) {
+  const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore);
     const [thumbnails, setThumbnails] = useState();
     const [active, setActive] = useState(false);
     const toggleActive = useCallback(() => setActive((active) => !active), []);
     const history = useHistory();
 
       useEffect(()=>{
+        setIsLoading()
         fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + account_id, {
           credentials: 'include',
           method: 'GET',
@@ -19,15 +22,16 @@ export default function ShopList({handle,title,description, account_id, id}) {
           return response.json()
       }).then(function (json) {
           setThumbnails(json.data)
+          unsetIsLoading();
       }).catch(function (ex) {
       });
       }, [])
     
 
     const showMore = (id)  =>  {
-      console.log("id", id)
       history.push(`/account/id/${account_id}/shop/${id}`)
     }
+
     const fallbackCopyTextToClipboard = (text) =>  {
         var textArea = document.createElement("textarea");
         textArea.value = text;
@@ -75,10 +79,10 @@ export default function ShopList({handle,title,description, account_id, id}) {
     return (
         <ShopContent>
              <div>
-                 <div style={{display:"flex", marginBottom:"20px"}}>
+                 <div style={{display:"flex", marginBottom:"20px", cursor:"pointer"}} onClick={()=>showMore(id)}>
                     <Image/>
                     <div>
-                    <DisplayText size="medium">{title}</DisplayText>
+                    <DisplayText size="medium" >{title}</DisplayText>
                     <p>{description}</p>
                     </div>
                    
@@ -88,7 +92,7 @@ export default function ShopList({handle,title,description, account_id, id}) {
                 </div>
              </div>
              {toastMarkup}
-            <div onClick={()=>showMore(id)} style={{display:"flex",justifyContent:"flex-end", cursor:"pointer"}}>{thumbnails && thumbnails.map((item, indx)=> <ProductImage key={indx} src={item.cover_img}></ProductImage>)}</div>
+            <ThumbnailContent onClick={()=>showMore(id)}>{thumbnails && thumbnails.map((item, indx)=> <ProductImage key={indx} src={item.cover_img}></ProductImage>)}</ThumbnailContent>
           
         </ShopContent>
     )

@@ -3,7 +3,7 @@ import {Switch, Route, useRouteMatch, useParams, Redirect} from 'react-router-do
 import {TikTokList} from '../TikTok';
 import {Embed} from '../Embed';
 import {Settings} from '../Settings';
-import {Shop, CreateShop, ViewShop} from '../Shop';
+import {Shop, CreateShop, ViewShop, EditShop} from '../Shop';
 import {ConnectAccount, TiktokConnect} from '../ConnectAccount';
 
 import {AppFrame} from '../Frame';
@@ -52,8 +52,11 @@ export const AccountId = () => {
         <Route path={`${path}/shop/create`}>
           <CreateShop />
         </Route>
-        <Route path={`${path}/shop/:shop_id`}>
+        <Route exact path={`${path}/shop/:shop_id`}>
           <ViewShop />
+        </Route>
+        <Route path={`${path}/shop/edit/:shop_id`}>
+          <EditShop />
         </Route>
       </Switch>
     </AppFrame>

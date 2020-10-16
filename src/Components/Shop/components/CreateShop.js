@@ -29,7 +29,6 @@ const Store = () => {
        setSuccess(false)
        setError(false);
        const request =  {...data,account_id:accountId,user_id:userId}
-       console.log(request);
         fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/shop/`, {
           method: 'POST',
           credentials: 'include',
@@ -63,7 +62,7 @@ const Store = () => {
           });
       };
 
-      
+
     return(
       <>
          {success ? <Banner
@@ -102,9 +101,6 @@ const Store = () => {
 
 export const CreateShop = () => {
     const {accountId} = useParams();
-    const { userId } = useParams();
-    const {users} = React.useContext(UserStore);
-    const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
     return (
         <Page fullWidth
         title="Create Shop"

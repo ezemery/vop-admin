@@ -13,12 +13,11 @@ const Store = () => {
     const {handleSubmit, control} = useForm();
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [failure, setFailure] = useState(false);
-    const {accountId} = useParams();
+    const {shop_id, accountId} = useParams();
     const {user} = React.useContext(UserStore);
     const userId = user.id;
     const {setIsLoading,unsetIsLoading} = useContext(FrameStore)
-
+    console.log(shop_id);
     const onSubmit = (data) => {
         if(!data.handle || !data.title || !data.description){
             setError(true);
@@ -28,10 +27,9 @@ const Store = () => {
        setIsLoading();
        setSuccess(false)
        setError(false);
-       const request =  {...data,account_id:accountId,user_id:userId}
-       console.log(request);
-        fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/shop/`, {
-          method: 'POST',
+       const request =  {...data,shop_id,account_id:accountId,user_id:userId}
+        fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/shop/id/${shop_id}`, {
+          method: 'PUT',
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
@@ -48,37 +46,30 @@ const Store = () => {
           .then((json) => {
               if(json){
                 setSuccess(true)
-                setFailure(false)
                 unsetIsLoading();
               }else{
-                setFailure(true);
                 unsetIsLoading();
               }
               
            
           })
           .catch((ex) => {
-            setFailure(true);
             unsetIsLoading();
           });
       };
+
+
     return(
       <>
          {success ? <Banner
-                title="Your shop has been created successfully."
+                title="Your shop has been saved successfully."
                 status="success"
                 onDismiss={() => setSuccess(false)}
                 />:null}
-
-          {failure ? <Banner
-                          title="Shop handle exists, please try again"
-                          status="critical"
-                          onDismiss={() => setFailure(false)}
-                          />:null}
         <Layout>
             <Layout.AnnotatedSection
             title="Shop Details"
-            description="Create a shop for your vop customers"
+            description="Edit an existing vop shop"
             >
                <div style={{background:"#F9FAFB", padding:"30px"}}>
                     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -98,14 +89,11 @@ const Store = () => {
     )
 }
 
-export const CreateShop = () => {
+export const EditShop = () => {
     const {accountId} = useParams();
-    const { userId } = useParams();
-    const {users} = React.useContext(UserStore);
-    const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
     return (
         <Page fullWidth
-        title="Create Shop"
+        title="Edit Shop"
         breadcrumbs={[
           {
             content: 'All shops',

@@ -10,7 +10,6 @@ export const Shop = () => {
   const {user} = React.useContext(UserStore);
   const userId = user.id;
   const [shops, setShops]  = useState([])
-  console.log("shops", shops)
   const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
 
   const addShop = () => {
@@ -42,6 +41,7 @@ export const Shop = () => {
       .catch((ex) => {
       });
   }, [])
+
   return (
     <Page fullWidth title="All Shops" primaryAction={shops ? {content: 'Add a new shop', onAction: addShop}: ""}>
         {shops && shops.length  > 0 ? shops.map((item) => <ShopList {...item} key={item.id}/>): <EmptyState
