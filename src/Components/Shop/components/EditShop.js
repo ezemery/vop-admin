@@ -17,7 +17,6 @@ const Store = () => {
     const {user} = React.useContext(UserStore);
     const userId = user.id;
     const {setIsLoading,unsetIsLoading} = useContext(FrameStore)
-    console.log(shop_id);
     const onSubmit = (data) => {
         if(!data.handle || !data.title || !data.description){
             setError(true);

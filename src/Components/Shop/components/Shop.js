@@ -32,7 +32,6 @@ export const Shop = () => {
         return response.json();
       })
       .then((json) => {
-        console.log("json",json)
         setShops(json.shops)
         unsetIsLoading()
         

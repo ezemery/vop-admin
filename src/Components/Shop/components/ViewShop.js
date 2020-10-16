@@ -29,8 +29,6 @@ export const ViewShop = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modal, setModal] = useState(false);
     const toggleActive = useCallback(() => setActive((active) => !active), []);
-    console.log("shop",shop)
-    console.log("thumbnails",thumbnails)
 
     useEffect(() => {
         setIsLoading()
@@ -117,7 +115,6 @@ export const ViewShop = () => {
       ));
 
       const previewShop = (url) => {
-          console.log(url)
         window.open(`https://vop.shop/${url}`,"_blank");
       }
       const fallbackCopyTextToClipboard = (text) =>  {
