@@ -6,14 +6,12 @@ import {useParams} from "react-router-dom";
 import NumericLabel from "../NumericLabel";
 import {UserStore} from "../../Context/store";
 
-
 const { Step } = Steps;
 const { Search } = Input;
 
 export const SetupTags = ({complete, showSteps, initialTags}) => {
 
     const [tags, setTags] = useState(initialTags);
-
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const saveTags = () => {
@@ -103,12 +101,12 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
             return response.json()
         }).then(function(json) {
             setLoading(false)
-            if (json.body) {
+            if (json.challengeInfo) {
                 setTags(oldArray => [...oldArray, {
-                   id: json.body.challengeData.challengeId,
-                    tag: json.body.challengeData.challengeName,
-                    posts: json.body.challengeData.posts,
-                    views: json.body.challengeData.views
+                   id: json.challengeInfo.challenge.id,
+                    tag: json.challengeInfo.challenge.title,
+                    posts: json.challengeInfo.stats.videoCount,
+                    views: json.challengeInfo.stats.viewCount
                 }]);
             } else {
                 setError("Unable to find tag")
@@ -142,7 +140,7 @@ export const SetupTags = ({complete, showSteps, initialTags}) => {
                 <Alert message={error} type="error" showIcon />
             </div>) : ""}
             <p>&nbsp;</p>
-            <Table columns={columns} dataSource={tags} />
+            <Table columns={columns} dataSource={tags}/>
             <p>&nbsp;</p>
             <Button type="primary" className="login-form-button" onClick={onSubmit}>
                 Save

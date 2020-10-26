@@ -13,7 +13,6 @@ export const SetupUsername = ({complete, showSteps, username}) => {
     const [showDetails, setShowDetails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
     const { accountId } = useParams();
     const {user} = React.useContext(UserStore);
     const userId = user.id
@@ -35,8 +34,8 @@ export const SetupUsername = ({complete, showSteps, username}) => {
             return response.json()
         }).then(function(json) {
             setLoading(false)
-            if (json.statusCode === 0) {
-                setShowDetails(json)
+            if (json.statusCode === 0 && json.userInfo) {
+                setShowDetails(json.userInfo)
             } else {
                 setError("Unable to find username")
             }
@@ -111,13 +110,13 @@ export const SetupUsername = ({complete, showSteps, username}) => {
                         <div style={{height:"10px"}} />
                         <Row gutter={16}>
                             <Col span={8}>
-                                <Statistic title="Likes" value={showDetails.body.userData.heart} />
+                                <Statistic title="Likes" value={showDetails.stats.heartCount} />
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Followers" value={showDetails.body.userData.fans}/>
+                                <Statistic title="Followers" value={showDetails.stats.followerCount}/>
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Following" value={showDetails.body.userData.following} />
+                                <Statistic title="Following" value={showDetails.stats.followingCount} />
                             </Col>
                         </Row>
                         <div style={{height:"10px"}} />
