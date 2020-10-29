@@ -42,8 +42,7 @@ export const Login = (props) => {
   const [newAccount, setNewAccount] = useState(0)
 
   const onSubmit = (data) => {
-    console.log(!data.email);
-
+   
 
     if(!data.email || !data.password){
       setLoading(false);
