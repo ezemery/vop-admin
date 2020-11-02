@@ -1,6 +1,7 @@
 import React, {useContext, useCallback} from 'react';
 import { useState, useEffect } from 'react';
 import {TextField, FormLayout, Layout, Banner, Button, Form} from '@shopify/polaris';
+import { useHistory} from 'react-router-dom';
 import {
   Page
   } from '@shopify/polaris';
@@ -18,13 +19,14 @@ const Store = () => {
     const {user} = React.useContext(UserStore);
     const userId = user.id;
     const {setIsLoading,unsetIsLoading} = useContext(FrameStore)
-
+    const history = useHistory();
     const onSubmit = (data) => {
         if(!data.handle || !data.title || !data.description){
             setError(true);
             unsetIsLoading();
           return;
         }
+        data.handle = data.handle.toLowerCase();
        setIsLoading();
        setSuccess(false)
        setError(false);
@@ -45,10 +47,12 @@ const Store = () => {
             return response.json();
           })
           .then((json) => {
+            console.log(json)
               if(json){
                 setSuccess(true)
                 setFailure(false)
                 unsetIsLoading();
+                history.push(`/account/id/${accountId}/shop/${json.shop.id}`)
               }else{
                 setFailure(true);
                 unsetIsLoading();
@@ -85,7 +89,7 @@ const Store = () => {
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <FormLayout>
                             
-                        <Controller as={TextField}  control={control} type="text"  label="Handle" placeholder="Enter a handle"  name="handle"  error={error ? 'Field cannot be empty' : null}/>
+                        <Controller as={TextField}  control={control} type="text"  label="Handle" placeholder="Enter a handle"  name="handle"  connectedLeft={<Button disabled>https://vop.shop/</Button>} error={error ? 'Field cannot be empty' : null}/>
                         <Controller as={TextField}  control={control} type="text"  label="Shop Title" placeholder="Enter a shop title"  name="title" error={error ? 'Field cannot be empty' : null} />
                         <Controller as={TextField}  control={control} type="text" label="Shop Bio" placeholder="Enter a short bio"  name="description" multiline={4} error={error ? 'Field cannot be empty' : null}/>
                         <div style={{display:"flex", justifyContent:"flex-end"}}><Button primary submit>Save</Button></div>
