@@ -13,7 +13,6 @@ export const ConnectAccount = () => {
   const [active, setActive] = useState(false);
   const handleChange = useCallback(() => setActive(!active), [active]);
   const [connectedAccount, setConnectedAccount] = useState([]);
-  console.log("connectedAccount",connectedAccount);
   const [queryValue, setQueryValue] = useState(null);
   const [filtered, setFiltered] = useState([]);
   const [successActive, setSuccessActive] = useState(false);
