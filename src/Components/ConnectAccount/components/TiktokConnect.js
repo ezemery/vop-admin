@@ -122,6 +122,11 @@ export const TiktokConnect = () => {
   const setTags = ({tag}) => {
     setInvalidUsername(false);
     setLoading(true);
+    if(!tag ){
+      setLoading(false);
+      setInvalidUsername(true);
+      return;
+    }
     
     const data = { platform: "tiktok", type: "tag", data: tag}
 
@@ -443,6 +448,7 @@ export const TiktokConnect = () => {
                 as={TextField}
                 control={control}
                 prefix={<Icon source={HashtagMajorMonotone} />}
+                error={invalidUsername ? 'Tag is invalid' : null}
                 placeholder="Tiktok Tag"
                 labelHidden
                 type="text"

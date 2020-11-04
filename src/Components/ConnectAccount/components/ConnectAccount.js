@@ -12,12 +12,13 @@ export const ConnectAccount = () => {
   const userId = user.id
   const [active, setActive] = useState(false);
   const handleChange = useCallback(() => setActive(!active), [active]);
-  const [connectedAccount, setConnectedAccount] = useState(null);
+  const [connectedAccount, setConnectedAccount] = useState([]);
   const [queryValue, setQueryValue] = useState(null);
   const [filtered, setFiltered] = useState([]);
   const [successActive, setSuccessActive] = useState(false);
   const [failedActive, setFailedActive] = useState(false);
-
+  const [deleteActive, setDeleteActive] = useState(false);
+  const toggleToastDeleteActive = () => setDeleteActive((deleteActive) => !deleteActive)
   const toggleToastSuccessActive = () => setSuccessActive((successActive) => !successActive)
   const toggleToastFailedActive = () => setFailedActive((failedActive) => !failedActive)
 
@@ -52,6 +53,7 @@ export const ConnectAccount = () => {
         if (json.success) {
           const filter  = filtered.filter((item)=> item.id !== id)
           setFiltered(filter)
+          toggleToastDeleteActive()
           setConnectedAccount(filter)
           unsetIsLoading()
         }else{
@@ -227,12 +229,16 @@ export const ConnectAccount = () => {
     <Toast content="Import started successfully" onDismiss={toggleToastSuccessActive} />
   ) : null
 
+  const toastDeleteMarkup = deleteActive ? (
+    <Toast content="Successfully Deleted" onDismiss={toggleToastDeleteActive} />
+  ) : null
+
   const toastFailedMarkup = failedActive ? (
     <Toast content="Something went wrong, please try again" onDismiss={toggleToastFailedActive} />
   ) : null;
 
   return (
-    <Page fullWidth title="Connect Account"  primaryAction={connectedAccount ? {content: 'Add a new account', onAction: handleChange}: ""}>
+    <Page fullWidth title="Connect Account"  primaryAction={ connectedAccount.length > 0 ? {content: 'Add a new account', onAction: handleChange}: ""}>
       {connectedAccount && connectedAccount.length !== 0 ? <Resource>
         <ResourceList
           resourceName={{singular: 'social account', plural: 'social accounts'}}
@@ -331,6 +337,12 @@ export const ConnectAccount = () => {
         open={active}
         onClose={handleChange}
         title="Add new social accounts"
+        secondaryActions={[
+          {
+            content: 'Cancel',
+            onAction: handleChange,
+          },
+        ]}
       >
         <Modal.Section>
           <Social>
@@ -357,8 +369,8 @@ export const ConnectAccount = () => {
               <Snapchat />
               <div style={{marginLeft: '20px'}}>
                 {' '}
-                <Heading>Snapchat</Heading>{' '}
-                <p> Connect your Snapchat Account</p>{' '}
+                <Heading>Instagram</Heading>{' '}
+                <p> Connect your Instagram Account</p>{' '}
               </div>
             </div>
             <div>
@@ -373,6 +385,7 @@ export const ConnectAccount = () => {
       </Modal>
       {toastSuccessMarkup}
       {toastFailedMarkup}
+      {toastDeleteMarkup}
     </Page>
   );
 };
