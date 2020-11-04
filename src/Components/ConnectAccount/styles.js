@@ -55,6 +55,11 @@ export const ConnectList = styled.div`
     z-index: 999999999;
     right: 20px;
     top: 57px;
+    @media only screen and (max-width: 600px){
+      right: 0px;
+      top: 250px;
+      left:0px;
+    }
   }
   
   .Polaris-Icon {

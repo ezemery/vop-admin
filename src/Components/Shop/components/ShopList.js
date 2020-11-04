@@ -93,7 +93,6 @@ export default function ShopList({handle,title,description, account_id, id}) {
              </div>
              {toastMarkup}
             <ThumbnailContent onClick={()=>showMore(id)}>{thumbnails && thumbnails.map((item, indx)=> <ProductImage key={indx} src={item.cover_img}></ProductImage>)}</ThumbnailContent>
-          
         </ShopContent>
     )
 }
