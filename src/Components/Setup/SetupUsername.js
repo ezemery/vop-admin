@@ -1,77 +1,71 @@
-import React,{ useState,useContext }  from 'react';
+import React,{ useState }  from 'react';
 import { Steps, Icon, Input, Button, Card, Row, Col, Statistic, Alert } from 'antd';
 import 'whatwg-fetch'
 import {OnboardingSteps} from "./styles"
 import {useParams} from "react-router-dom";
-import {UserStore,FrameStore,AccountStore} from "../../Context/store";
+import {UserStore} from "../../Context/store";
 
 const { Step } = Steps;
 
 export const SetupUsername = ({complete, showSteps, username}) => {
-    const {user} = React.useContext(UserStore);
-    const {updateActiveAccount} = React.useContext(AccountStore);
-    const { unsetIsLoading, setIsLoading } = useContext(FrameStore);
-    const userId = user.id
+
     const [newUsername, setNewUsername] = useState(username);
     const [showDetails, setShowDetails] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { accountId } = useParams();
-    
-    
+    const {user} = React.useContext(UserStore);
+    const userId = user.id
 
-    const LoadUser = async () => {
+    const LoadUser = () => {
         setShowDetails(false)
         setLoading(true)
         setError(null)
-        try{
-            const response  =   await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: newUsername,
-                })
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: newUsername,
             })
-            const json = await response.json();
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
             setLoading(false)
-            if (json.statusCode === 0) {
-                setShowDetails(json)
+            if (json.statusCode === 0 && json.userInfo) {
+                setShowDetails(json.userInfo)
             } else {
                 setError("Unable to find username")
             }
-        }catch(error){
+        }).catch(function(ex) {
             setLoading(false)
             setError("Error validating username")
-        }
+        })
+
     };
-
-    const saveUsername = async () => {
-        setIsLoading()
-        try{
-            const response = await  fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user_save`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: newUsername,
-                })
+    const saveUsername = () => {
+        fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/user_save`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: newUsername,
             })
-
-            const json = await response.json();
+        }).then(function(response) {
+            return response.json()
+        }).then(function(json) {
             if (json.success === true) {
-                await updateActiveAccount(userId);
-                unsetIsLoading();
-                setShowDetails(false)
                 complete();
+                setShowDetails(false)
             }
-        }catch(error){
+        }).catch(function(ex) {
 
-        }
+        })
+
     };
 
     const onSubmit = () => { LoadUser() };
@@ -116,13 +110,13 @@ export const SetupUsername = ({complete, showSteps, username}) => {
                         <div style={{height:"10px"}} />
                         <Row gutter={16}>
                             <Col span={8}>
-                                <Statistic title="Likes" value={showDetails.body.userData.heart} />
+                                <Statistic title="Likes" value={showDetails.stats.heartCount} />
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Followers" value={showDetails.body.userData.fans}/>
+                                <Statistic title="Followers" value={showDetails.stats.followerCount}/>
                             </Col>
                             <Col span={8}>
-                                <Statistic title="Following" value={showDetails.body.userData.following} />
+                                <Statistic title="Following" value={showDetails.stats.followingCount} />
                             </Col>
                         </Row>
                         <div style={{height:"10px"}} />
