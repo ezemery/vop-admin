@@ -1,7 +1,7 @@
-import {Col, Row, Card,Typography, Empty} from 'antd';
+import {Col, Row,Typography, Empty} from 'antd';
 import React, {useContext, useEffect, useCallback} from 'react';
 import { useState } from 'react';
-import {Link, useParams} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import {useForm, Controller} from 'react-hook-form';
 import {
     Page,
@@ -11,21 +11,23 @@ import {
     TextField,
     Form,
     FormLayout,
-    DisplayText
+    DisplayText,
+    Layout,
+    Card,
+    CalloutCard
     } from '@shopify/polaris';
 import {FrameStore, UserStore} from "../../Context/store"
-import {EmbedContainer} from "./styles"
 import VopEmbed from '@vop/embed';
-import {findUserInUsersById} from "../../services";
 
 const { Text } = Typography;
 
 export const Embed = () => {
+    const history = useHistory();
     const [loading, setLoading] = useState(true);
     const [embedAvailable, setEmbedAvailable] = useState(false);
     const {user} = React.useContext(UserStore);
+    const {accountId} = useParams();
     const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
-    const {handleSubmit, control} = useForm();
     const [embedType, setEmbedType] = useState('carousel');
     const [template, setTemplate] = useState('one');
     const [twitter, setTwitter] = useState(null);
@@ -57,6 +59,9 @@ export const Embed = () => {
         [],
     );
 
+    const switchPage = () => {
+        history.push(`/account/id/${accountId}/embed/customize`)
+    }
     useEffect(() => {
         if(user) {
             fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + user.id, {
@@ -75,19 +80,17 @@ export const Embed = () => {
         }
     },[user]);
 
-    let embedPreview = (<Empty
-        image="/tiktok.png"
-        imageStyle={{
-            height: 60,
+    let embedPreview = (
+        <CalloutCard
+        title="You need to approve a few videos in your Approval screen before you can embed"
+        illustration="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
+        primaryAction={{
+          content: 'Approve Videos',
+          url: '/',
         }}
-        description={
-            <span><br />
-        <b level={2}>You need to approve videos.</b> You need to approve a few videos in your Approval screen before you can embed.
-      </span>
-        }
-    >
-        <Link to="/" ><Button primary>Approve Videos</Button></Link>
-    </Empty>);
+      >
+      </CalloutCard>
+   );
 
 
 
@@ -106,76 +109,13 @@ export const Embed = () => {
 
 
     return user ? (
-        <Page fullWidth title="Embed your Vop Feed">
+        <Page 
+        fullWidth 
+        title="Embed your vop feed"
+        primaryAction={ embedAvailable ? {content: 'Customize Embed', onAction: switchPage}: ""}
+        >
         <div hidden={loading}>
-            <Row hidden={!embedAvailable}>
-                <Col lg={24} xs={24}>
-                    <Card className="text-align">
-                    <div style={{paddingTop:"15px", paddingBottom:"15px"}}>
-                    <DisplayText size="large">How would you like to embed?</DisplayText>
-                    </div>
-                        <Stack vertical>
-                            <RadioButton
-                                label="Carousel Layout"
-                                helpText="This layout is a single horizontal scroll, best used on your homepage."
-                                checked={embedType === 'carousel'}
-                                id="carousel"
-                                name="embed-type"
-                                onChange={handleEmbedTypeChange}
-                            />
-                            <RadioButton
-                                label="Page Layout"
-                                helpText="This is a multi-row layout with infinite scroll, best used on a dedicated page"
-                                id="page"
-                                name="embed-type"
-                                checked={embedType === 'page'}
-                                onChange={handleEmbedTypeChange}
-                            />
-                        </Stack>
-                        <div style={{paddingTop:"15px", paddingBottom:"15px"}}>
-                        <DisplayText size="large">Choose your template</DisplayText>
-                        </div>
-                        
-                        <Stack horizontal distribution="fillEvenly">
-                            <div>
-                            <RadioButton
-                                label="Template one design"
-                                helpText="Choose template one design"
-                                checked={template === 'one'}
-                                id="one"
-                                name="embed-template"
-                                onChange={handleTemplateChange}
-                            />
-                            <img style={{width:"300px", height:"auto"}} src="../../../../template-one.png"/>
-                            </div>
-                            <div>
-                            <RadioButton
-                                label="Template two design"
-                                helpText="Choose template two design"
-                                id="two"
-                                name="embed-template"
-                                checked={template === 'two'}
-                                onChange={handleTemplateChange}
-                            />
-                            <img style={{width:"300px", height:"auto"}} src="../../../../template-two.png"/>
-                            </div>
-                            
 
-                        </Stack>
-                        <div style={{paddingTop:"30px", paddingBottom:"15px"}}>
-                            <DisplayText size="large">Add social media handles</DisplayText>
-                        </div>
-                        
-                       <Form>
-                            <FormLayout>
-                                <TextField type="text" name="tw" label="Twitter" labelHidden placeholder="Enter a twitter handle"  value={twitter} onChange={twitterChange} connectedLeft={<Button disabled>https://twitter.com/</Button>} />
-                                <TextField type="text"  label="Facebook" labelHidden placeholder="Enter facebook handle"  value={facebook} onChange={facebookChange}  connectedLeft={<Button disabled>https://www.facebook.com/</Button>} />
-                                <TextField type="text" label="Pinterest" labelHidden placeholder="Enter pinterest handle" value={pinterest} onChange={pinterestChange} connectedLeft={<Button disabled>https://www.pinterest.com/</Button>}/>
-                            </FormLayout>
-                        </Form>
-                    </Card>
-                </Col>
-            </Row>
             <Row>
                 <Col lg={24} md={24} sm={24}>&nbsp;
                 </Col>
@@ -183,8 +123,10 @@ export const Embed = () => {
             <Row hidden={!embedAvailable}>
                 <Col lg={24} xs={24}>
                     <Card className="text-align">
-                    <DisplayText size="large">Your embed code snippet</DisplayText>
-                        <br/>
+                        <div style={{padding:"15px"}}>
+                            <DisplayText size="large">Your embed code snippet</DisplayText>
+                        </div>
+                        <div style={{padding:"15px"}}>
                         <TextField
                             label="Paste the code sample below in to your e-commerce page or system to enable Vop on your store."
                             readOnly={true}
@@ -192,14 +134,16 @@ export const Embed = () => {
 <script src="https://cdn.tokshop.com/tokshop.v3.js" async="async" ></script>`}
                             multiline={3}
                         />
-                        <br/>
+
                         <br/>
                         <Text>For installation instructions for Shopify please <Button plain
                             target="_blank"
                             rel="noopener noreferrer"
                             href="https://help.getvop.com/en/articles/3889177-how-to-embed-vop-into-your-shopify-store">read this article</Button></Text>
                         <br />
-                        <br/>
+                        </div>
+
+                        
                     </Card>
                 </Col>
             </Row>
@@ -210,10 +154,12 @@ export const Embed = () => {
             <Row>
                 <Col lg={24} xs={24}>
                     <Card className="text-align">
-                    <div style={{paddingTop:"15px", paddingBottom:"15px"}}>
+                    <div style={{padding:"15px"}}>
                         <DisplayText size="large">Preview</DisplayText>
                     </div>
-                    {embedPreview}
+                    <div style={{padding:"15px"}}>
+                     {embedPreview}
+                    </div>
                     </Card>
                 </Col>
             </Row>
