@@ -1,7 +1,7 @@
 import React from 'react';
 import {Switch, Route, useRouteMatch, useParams, Redirect} from 'react-router-dom';
 import {TikTokList} from '../TikTok';
-import {Embed} from '../Embed';
+import {Embed, CustomizeEmbed} from '../Embed';
 import {Settings} from '../Settings';
 import {Shop, CreateShop, ViewShop, EditShop} from '../Shop';
 import {ConnectAccount, TiktokConnect} from '../ConnectAccount';
@@ -40,8 +40,11 @@ export const AccountId = () => {
         <Route path={`${path}/settings`}>
           <Settings />
         </Route>
-        <Route path={`${path}/embed`}>
+        <Route exact path={`${path}/embed`}>
           <Embed />
+        </Route>
+        <Route path={`${path}/embed/customize`}>
+          <CustomizeEmbed />
         </Route>
         <Route exact path={`${path}/connect`}>
           <ConnectAccount />
