@@ -85,8 +85,31 @@ export const ConnectAccount = () => {
       })
       .then((json) => {
         if (json.success) {
-          unsetIsLoading()
-          toggleToastSuccessActive()
+          fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/list`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then((json) => {
+              if (json.importers) {
+                setConnectedAccount(json.importers)
+                setFiltered(json.importers)
+                unsetIsLoading()
+                toggleToastSuccessActive();
+              }
+              throw new Error('Network response was not ok');
+            })
+            .catch((ex) => {
+             
+            });
         }else{
           toggleToastFailedActive();
           unsetIsLoading();
@@ -302,7 +325,7 @@ export const ConnectAccount = () => {
                     Video
                   </div>
                   <div className="list-item">
-                    {status === "complete" ? <span className="complete">Complete</span>: status === "importing" ? <span className="progress">Import in progress</span>: <span  className="inactive">Inactive</span>}
+                    {status === "completed" ? <span className="complete">Complete</span>: status === "importing" ? <span className="progress">Import in progress</span>: <span  className="inactive">Inactive</span>}
                   </div>
                   <div className="list-item drop">  
                   <div className="dropdown">

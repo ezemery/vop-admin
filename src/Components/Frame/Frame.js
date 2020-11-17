@@ -121,7 +121,7 @@ export const AppFrame = (props) => {
             <Spacing className="initials">{UsernameInitials()}</Spacing>
               <Spacing>{UsernameCapitalize()}</Spacing>
               <Spacing>{user.email}</Spacing>
-            <Spacing><Button url={`/account/id/${accountId}/settings`} outline>Manage Your Account</Button></Spacing>
+            <Spacing><Button url={`/account/id/${accountId}/connect`} outline>Manage Your Account</Button></Spacing>
             <Spacing><Button onClick={handleLogout} plain icon={LogOutMinor}>Logout</Button></Spacing> 
           </div>
         </UserMenu>
@@ -163,12 +163,13 @@ export const AppFrame = (props) => {
             icon: StoreMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
-          {
-            label: 'Settings',
-            url: `/account/id/${accountId}/settings`,
-            icon: OrdersMajorTwotone,
-            onClick: frameContext.setIsLoading,
-          },
+          //DEPRECATED
+          // {
+          //   label: 'Settings',
+          //   url: `/account/id/${accountId}/settings`,
+          //   icon: OrdersMajorTwotone,
+          //   onClick: frameContext.setIsLoading,
+          // },
           
           // {
           //   label: 'Logout',
