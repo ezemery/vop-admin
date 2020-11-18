@@ -37,9 +37,11 @@ export const AccountId = () => {
         <Route path={`${path}/manage`}>
           <TikTokList defaultStatus="approve" key="manage" user={user} />
         </Route>
+        {/* Deprecated  
         <Route path={`${path}/settings`}>
           <Settings />
-        </Route>
+        </Route> 
+        */}
         <Route exact path={`${path}/embed`}>
           <Embed />
         </Route>
