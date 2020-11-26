@@ -11,6 +11,9 @@ export const ConnectAccount = () => {
   const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
   const userId = user.id
   const [active, setActive] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteModalActive, setDeletemodalActive] = useState(false);
+  const handleDeleteChange = useCallback((id) =>{ setDeleteId(id); setDeletemodalActive(!deleteModalActive)}, [deleteModalActive]);
   const handleChange = useCallback(() => setActive(!active), [active]);
   const [connectedAccount, setConnectedAccount] = useState([]);
   const [queryValue, setQueryValue] = useState(null);
@@ -21,7 +24,6 @@ export const ConnectAccount = () => {
   const toggleToastDeleteActive = () => setDeleteActive((deleteActive) => !deleteActive)
   const toggleToastSuccessActive = () => setSuccessActive((successActive) => !successActive)
   const toggleToastFailedActive = () => setFailedActive((failedActive) => !failedActive)
-
   const handleFiltersQueryChange =
     (value) => {
       setQueryValue(value)
@@ -35,6 +37,7 @@ export const ConnectAccount = () => {
   };
 
   const handleDelete = (id) => {
+    handleDeleteChange()
     setIsLoading()
     fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/id/${id}`, {
       method: 'DELETE',
@@ -280,13 +283,6 @@ export const ConnectAccount = () => {
           renderItem={(item) => {
             const {id, platform, type, data, status, last_finished_at} = item;
             const media = <Avatar customer size="medium" name={platform} />;
-            const shortcutActions = [
-            {
-              content: 'Delete',
-              accessibilityLabel: `Delete ${data}`,
-              onClick: ()=>{ handleDelete(id)}
-            },
-          ]
 
             return (
               <ResourceList.Item
@@ -335,7 +331,7 @@ export const ConnectAccount = () => {
                      <div style={{marginBottom:"5px"}}>
                         <Button plain icon={RefreshMinor} onClick={()=>{startImport(id)}}>Start Import</Button>
                       </div>
-                      <Button plain destructive icon={DeleteMinor} onClick={()=>{handleDelete(id)}}>
+                      <Button plain destructive icon={DeleteMinor} onClick={() => handleDeleteChange(id)}>
                         Delete
                       </Button>
                     </div>
@@ -405,6 +401,25 @@ export const ConnectAccount = () => {
             </div>
           </Social> */}
         </Modal.Section>
+      </Modal>
+
+      <Modal
+        open={deleteModalActive}
+        onClose={handleDeleteChange}
+        title="Are you sure you want to delete"
+        primaryAction={
+          {
+            content: 'Yes',
+            onAction: ()=>{handleDelete(deleteId)},
+          }
+        }
+        secondaryActions={[
+          {
+            content: 'Cancel',
+            onAction: handleDeleteChange,
+          },
+        ]}
+      >
       </Modal>
       {toastSuccessMarkup}
       {toastFailedMarkup}
