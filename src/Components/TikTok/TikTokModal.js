@@ -150,7 +150,7 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
     >
         <Row>
             <Col xs={5}>
-                <video src={currentItem.video_url} controls autoPlay="autoPlay" style={{width: "300px"}}/>
+                <video src={currentItem.media_url} controls autoPlay="autoPlay" style={{width: "300px"}}/>
             </Col>
             <Col xs={7}>
                 <div style={{width: "300px"}}>&nbsp;</div>

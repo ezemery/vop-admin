@@ -109,7 +109,7 @@ export const CustomizeEmbed = () => {
         embedPreview = <VopEmbed config={config}/>
     }
 
-
+    const embedlink = process.env.REACT_APP_EMBED_HOST;
 
     return user ? (
         <Page 
@@ -224,7 +224,7 @@ export const CustomizeEmbed = () => {
                             label="Paste the code sample below in to your e-commerce page or system to enable Vop on your store."
                             readOnly={true}
                             value={`<div data-tokshop${(embedType === 'carousel') ? '' : '-page'}-id="${user.id}" data-tokshop-template="${(template)=== "one" ? 1 : 2}" ${twitter?`data-tokshop-twitter="https://twitter.com/${twitter}"`:""} ${facebook?`data-tokshop-facebook="https://facebook.com/${facebook}"`:""} ${pinterest?`data-tokshop-pinterest="https://pinterest.com/${pinterest}"`:""}></div>
-<script src="https://cdn.tokshop.com/tokshop.v3.js" async="async" ></script>`}
+<script src="${embedlink}" async="async" ></script>`}
                             multiline={3}
                         />
 

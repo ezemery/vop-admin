@@ -125,7 +125,7 @@ export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
             <Video
             coverImg={item.cover_img}
             isMuted
-            videoUrl={item.video_url}
+            videoUrl={item.media_url}
             videoRef={videoRef}
             onClick={() => openModal(currentIndex) }
             />
