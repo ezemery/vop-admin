@@ -1,5 +1,5 @@
 import {Col, Row,Typography, Empty} from 'antd';
-import React, {useContext, useEffect, useCallback} from 'react';
+import React, {useContext, useEffect, useCallback, useMemo} from 'react';
 import { useState } from 'react';
 import {useHistory, useParams} from "react-router-dom";
 import {useForm, Controller} from 'react-hook-form';
@@ -24,7 +24,7 @@ const { Text } = Typography;
 export const Embed = () => {
     const history = useHistory();
     const [loading, setLoading] = useState(true);
-    const [embedAvailable, setEmbedAvailable] = useState(false);
+    const [embedAvailable, setEmbedAvailable] = useState(null);
     const {user} = React.useContext(UserStore);
     const {accountId} = useParams();
     const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
@@ -62,7 +62,9 @@ export const Embed = () => {
     const switchPage = () => {
         history.push(`/account/id/${accountId}/embed/customize`)
     }
+
     useEffect(() => {
+        setIsLoading();
         if(user) {
             fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + user.id, {
                 credentials: 'include',
@@ -71,16 +73,16 @@ export const Embed = () => {
                 return response.json()
             }).then(function (json) {
                 if (json.data.length > 0) {
-                    setEmbedAvailable(true)
+                    setEmbedAvailable(json.data.length)
                 }
             }).catch(function (ex) {
             });
             setLoading(false);
             unsetIsLoading();
         }
-    },[user]);
+    },[]);
 
-    let embedPreview = (
+    let embedEmpty = (
         <CalloutCard
         title="You need to approve a few videos in your Approval screen before you can embed"
         illustration="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
@@ -93,8 +95,6 @@ export const Embed = () => {
    );
 
 
-
-    if(embedAvailable === true) {
         const config = {
             appId: user.id,
             baseUrl: process.env.REACT_APP_API_HOST,
@@ -103,10 +103,9 @@ export const Embed = () => {
             body: document.body,
             debug: false,
         }
-        embedPreview = <VopEmbed config={config}/>
-    }
-
-
+        
+    const  embedPreview = useMemo(() =>  <VopEmbed config={config}/>,[embedAvailable])
+        const embedlink = process.env.REACT_APP_EMBED_HOST;
 
     return user ? (
         <Page 
@@ -131,7 +130,7 @@ export const Embed = () => {
                             label="Paste the code sample below in to your e-commerce page or system to enable Vop on your store."
                             readOnly={true}
                             value={`<div data-tokshop${(embedType === 'carousel') ? '' : '-page'}-id="${user.id}" data-tokshop-template="${(template)=== "one" ? 1 : 2}" ${twitter?`data-tokshop-twitter="https://twitter.com/${twitter}"`:""} ${facebook?`data-tokshop-facebook="https://facebook.com/${facebook}"`:""} ${pinterest?`data-tokshop-pinterest="https://pinterest.com/${pinterest}"`:""}></div>
-<script src="https://cdn.tokshop.com/tokshop.v3.js" async="async" ></script>`}
+<script src="${embedlink}" async="async" ></script>`}
                             multiline={3}
                         />
 
@@ -158,7 +157,7 @@ export const Embed = () => {
                         <DisplayText size="large">Preview</DisplayText>
                     </div>
                     <div style={{padding:"15px"}}>
-                     {embedPreview}
+                     {typeof embedAvailable === "number"? embedPreview : embedEmpty}
                     </div>
                     </Card>
                 </Col>

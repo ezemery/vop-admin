@@ -67,7 +67,6 @@ export function Video({
   rounded = true,
 }) {
   const container = useRef(null);
-
   const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   const toggleIsVideoMuted = useCallback(() => {
