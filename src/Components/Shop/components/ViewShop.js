@@ -115,7 +115,7 @@ export const ViewShop = () => {
       ));
 
       const previewShop = (url) => {
-        window.open(`https://vop.shop/${url}`,"_blank");
+        window.open(`https://${process.env.REACT_APP_VOPSHOP_HOST}/${url}`,"_blank");
       }
       const fallbackCopyTextToClipboard = (text) =>  {
         var textArea = document.createElement("textarea");
@@ -183,9 +183,8 @@ export const ViewShop = () => {
                 </div> 
               </div>
               <div style={{display:"flex"}}>
-              <div className="clipboard_copy" onClick={() => copyTextToClipboard(`vop.shop/${shop.handle}`)}> 
-                    <span className="copy">vop.shop/{shop.handle}</span><Icon source={ClipboardMinor} />
-                  
+              <div className="clipboard_copy" onClick={() => copyTextToClipboard(`${process.env.REACT_APP_VOPSHOP_HOST}/${shop.handle}`)}> 
+              <span className="copy">{process.env.REACT_APP_VOPSHOP_HOST}/{shop.handle}</span><Icon source={ClipboardMinor} />   
             </div>
                 <div className="list-item drop">  
                     <div className="">
