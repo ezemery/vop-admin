@@ -9,6 +9,7 @@ export const LoginForm = styled.div`
   ${tw`p-1 md:p-10 sm:text-left max-w-full md:max-w-3xl text-center bg-white rounded m-auto`}
   height: 400px;
 `;
+
 export const Logo = styled.svg`
   ${tw`lg:absolute lg:left-10 lg:top-10 mr-auto ml-auto mt-10 mb-20`}
   width: 80px;

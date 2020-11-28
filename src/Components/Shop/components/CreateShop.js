@@ -89,7 +89,7 @@ const Store = () => {
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <FormLayout>
                             
-                        <Controller as={TextField}  control={control} type="text"  label="Handle" placeholder="Enter a handle"  name="handle"  connectedLeft={<Button disabled>https://vop.shop/</Button>} error={error ? 'Field cannot be empty' : null}/>
+                        <Controller as={TextField}  control={control} type="text"  label="Handle" placeholder="Enter a handle"  name="handle"  connectedLeft={<Button disabled>{process.env.REACT_APP_VOPSHOP_HOST}/</Button>} error={error ? 'Field cannot be empty' : null}/>
                         <Controller as={TextField}  control={control} type="text"  label="Shop Title" placeholder="Enter a shop title"  name="title" error={error ? 'Field cannot be empty' : null} />
                         <Controller as={TextField}  control={control} type="text" label="Shop Bio" placeholder="Enter a short bio"  name="description" multiline={4} error={error ? 'Field cannot be empty' : null}/>
                         <div style={{display:"flex", justifyContent:"flex-end"}}><Button primary submit>Save</Button></div>
