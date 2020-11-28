@@ -115,7 +115,7 @@ export const ViewShop = () => {
       ));
 
       const previewShop = (url) => {
-        window.open(`https://${process.env.REACT_APP_VOPSHOP_HOST}/${url}`,"_blank");
+        window.open(`${process.env.REACT_APP_VOPSHOP_HOST}/${url}`,"_blank");
       }
       const fallbackCopyTextToClipboard = (text) =>  {
         var textArea = document.createElement("textarea");
