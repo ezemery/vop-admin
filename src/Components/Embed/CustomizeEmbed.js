@@ -13,7 +13,8 @@ import {
     DisplayText,
     Layout,
     Card,
-    Modal
+    Modal,
+    CalloutCard
     } from '@shopify/polaris';
 import {FrameStore, UserStore} from "../../Context/store"
 import VopEmbed from '@vop/embed';
@@ -72,7 +73,7 @@ export const CustomizeEmbed = () => {
                 return response.json()
             }).then(function (json) {
                 if (json.data.length > 0) {
-                    setEmbedAvailable(true)
+                    setEmbedAvailable(json.data.length)
                 }
             }).catch(function (ex) {
             });
@@ -81,35 +82,34 @@ export const CustomizeEmbed = () => {
         }
     },[user]);
 
-    let embedPreview = (<Empty
-        image="/tiktok.png"
-        imageStyle={{
-            height: 60,
-        }}
-        description={
-            <span><br />
-        <b level={2}>You need to approve videos.</b> You need to approve a few videos in your Approval screen before you can embed.
-      </span>
-        }
-    >
-        <Link to="/" ><Button primary>Approve Videos</Button></Link>
-    </Empty>);
 
 
 
-    if(embedAvailable === true) {
-        const config = {
-            appId: user.id,
-            baseUrl: process.env.REACT_APP_API_HOST,
-            component: embedType,
-            styles: {},
-            body: document.body,
-            debug: false,
-        }
-        embedPreview = <VopEmbed config={config}/>
-    }
+            let embedEmpty = (
+                <CalloutCard
+                title="You need to approve a few videos in your Approval screen before you can embed"
+                illustration="https://cdn.shopify.com/s/assets/admin/checkout/settings-customizecart-705f57c725ac05be5a34ec20c05b94298cb8afd10aac7bd9c7ad02030f48cfa0.svg"
+                primaryAction={{
+                content: 'Approve Videos',
+                url: '/',
+                }}
+            >
+            </CalloutCard>
+            );
 
-    const embedlink = process.env.REACT_APP_EMBED_HOST;
+            const config = {
+                appId: user.id,
+                baseUrl: process.env.REACT_APP_API_HOST,
+                component: embedType,
+                template:2,
+                styles: {},
+                body: document.body,
+                debug: false,
+                embedkey:embedAvailable,
+            } 
+
+            const  embedPreview = <VopEmbed config={config} />
+            const embedlink = process.env.REACT_APP_EMBED_HOST;
 
     return user ? (
         <Page 
@@ -251,7 +251,7 @@ export const CustomizeEmbed = () => {
                         <DisplayText size="large">Preview</DisplayText>
                     </div>
                     <div style={{padding:"15px"}}>
-                     {embedPreview}
+                    {typeof embedAvailable === "number"? embedPreview : embedEmpty}
                     </div>
                     </Card>
                 </Col>
