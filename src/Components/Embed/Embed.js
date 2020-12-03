@@ -1,6 +1,5 @@
-import {Col, Row,Typography, Empty} from 'antd';
-import React, {useContext, useEffect, useCallback, useMemo} from 'react';
-import { useState } from 'react';
+import {Col, Row,Typography} from 'antd';
+import React, {useState,useContext, useEffect, useCallback, useMemo} from 'react';
 import {useHistory, useParams} from "react-router-dom";
 import {useForm, Controller} from 'react-hook-form';
 import {
@@ -34,6 +33,7 @@ export const Embed = () => {
     const [facebook, setFacebook] = useState(null);
     const [pinterest, setPinterest] = useState(null);
 
+
     const twitterChange = useCallback(
         (value) => setTwitter(value),
         [],
@@ -65,6 +65,7 @@ export const Embed = () => {
 
     useEffect(() => {
         setIsLoading();
+        setLoading(true);
         if(user) {
             fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + user.id, {
                 credentials: 'include',
@@ -79,6 +80,10 @@ export const Embed = () => {
             });
             setLoading(false);
             unsetIsLoading();
+
+            return ()=>{
+                setEmbedAvailable(0)
+            }
         }
     },[]);
 
@@ -94,18 +99,19 @@ export const Embed = () => {
       </CalloutCard>
    );
 
-
-        const config = {
-            appId: user.id,
-            baseUrl: process.env.REACT_APP_API_HOST,
-            component: embedType,
-            styles: {},
-            body: document.body,
-            debug: false,
-        }
-        
-    const  embedPreview = useMemo(() =>  <VopEmbed config={config}/>,[embedAvailable])
-        const embedlink = process.env.REACT_APP_EMBED_HOST;
+   const config = {
+    appId: user.id,
+    baseUrl: process.env.REACT_APP_API_HOST,
+    component: embedType,
+    template:2,
+    styles: {},
+    body: document.body,
+    debug: false,
+    embedKey:embedAvailable,
+} 
+  
+const  embedPreview = useMemo(()=>{return<VopEmbed config={config} />},[embedAvailable, loading])
+    const embedlink = process.env.REACT_APP_EMBED_HOST;
 
     return user ? (
         <Page 
