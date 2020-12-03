@@ -160,7 +160,7 @@ const  embedPreview = useMemo(()=>{return<VopEmbed config={config} />},[embedAva
                 <Col lg={24} xs={24}>
                     <Card className="text-align">
                     <div style={{padding:"15px"}}>
-                        <DisplayText size="large">Preview {embedAvailable}</DisplayText>
+                        <DisplayText size="large">Preview</DisplayText>
                     </div>
                     <div style={{padding:"15px"}}>
                      {typeof embedAvailable === "number"? embedPreview : embedEmpty}
