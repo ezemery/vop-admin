@@ -15,7 +15,7 @@ export default function ShopList({handle,title,description, account_id, id}) {
 
       useEffect(()=>{
         setIsLoading()
-        fetch(process.env.REACT_APP_API_HOST + '/embed/feed/' + account_id, {
+        fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${account_id}?limit=10`, {
           credentials: 'include',
           method: 'GET',
       }).then(function (response) {
