@@ -106,6 +106,7 @@ export const CustomizeEmbed = () => {
                 body: document.body,
                 debug: false,
                 embedkey:embedAvailable,
+                socials:{twitter,facebook,pinterest}
             } 
 
             const  embedPreview = <VopEmbed config={config} />
