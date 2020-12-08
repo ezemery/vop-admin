@@ -101,7 +101,7 @@ export const CustomizeEmbed = () => {
                 appId: user.id,
                 baseUrl: process.env.REACT_APP_API_HOST,
                 component: embedType,
-                template:2,
+                template:template === "one"?1:2,
                 styles: {},
                 body: document.body,
                 debug: false,
