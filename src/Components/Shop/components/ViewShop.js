@@ -179,7 +179,7 @@ export const ViewShop = () => {
               <Image/>
                 <div>
                     <DisplayText size="medium">{shop.title}</DisplayText>
-                    <p style={{maxWidth:"32rem"}}>{shop.description}</p>
+                    <p style={{maxWidth:"48rem"}}>{shop.description}</p>
                 </div> 
               </div>
               <div style={{display:"flex"}}>

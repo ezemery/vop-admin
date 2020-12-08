@@ -1,7 +1,7 @@
 import tw, {styled} from 'twin.macro';
 
 export const ShopContent = styled.div`
-${tw`h-48 flex mt-10 mb-10 justify-between`}
+${tw`flex justify-between py-10`}
 border-bottom:1px solid #DFE3E8;
 .clipboard_copy{
     ${tw`inline-flex rounded-full py-2 px-4 justify-between items-center`}

@@ -82,13 +82,13 @@ export default function ShopList({handle,title,description, account_id, id}) {
                  <div style={{display:"flex", marginBottom:"20px", cursor:"pointer"}} onClick={()=>showMore(id)}>
                     <Image/>
                     <div>
-                    <DisplayText size="medium" >{title}</DisplayText>
-                    <p>{description}</p>
+                    <DisplayText size="medium">{title}</DisplayText>
+                    <p style={{maxWidth:"20rem"}}>{description}</p>
                     </div>
                    
                  </div>
                 <div className="clipboard_copy" onClick={() => copyTextToClipboard(`${process.env.REACT_APP_VOPSHOP_HOST}/${handle}`)}> 
-                <span className="copy">{process.env.REACT_APP_VOPSHOP_HOST}/{handle}</span><Icon source={ClipboardMinor} />
+                  <span className="copy">{process.env.REACT_APP_VOPSHOP_HOST}/{handle}</span><Icon source={ClipboardMinor} />
                 </div>
              </div>
              {toastMarkup}
