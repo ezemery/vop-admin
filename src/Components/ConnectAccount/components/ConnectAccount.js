@@ -4,6 +4,7 @@ import {useParams} from 'react-router-dom';
 import {HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
 import {Social, ConnectList, Resource} from '../styles';
 import {UserStore, FrameStore} from "../../../Context/store";
+import instagram from '../../Icons/instagram.png'
 
 export const ConnectAccount = () => {
   const {accountId} = useParams();
@@ -383,9 +384,9 @@ export const ConnectAccount = () => {
               </Button>
             </div>
           </Social>
-          {/* <Social>
+          <Social>
             <div style={{display: 'flex'}}>
-              <Snapchat />
+              <img src={instagram} alt="instagram logo"/>
               <div style={{marginLeft: '20px'}}>
                 {' '}
                 <Heading>Instagram</Heading>{' '}
@@ -394,12 +395,12 @@ export const ConnectAccount = () => {
             </div>
             <div>
               {' '}
-              <Button primary url="/">
+              <Button primary  url={`/account/id/${accountId}/connect/instagram`}>
                 {' '}
                 Connect Account
               </Button>
             </div>
-          </Social> */}
+          </Social>
         </Modal.Section>
       </Modal>
 

@@ -4,7 +4,7 @@ import {TikTokList} from '../TikTok';
 import {Embed, CustomizeEmbed} from '../Embed';
 import {Settings} from '../Settings';
 import {Shop, CreateShop, ViewShop, EditShop} from '../Shop';
-import {ConnectAccount, TiktokConnect} from '../ConnectAccount';
+import {ConnectAccount, TiktokConnect, InstagramConnect} from '../ConnectAccount';
 
 import {AppFrame} from '../Frame';
 import {UserStore} from '../../Context/store';
@@ -33,6 +33,9 @@ export const AccountId = () => {
         </Route>
         <Route path={`${path}/connect/tiktok`}>
           <TiktokConnect />
+        </Route>
+        <Route path={`${path}/connect/instagram`}>
+          <InstagramConnect />
         </Route>
         <Route path={`${path}/manage`}>
           <TikTokList defaultStatus="approve" key="manage" user={user} />
