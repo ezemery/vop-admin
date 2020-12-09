@@ -52,7 +52,6 @@ export const TikTokList = ({
   const [more, setMore] = useState(false);
 
   const [data, updateData] = useReducer(videoReducer, videoInitial);
-  console.log("data", data)
 
   const removeItem = (index) => {
     updateData({type: 'remove', index: index})
