@@ -298,7 +298,14 @@ export const ConnectAccount = () => {
                     <h3>
                        <TextStyle variation="strong"> &nbsp; &nbsp;Tiktok</TextStyle>
                     </h3>
-                     </> : null
+                     </> : platform === "instagram" ? 
+                      <> 
+                     <img src={instagram} alt="instagram connect" />
+                      <h3>
+                         <TextStyle variation="strong"> &nbsp; &nbsp;Instagram</TextStyle>
+                      </h3>
+                       </> 
+                    :null
                    }
                 </div>
                   <div className="list-item">
@@ -306,7 +313,7 @@ export const ConnectAccount = () => {
                   <>
                   <Icon source={HashtagMajorMonotone}/> HashTag</> : 
                   type ==="username" ?
-                  <> <Icon source={CustomersMajorMonotone}/> Username</>:null
+                  <> <Icon source={CustomersMajorMonotone}/> Username</>: type==="ig_business_id" ? <> <Icon source={CustomersMajorMonotone}/> Instagram</>:null
                   }
                   </div>
 
@@ -314,7 +321,7 @@ export const ConnectAccount = () => {
                     {type == "tag" ? 
                   <>#{data}</> : 
                   type ==="username" ?
-                <>@{data}</>:null
+                <>@{data}</>:type ==="ig_business_id" ? <>@{data}</>:null
                   }
                   </div>
                   <div className="list-item">

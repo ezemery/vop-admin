@@ -36,7 +36,7 @@ export const InstagramConnect = () => {
   const {register, handleSubmit, control} = useForm();
   const [type, setType] = useState("personal")
   const handleChange = useCallback((_checked, newValue) => setType(newValue), []);
-
+  console.log(process.env)
   useEffect(() => {
     loadFB(() => {
       setLoaded(true);
@@ -57,7 +57,7 @@ export const InstagramConnect = () => {
   const loadSDK = useCallback(() => {
     window.fbAsyncInit = function() {
         window.FB.init({
-          appId            : "1065206397286157",
+          appId            : process.env.REACT_APP_FBID,
           autoLogAppEvents : true,
           xfbml            : true,
           version          : 'v9.0'
@@ -93,31 +93,81 @@ export const InstagramConnect = () => {
       })
   }
 
+  const fetchProfIG = (access_token,fb_page_id ) => {
+    console.log(access_token,fb_page_id)
+    const data = {
+      "access_token": access_token,
+      "fb_page_id": fb_page_id
+  }
+  return fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/instagram/professional-instagram-id`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then((response)=>{
+        return response.json();
+    }).then((json)=>{
+        return json;
+    })
+  }
+
+  const connectProfessional = (ig_business_id,access_token ) => {
+    console.log(ig_business_id, access_token)
+    const data = {
+      "platform":"instagram",
+      "type": "ig_business_id",
+      "data": ig_business_id,
+      "platform_data": {
+          "account_type": "professional",
+          "auth_code": access_token
+      }
+    }
+  return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then((response)=>{
+        return response.json();
+    }).then((json)=>{
+        return json;
+    })
+  }
+
   const connectPersonal = (code) => {
+    const length = code.length;
+    const newCode = code.slice(0,length - 2)
+    console.log("newCode", newCode, "code",code)
       const data = {
         "platform":"instagram",
         "platform_data": {
             "account_type": "personal",
-            "auth_code": code,
+            "auth_code": newCode,
         }
       }
-    return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/2/account/id/2/connected/create`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      }).then((response)=>{
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-      }).then((json)=> {
-          nextScreen("connected")
-          return json;
-      })
+      console.log(data)
+    // return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(data),
+    //   }).then((response)=>{
+    //     if (!response.ok) {
+    //         throw new Error('Network response was not ok');
+    //       }
+    //       return response.json();
+    //   }).then((json)=> {
+    //       nextScreen("connected")
+    //       return json;
+    //   })
   } 
+
   const fetchFBPages = (access_token) => {
     const data = {
         "access_token": access_token
@@ -142,7 +192,8 @@ export const InstagramConnect = () => {
   const fBCallback =  async (response) => {
     console.log(response)
     const FBPages = await fetchFBPages(response.authResponse.accessToken);
-    console.log(FBPages)
+    const IGPage = await fetchProfIG(FBPages.pages[0].access_token,FBPages.pages[0].id)
+    const connectProf = await connectProfessional(IGPage.data.instagram_business_account.id,response.authResponse.accessToken)
   }
 
 

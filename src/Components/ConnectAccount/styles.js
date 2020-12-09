@@ -54,7 +54,7 @@ export const ConnectList = styled.div`
     padding: 12px 10px;
     z-index: 999999999;
     right: 20px;
-    top: 57px;
+    top: 45px;
     @media only screen and (max-width: 600px){
       right: 0px;
       top: 250px;
