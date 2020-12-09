@@ -7,7 +7,6 @@ import {UserStore} from "../../Context/store";
 
 
 export const TikTokCard = ({currentIndex, item, openModal, removeItem}) => {
-
   const [play, setPlay] = useState(false);
 
   const { accountId } = useParams();

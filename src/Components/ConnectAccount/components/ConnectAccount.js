@@ -4,6 +4,7 @@ import {useParams} from 'react-router-dom';
 import {HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
 import {Social, ConnectList, Resource} from '../styles';
 import {UserStore, FrameStore} from "../../../Context/store";
+import instagram from '../../Icons/instagram.png'
 
 export const ConnectAccount = () => {
   const {accountId} = useParams();
@@ -297,7 +298,14 @@ export const ConnectAccount = () => {
                     <h3>
                        <TextStyle variation="strong"> &nbsp; &nbsp;Tiktok</TextStyle>
                     </h3>
-                     </> : null
+                     </> : platform === "instagram" ? 
+                      <> 
+                     <img src={instagram} alt="instagram connect" />
+                      <h3>
+                         <TextStyle variation="strong"> &nbsp; &nbsp;Instagram</TextStyle>
+                      </h3>
+                       </> 
+                    :null
                    }
                 </div>
                   <div className="list-item">
@@ -305,7 +313,7 @@ export const ConnectAccount = () => {
                   <>
                   <Icon source={HashtagMajorMonotone}/> HashTag</> : 
                   type ==="username" ?
-                  <> <Icon source={CustomersMajorMonotone}/> Username</>:null
+                  <> <Icon source={CustomersMajorMonotone}/> Username</>: type==="ig_business_id" ? <> <Icon source={CustomersMajorMonotone}/> Instagram</>:null
                   }
                   </div>
 
@@ -313,7 +321,7 @@ export const ConnectAccount = () => {
                     {type == "tag" ? 
                   <>#{data}</> : 
                   type ==="username" ?
-                <>@{data}</>:null
+                <>@{data}</>:type ==="ig_business_id" ? <>@{data}</>:null
                   }
                   </div>
                   <div className="list-item">
@@ -383,9 +391,9 @@ export const ConnectAccount = () => {
               </Button>
             </div>
           </Social>
-          {/* <Social>
+          <Social>
             <div style={{display: 'flex'}}>
-              <Snapchat />
+              <img src={instagram} alt="instagram logo"/>
               <div style={{marginLeft: '20px'}}>
                 {' '}
                 <Heading>Instagram</Heading>{' '}
@@ -394,12 +402,12 @@ export const ConnectAccount = () => {
             </div>
             <div>
               {' '}
-              <Button primary url="/">
+              <Button primary  url={`/account/id/${accountId}/connect/instagram`}>
                 {' '}
                 Connect Account
               </Button>
             </div>
-          </Social> */}
+          </Social>
         </Modal.Section>
       </Modal>
 
