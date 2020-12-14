@@ -39,20 +39,22 @@ export const findUserInUsersById = (users, id) => {
     return users.find(element => element.id.toString() === id);
 }
 
-export const getVideos = (lastVideo, status, hasTags, query, userId, accountId) => {
+export const getVideos = (lastVideo, status, hasTags, query, userId, accountId) => { 
+
     const params = {
         max_id: lastVideo,
         status: status,
         has_tags: hasTags,
         query: query,
     };
-
+    console.log(params)
     const esc = encodeURIComponent;
     const queryString = Object.keys(params)
         .filter(k => params[k] !== "")
         .map(k => esc(k) + '=' + esc(params[k]))
         .join('&');
-    return fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/'+userId+'/account/id/'+accountId+'/content?'+queryString, {
+        console.log("queryString",queryString);
+    return fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/'+userId+'/account/id/'+accountId+'/content?'+ queryString, {
         method: 'GET',
         credentials: 'include',
         headers: {

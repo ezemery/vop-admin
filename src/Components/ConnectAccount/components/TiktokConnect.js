@@ -28,6 +28,7 @@ export const TiktokConnect = () => {
   const history = useHistory();
   const [form, setForm] = useState('');
   const [invalidUsername, setInvalidUsername] = useState(false);
+  const [alreadyExists, setAlreadyExists] = useState(false)
   const [loading, setLoading] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -74,6 +75,7 @@ export const TiktokConnect = () => {
 
   const setUsername = ({username}) => {
     setInvalidUsername(false);
+    setAlreadyExists(false);
     setLoading(true);
 
     if(!username ){
@@ -93,7 +95,13 @@ export const TiktokConnect = () => {
       body: JSON.stringify(data),
     })
       .then((response) => {
+        console.log(response)
         if (!response.ok) {
+          if(response.status ===  409){
+            setAlreadyExists(true)
+          }else if(response.status ===  400){
+            setInvalidUsername(true);
+          }
           throw new Error('Network response was not ok');
         }
         setInvalidUsername(false);
@@ -104,12 +112,12 @@ export const TiktokConnect = () => {
           setLoading(false);
           nextScreen("connected")
         }
-        setInvalidUsername(true);
-        throw new Error('Network response was not ok');
+          setInvalidUsername(true);
+          throw new Error('Network response was not ok');
+        
       })
       .catch((ex) => {
         setLoading(false);
-        setInvalidUsername(true);
       });
   
   };
@@ -121,6 +129,7 @@ export const TiktokConnect = () => {
 
   const setTags = ({tag}) => {
     setInvalidUsername(false);
+    setAlreadyExists(false);
     setLoading(true);
     if(!tag ){
       setLoading(false);
@@ -140,6 +149,12 @@ export const TiktokConnect = () => {
     })
       .then((response) => {
         if (!response.ok) {
+          console.log(response)
+          if(response.status ===  409){
+            setAlreadyExists(true)
+          }else if(response.status ===  400){
+            setInvalidUsername(true);
+          }
           throw new Error('Network response was not ok');
         }
         setInvalidUsername(false);
@@ -150,12 +165,11 @@ export const TiktokConnect = () => {
           setLoading(false);
           nextScreen("connected")
         }
-        setInvalidUsername(true);
-        throw new Error('Network response was not ok');
+          setInvalidUsername(true);
+          throw new Error('Network response was not ok');
       })
       .catch((ex) => {
         setLoading(false);
-        setInvalidUsername(true);
       });
   };
 
@@ -384,7 +398,7 @@ export const TiktokConnect = () => {
                 as={TextField}
                 control={control}
                 prefix={<Icon source={MentionMajorMonotone} />}
-                error={invalidUsername ? 'Username is invalid' : null}
+                error={invalidUsername ? 'Username is invalid' : alreadyExists ?"Username already exists":null}
                 label="Username"
                 placeholder="Tiktok Username"
                 labelHidden
@@ -448,7 +462,7 @@ export const TiktokConnect = () => {
                 as={TextField}
                 control={control}
                 prefix={<Icon source={HashtagMajorMonotone} />}
-                error={invalidUsername ? 'Tag is invalid' : null}
+                error={invalidUsername ? 'Tag is invalid' : alreadyExists ? "Tag already exists":null}
                 placeholder="Tiktok Tag"
                 labelHidden
                 type="text"
