@@ -36,17 +36,18 @@ export const InstagramConnect = () => {
   const {register, handleSubmit, control} = useForm();
   const [type, setType] = useState("personal")
   const handleChange = useCallback((_checked, newValue) => setType(newValue), []);
+
   useEffect(() => {
     loadFB(() => {
       setLoaded(true);
     });
 
     const url = window.location.href;
-    const splitCode = url.split("code=")
+    const splitCode = url.split("code=");
+    const redirectURL = url.split("?")
     if(splitCode.length > 1){
-        console.log(splitCode[1]);
-        const code = splitCode[1] 
-        connectPersonal(code)
+        console.log("code",splitCode[1],"url" ,redirectURL[0]);
+        connectPersonal(splitCode[1], redirectURL[0])
     }
     
   },[]);
@@ -137,34 +138,34 @@ export const InstagramConnect = () => {
     })
   }
 
-  const connectPersonal = (code) => {
+  const connectPersonal = (code, redirect_url) => {
     const length = code.length;
     const newCode = code.slice(0,length - 2)
-    console.log("newCode", newCode, "code",code)
       const data = {
         "platform":"instagram",
         "platform_data": {
             "account_type": "personal",
             "auth_code": newCode,
+            "redirect_url": redirect_url
         }
       }
       console.log(data)
-    // return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
-    //     method: 'POST',
-    //     credentials: 'include',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(data),
-    //   }).then((response)=>{
-    //     if (!response.ok) {
-    //         throw new Error('Network response was not ok');
-    //       }
-    //       return response.json();
-    //   }).then((json)=> {
-    //       nextScreen("connected")
-    //       return json;
-    //   })
+    return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }).then((response)=>{
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+      }).then((json)=> {
+          nextScreen("connected")
+          return json;
+      })
   } 
 
   const fetchFBPages = (access_token) => {

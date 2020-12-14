@@ -12,6 +12,7 @@ import {Video} from '../Video';
 import {Card, ButtonGroup, Button, Text} from './styles'
 
 export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
+  console.log("item", item)
     const videoRef = React.createRef();
     let params = {
         justification: 'L',
@@ -122,13 +123,14 @@ export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
       ),[])
     return (
         <Card>
+            {item.media_type ==="video"?
             <Video
             coverImg={item.cover_img}
             isMuted
             videoUrl={item.media_url}
             videoRef={videoRef}
-            onClick={() => openModal(currentIndex) }
-            />
+            onClick={() => openModal(currentIndex)}/>
+            :<img src={item.media_url} style={{objectFit:"cover", height:"100%"}}/>}
             <Text> <Tiktok/> <div style={{textAlign:"center", marginRight:"10px", marginLeft:"10px"}}>{user.username} </div><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></Text>
             <ButtonGroup>
                 <Button onClick={() => SetInfo("reject")}><Icon source={CircleCancelMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Dismiss</div> </Button>

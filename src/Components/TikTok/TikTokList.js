@@ -5,8 +5,8 @@ import {Row, Col} from 'react-flexbox-grid';
 import InfiniteScroll from 'react-infinite-scroller';
 import {EmptyState, Button, Page, Banner} from '@shopify/polaris';
 import {useHistory, useParams} from 'react-router-dom';
+import {TikTokModal} from './TikTokModal';
 import {TikTokCard} from './TikTokCard';
-import {TiktokContainer} from './TiktokContainer';
 import {FrameStore, UserStore, VideoStore} from '../../Context/store';
 import {useVideoFetch} from "../../Hooks/video.hook";
 
@@ -114,15 +114,13 @@ export const TikTokList = ({
   };
 
   let feedList = data.map((item, idx) => (
-    <TiktokContainer
-      item={item.media}
+    <TikTokCard
+      item={item}
       removeItem={removeItem}
-      currentIndex={currentIndex}
-      key={idx}
+      currentIndex={idx}
+      key={item.id}
       openModal={openModal}
       user={user}
-      setModal={setModal}
-      modal={modal}
     />
   ));
 
@@ -164,7 +162,7 @@ export const TikTokList = ({
           </div>
         }
       >
-        <Row gutter={[32]}>
+        <Row gutter={[32]} type="flex">
           <VideoStore.Provider value={videoFetch}>
             {feedList}
           </VideoStore.Provider>
@@ -250,6 +248,19 @@ export const TikTokList = ({
       </Row>
       <br />
       {feedList}
+      {data.length > 0 ? (
+        <TikTokModal
+          user={user}
+          setModal={setModal}
+          data={data}
+          currentIndex={currentIndex}
+          modal={modal}
+          key={currentIndex}
+          removeItem={removeItem}
+        />
+      ) : (
+        ''
+      )}
     </Page>
   );
 };
