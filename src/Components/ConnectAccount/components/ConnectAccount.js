@@ -391,7 +391,7 @@ export const ConnectAccount = () => {
               </Button>
             </div>
           </Social>
-          <Social>
+          {/* <Social>
             <div style={{display: 'flex'}}>
               <img src={instagram} alt="instagram logo"/>
               <div style={{marginLeft: '20px'}}>
@@ -407,7 +407,7 @@ export const ConnectAccount = () => {
                 Connect Account
               </Button>
             </div>
-          </Social>
+          </Social> */}
         </Modal.Section>
       </Modal>
 

@@ -34,9 +34,9 @@ export const AccountId = () => {
         <Route path={`${path}/connect/tiktok`}>
           <TiktokConnect />
         </Route>
-        <Route path={`${path}/connect/instagram`}>
+        {/* <Route path={`${path}/connect/instagram`}>
           <InstagramConnect />
-        </Route>
+        </Route> */}
         <Route path={`${path}/manage`}>
           <TikTokList defaultStatus="approve" key="manage" user={user} />
         </Route>
@@ -54,9 +54,9 @@ export const AccountId = () => {
         <Route exact path={`${path}/connect`}>
           <ConnectAccount />
         </Route>
-        <Route exact path={`${path}/shop`}>
+        {/* <Route exact path={`${path}/shop`}>
           <Shop />
-        </Route>
+        </Route> */}
         <Route path={`${path}/shop/create`}>
           <CreateShop />
         </Route>
