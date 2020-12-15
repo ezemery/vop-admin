@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useEffect} from 'react';
+import React, {useCallback, useState, useEffect, useContext} from 'react';
 import {
   EmptyState,
   Button,
@@ -20,7 +20,7 @@ import {MentionMajorMonotone,HashtagMajorMonotone} from '@shopify/polaris-icons'
 import {useForm, Controller} from 'react-hook-form';
 import {Switch, Route, useRouteMatch,useHistory, useParams} from 'react-router-dom';
 import {Container, FormField} from '../styles';
-import {UserStore} from "../../../Context/store";
+import {UserStore,FrameStore} from "../../../Context/store";
 import instagram from '../../Icons/instagram.png'
 import {loadFB} from '../../../services'
 
@@ -36,6 +36,7 @@ export const InstagramConnect = () => {
   const {register, handleSubmit, control} = useForm();
   const [type, setType] = useState("personal")
   const handleChange = useCallback((_checked, newValue) => setType(newValue), []);
+  const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
   useEffect(() => {
     loadFB(() => {
@@ -75,6 +76,7 @@ export const InstagramConnect = () => {
 
 
   const IGAuthUrl = (redirect_url) => {
+    setIsLoading()
       const data = {
         "redirect_url":redirect_url
     }
@@ -86,15 +88,15 @@ export const InstagramConnect = () => {
         },
         body: JSON.stringify(data),
       }).then((response)=>{
-
           return response.json();
       }).then((json)=>{
+        unsetIsLoading()
           return json;
       })
   }
 
   const fetchProfIG = (access_token,fb_page_id ) => {
-    console.log(access_token,fb_page_id)
+    setIsLoading()
     const data = {
       "access_token": access_token,
       "fb_page_id": fb_page_id
@@ -109,12 +111,13 @@ export const InstagramConnect = () => {
     }).then((response)=>{
         return response.json();
     }).then((json)=>{
+        unsetIsLoading()
         return json;
     })
   }
 
   const connectProfessional = (ig_business_id,access_token ) => {
-    console.log(ig_business_id, access_token)
+    setIsLoading()
     const data = {
       "platform":"instagram",
       "type": "ig_business_id",
@@ -134,6 +137,7 @@ export const InstagramConnect = () => {
     }).then((response)=>{
         return response.json();
     }).then((json)=>{
+        unsetIsLoading()
         return json;
     })
   }
@@ -149,7 +153,7 @@ export const InstagramConnect = () => {
             "redirect_url": redirect_url
         }
       }
-      console.log(data)
+      setIsLoading()
     return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
         method: 'POST',
         credentials: 'include',
@@ -163,6 +167,7 @@ export const InstagramConnect = () => {
           }
           return response.json();
       }).then((json)=> {
+          unsetIsLoading()
           nextScreen("connected")
           return json;
       })
@@ -172,6 +177,7 @@ export const InstagramConnect = () => {
     const data = {
         "access_token": access_token
     }
+    setIsLoading()
     return fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/instagram/fb-pages`, {
         method: 'POST',
         credentials: 'include',
@@ -185,6 +191,7 @@ export const InstagramConnect = () => {
           }
           return response.json();
       }).then((json)=>{
+          unsetIsLoading();
           return json;
       })
   }
