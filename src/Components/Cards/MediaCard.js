@@ -10,9 +10,9 @@ import {
   } from '@shopify/polaris';
 import {Video} from '../Video';
 import {Card, ButtonGroup, Button, Text} from './styles'
+import instagram from '../Icons/instagram.png';
 
 export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
-  console.log("item", item)
     const videoRef = React.createRef();
     let params = {
         justification: 'L',
@@ -130,8 +130,8 @@ export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
             videoUrl={item.media_url}
             videoRef={videoRef}
             onClick={() => openModal(currentIndex)}/>
-            :<img src={item.media_url} style={{objectFit:"cover", height:"100%"}}/>}
-            <Text> <Tiktok/> <div style={{textAlign:"center", marginRight:"10px", marginLeft:"10px"}}>{user.username} </div><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></Text>
+            :<img src={item.media_url} style={{objectFit:"cover", height:"90%"}}/>}
+            <Text> {item.platform ==="instagram"?<img src={instagram} style={{height:"15px"}}/>:<Tiktok/>} <div style={{textAlign:"center", marginRight:"10px", marginLeft:"10px"}}>{user.username} </div><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></Text>
             <ButtonGroup>
                 <Button onClick={() => SetInfo("reject")}><Icon source={CircleCancelMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Dismiss</div> </Button>
                 <Button onClick={() => openModal(currentIndex)} style={{borderRight:"1px solid #e2e8f0"}}> <Icon source={CircleTickMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Start Approval</div> </Button>

@@ -155,7 +155,7 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
     >
         <Row>
             <Col xs={5}>
-               {currentItem.media_type==="video"?<video src={currentItem.media_url} controls autoPlay="autoPlay" style={{width: "300px"}}/>: <img src={currentItem.media_url} style={{objectFit:"cover", height:"100%"}}/>} 
+               {currentItem.media_type==="video"?<video src={currentItem.media_url} controls autoPlay="autoPlay" style={{width: "300px"}}/>: <img src={currentItem.media_url} style={{objectFit:"cover", height:"400px"}}/>} 
             </Col>
             <Col xs={7}>
                 <div style={{width: "300px"}}>&nbsp;</div>

@@ -39,13 +39,14 @@ export const findUserInUsersById = (users, id) => {
     return users.find(element => element.id.toString() === id);
 }
 
-export const getVideos = (lastVideo, status, hasTags, query, userId, accountId) => { 
+export const getVideos = (lastVideo, status, hasTags, query, userId, accountId,nextVideo ) => { 
 
     const params = {
-        max_id: lastVideo,
+       // max_id: lastVideo,
         status: status,
         has_tags: hasTags,
         query: query,
+        page:nextVideo,
     };
     console.log(params)
     const esc = encodeURIComponent;

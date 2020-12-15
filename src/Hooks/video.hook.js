@@ -16,6 +16,7 @@ export const useVideoFetch = () => {
         query,
         userId,
         accountId,
+        nextVideo
     ) => {
         try {
             const videos = await getVideos(
@@ -25,6 +26,7 @@ export const useVideoFetch = () => {
                 query,
                 userId,
                 accountId,
+                nextVideo
             );
             setVideoState({videos, loading: false, error: false});
         } catch (error) {

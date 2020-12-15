@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState,useContext} from 'react';
 import {
   EmptyState,
   Button,
@@ -19,8 +19,7 @@ import {MentionMajorMonotone,HashtagMajorMonotone} from '@shopify/polaris-icons'
 import {useForm, Controller} from 'react-hook-form';
 import {Switch, Route, useRouteMatch,useHistory, useParams} from 'react-router-dom';
 import {Container, FormField} from '../styles';
-import {UserStore} from "../../../Context/store";
-
+import {UserStore,FrameStore} from "../../../Context/store";
 export const TiktokConnect = () => {
   const {accountId} = useParams();
   const {user} = React.useContext(UserStore);
@@ -34,6 +33,7 @@ export const TiktokConnect = () => {
   const [inputValue, setInputValue] = useState('');
   const {register, handleSubmit, control} = useForm();
   const [textFieldValue, setTextFieldValue] = useState('');
+  const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
   const handleTextFieldChange = useCallback(
     (value) => setTextFieldValue(value),
     [],
@@ -77,7 +77,7 @@ export const TiktokConnect = () => {
     setInvalidUsername(false);
     setAlreadyExists(false);
     setLoading(true);
-
+    setIsLoading()
     if(!username ){
       setLoading(false);
       setInvalidUsername(true);
@@ -109,6 +109,7 @@ export const TiktokConnect = () => {
       })
       .then((json) => {
         if (json.success) {
+          unsetIsLoading()
           setLoading(false);
           nextScreen("connected")
         }
@@ -131,6 +132,7 @@ export const TiktokConnect = () => {
     setInvalidUsername(false);
     setAlreadyExists(false);
     setLoading(true);
+    setIsLoading()
     if(!tag ){
       setLoading(false);
       setInvalidUsername(true);
@@ -162,6 +164,7 @@ export const TiktokConnect = () => {
       })
       .then((json) => {
         if (json.success) {
+          unsetIsLoading();
           setLoading(false);
           nextScreen("connected")
         }
