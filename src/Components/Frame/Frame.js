@@ -157,12 +157,12 @@ export const AppFrame = (props) => {
             icon: CircleTickMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
-          {
-            label: 'Shop',
-            url: `/account/id/${accountId}/shop`,
-            icon: StoreMajorMonotone,
-            onClick: frameContext.setIsLoading,
-          },
+          // {
+          //   label: 'Shop',
+          //   url: `/account/id/${accountId}/shop`,
+          //   icon: StoreMajorMonotone,
+          //   onClick: frameContext.setIsLoading,
+          // },
           //DEPRECATED
           // {
           //   label: 'Settings',
