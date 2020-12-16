@@ -48,13 +48,11 @@ export const getVideos = (lastVideo, status, hasTags, query, userId, accountId,n
         query: query,
         page:nextVideo,
     };
-    console.log(params)
     const esc = encodeURIComponent;
     const queryString = Object.keys(params)
         .filter(k => params[k] !== "")
         .map(k => esc(k) + '=' + esc(params[k]))
         .join('&');
-        console.log("queryString",queryString);
     return fetch(process.env.REACT_APP_API_HOST + '/admin/user/id/'+userId+'/account/id/'+accountId+'/content?'+ queryString, {
         method: 'GET',
         credentials: 'include',

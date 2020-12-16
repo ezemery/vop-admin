@@ -52,8 +52,6 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
 
     };
 
-    console.log("currentItem",currentItem, "currentIndex",currentIndex)
-
     const SetInfo = (status) => {
         removeItem(currentIndex);
         fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/content/id/${currentItem.id}`, {

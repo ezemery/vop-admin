@@ -64,7 +64,7 @@ export const TikTokList = ({
 
   const fetchVideos = () => {
     setFetchLoading(true)
-    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/import`, {
+    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/connected/start_all`, {
       method: 'POST',
       credentials: 'include',
       headers: {
