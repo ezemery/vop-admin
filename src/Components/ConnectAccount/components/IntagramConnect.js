@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useEffect, useContext} from 'react';
 import {
   EmptyState,
   Button,
@@ -11,41 +11,240 @@ import {
   TextField,
   Icon,
   Loading,
+  Tag,
+  TextContainer,
+  Stack,
+  Checkbox
 } from '@shopify/polaris';
-import {MentionMajorMonotone} from '@shopify/polaris-icons';
+import {MentionMajorMonotone,HashtagMajorMonotone} from '@shopify/polaris-icons';
 import {useForm, Controller} from 'react-hook-form';
-import {Switch, Route, useRouteMatch, useParams} from 'react-router-dom';
-import {Container, FormField} from './styles';
-import {UserStore} from "../../Context/store";
+import {Switch, Route, useRouteMatch,useHistory, useParams} from 'react-router-dom';
+import {Container, FormField} from '../styles';
+import {UserStore,FrameStore} from "../../../Context/store";
+import instagram from '../../Icons/instagram.png'
+import {loadFB} from '../../../services'
 
-export const TiktokConnect = () => {
+export const InstagramConnect = () => {
   const {accountId} = useParams();
-    const {user} = React.useContext(UserStore);
-    const userId = user.id
+  const {user} = React.useContext(UserStore);
+  const userId = user.id
+  const history = useHistory();
   const [form, setForm] = useState('');
   const [invalidUsername, setInvalidUsername] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {handleSubmit, control} = useForm();
-  const setUsername = () => {
-    setForm('username');
-  };
+  const [loaded, setLoaded] = useState(false);
+  const {register, handleSubmit, control} = useForm();
+  const [type, setType] = useState("personal")
+  const handleChange = useCallback((_checked, newValue) => setType(newValue), []);
+  const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
+
+  useEffect(() => {
+    loadFB(() => {
+      setLoaded(true);
+    });
+
+    const url = window.location.href;
+    const splitCode = url.split("code=");
+    const redirectURL = url.split("?")
+    if(splitCode.length > 1){
+        console.log("code",splitCode[1],"url" ,redirectURL[0]);
+        connectPersonal(splitCode[1], redirectURL[0])
+    }
+    
+  },[]);
+
+
+
+  const loadSDK = useCallback(() => {
+    window.fbAsyncInit = function() {
+        window.FB.init({
+          appId            : process.env.REACT_APP_FBID,
+          autoLogAppEvents : true,
+          xfbml            : true,
+          version          : 'v9.0'
+        });
+      }
+  },[loaded])
+
+  loadSDK();
+
 
   const setDefault = () => {
     setForm('');
+    history.push(`/account/id/${accountId}/connect`)
   };
 
-  const setTags = () => {
-    setForm('tags');
-  };
 
-  const setConnected = () => {
-    setForm('connected');
-  };
+  const IGAuthUrl = (redirect_url) => {
+    setIsLoading()
+      const data = {
+        "redirect_url":redirect_url
+    }
+    return fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/instagram/auth`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }).then((response)=>{
+          return response.json();
+      }).then((json)=>{
+        unsetIsLoading()
+          return json;
+      })
+  }
 
-  const onSubmit = (data) => {
+  const fetchProfIG = (access_token,fb_page_id ) => {
+    setIsLoading()
+    const data = {
+      "access_token": access_token,
+      "fb_page_id": fb_page_id
+  }
+  return fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/instagram/professional-instagram-id`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then((response)=>{
+        return response.json();
+    }).then((json)=>{
+        unsetIsLoading()
+        return json;
+    })
+  }
+
+  const connectProfessional = (ig_business_id,access_token ) => {
+    setIsLoading()
+    const data = {
+      "platform":"instagram",
+      "type": "ig_business_id",
+      "data": ig_business_id,
+      "platform_data": {
+          "account_type": "professional",
+          "auth_code": access_token
+      }
+    }
+  return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }).then((response)=>{
+        return response.json();
+    }).then((json)=>{
+        unsetIsLoading()
+        return json;
+    })
+  }
+
+  const connectPersonal = (code, redirect_url) => {
+    const length = code.length;
+    const newCode = code.slice(0,length - 2)
+      const data = {
+        "platform":"instagram",
+        "platform_data": {
+            "account_type": "personal",
+            "auth_code": newCode,
+            "redirect_url": redirect_url
+        }
+      }
+      setIsLoading()
+    return fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }).then((response)=>{
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+      }).then((json)=> {
+          unsetIsLoading()
+          nextScreen("connected")
+          return json;
+      })
+  } 
+
+  const fetchFBPages = (access_token) => {
+    const data = {
+        "access_token": access_token
+    }
+    setIsLoading()
+    return fetch(`${process.env.REACT_APP_API_HOST}/admin/connect/instagram/fb-pages`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      }).then((response)=>{
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+      }).then((json)=>{
+          unsetIsLoading();
+          return json;
+      })
+  }
+
+  const fBCallback =  async (response) => {
+    console.log(response)
+    const FBPages = await fetchFBPages(response.authResponse.accessToken);
+    const IGPage = await fetchProfIG(FBPages.pages[0].access_token,FBPages.pages[0].id)
+    const connectProf = await connectProfessional(IGPage.data.instagram_business_account.id,response.authResponse.accessToken)
+    connectProf.success && nextScreen("connected");
+  }
+
+
+  const setUsername = async ({username}) => {
     setInvalidUsername(false);
     setLoading(true);
-  };
+
+    if(!username){
+      setLoading(false);
+      setInvalidUsername(true);
+      return;
+    }
+    if(type === "professional"){
+        setLoading(false);
+        window.FB.getLoginStatus(function(response) {
+            if(response.status === 'connected'){
+                console.log("response", response)
+                fBCallback(response)
+            }else{
+                window.FB.login(function(response) {
+                    if (response.status === 'connected') {
+                      // Logged into your webpage and Facebook.
+                      console.log("response", response)
+                      fBCallback(response)
+                    } 
+                  },{scope:'instagram_basic,pages_show_list'});
+            }
+        });
+    }else if(type === "personal"){
+        const location = window.location.href; 
+        console.log(location);
+        const redirect = await IGAuthUrl(location); 
+        setLoading(false);
+        window.open(redirect.url);
+       
+    }
+
+  }
+
+  const nextScreen = (value) => {
+    setForm(value);
+  }
+  
 
   const Check = useCallback(
     () => (
@@ -64,6 +263,7 @@ export const TiktokConnect = () => {
     ),
     [],
   );
+
   const Logo = useCallback(
     () => (
       <svg
@@ -94,24 +294,6 @@ export const TiktokConnect = () => {
     [],
   );
 
-  const Tiktok = useCallback(
-    () => (
-      <svg
-        width="64"
-        height="64"
-        viewBox="0 0 64 64"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M7.69883 0C23.828 0 39.9671 0 56.0962 0C56.1263 0.0300622 56.1663 0.080166 56.1964 0.080166C59.7328 0.611266 62.1171 2.60539 63.4495 5.88218C63.6999 6.49344 63.8202 7.15481 64.0005 7.79614C64.0005 7.92641 64.0005 8.0667 64.0005 8.19697C63.8402 8.32724 63.9003 8.50761 63.9003 8.65792C63.9003 24.2201 63.9003 39.7723 63.9003 55.3346C63.9003 55.4949 63.8402 55.6753 64.0005 55.7955C64.0005 55.9659 64.0005 56.1262 64.0005 56.2966C63.8602 56.3266 63.9103 56.4469 63.8903 56.5371C62.9686 60.9562 59.4523 63.9925 55.1645 63.9925C39.7166 64.0025 24.2788 64.0025 8.83088 63.9925C4.02219 63.9925 0.0149589 59.9541 0.00494076 55.1442C-0.00507732 39.7122 0.00494076 24.2803 0.00494076 8.84832C-0.00507732 5.22081 2.31912 1.91396 5.72527 0.591224C6.37644 0.340705 7.05767 0.260539 7.69883 0ZM44.0945 18.9993C44.0945 18.8991 44.0144 18.8991 43.9543 18.8891C43.8641 18.8089 43.774 18.7388 43.6938 18.6586C43.6538 18.5785 43.6237 18.4682 43.4935 18.4983H43.5035C43.5035 18.4682 43.5235 18.4282 43.5035 18.4081C42.0909 16.6044 41.2294 14.5902 41.2795 12.2554C41.2795 12.0449 41.1693 12.0049 40.999 12.0149C40.4379 12.0249 39.8669 12.0349 39.3059 12.0449L39.2658 12.0149C39.2758 12.0049 39.2859 11.9848 39.2758 11.9748C39.2658 11.9447 39.2558 11.9247 39.2458 11.8946C39.2258 11.5138 39.1656 11.133 39.1857 10.7523C39.2057 10.3715 39.0855 10.2813 38.7148 10.2813C36.6511 10.3013 34.5874 10.3113 32.5237 10.2813C32.0528 10.2713 31.9626 10.4216 31.9626 10.8625C31.9727 20.0114 31.9727 29.1504 31.9727 38.2993C31.9727 38.7502 31.9526 39.2012 31.9025 39.6421C31.582 42.6182 28.5966 45.0232 25.6212 44.7727C24.8899 44.7126 24.1986 44.4821 23.4974 44.3218C23.4873 44.2316 23.4172 44.2216 23.3471 44.2316C23.277 44.1614 23.2068 44.1013 23.1467 44.0312C23.0766 43.9209 23.0165 43.8007 22.9464 43.6905C21.4637 41.3055 21.8143 38.1891 23.838 36.235C25.4208 34.7018 27.3343 34.2008 29.4782 34.6918C29.8088 34.772 29.919 34.7018 29.8989 34.3511C29.8689 33.8902 29.8889 33.4192 29.8889 32.9582C29.8889 31.2647 29.8889 29.5612 29.8889 27.8677C29.8889 27.6873 29.969 27.4468 29.6384 27.4268C29.0273 27.3967 28.4162 27.2665 27.7951 27.3566L27.7651 27.3266C27.7751 26.9959 27.745 26.6552 27.7951 26.3345C27.8853 25.7834 27.6148 25.6631 27.1439 25.6431C24.8498 25.5128 22.6358 25.8134 20.542 26.7754C12.798 30.3228 10.3436 39.9527 15.4628 46.7869C16.2342 47.809 17.0958 48.7509 18.2078 49.4223H18.1978C18.2178 49.5326 18.308 49.5526 18.3981 49.5827C18.5284 49.6829 18.6586 49.7931 18.7889 49.8933C18.889 50.0436 18.9792 50.214 19.1996 50.224C19.1796 50.3242 19.2597 50.3643 19.3198 50.4144C22.2551 52.9496 25.6412 54.0419 29.5082 53.6411C32.4736 53.3304 35.0382 52.1279 37.1821 50.0636C39.937 47.4182 41.2694 44.1414 41.2795 40.3235C41.2895 35.7741 41.2795 31.2246 41.2795 26.6752C41.2795 26.5049 41.2294 26.3145 41.3296 26.1241C41.9807 26.4949 42.6119 26.8857 43.263 27.2364C45.5872 28.489 48.0918 29.0702 50.7165 29.1904C50.9269 29.2005 51.1974 29.3007 51.1974 28.8998C51.1874 26.6953 51.1874 24.5007 51.1874 22.2962C51.1874 22.1659 51.2074 22.0156 50.997 22.0256C50.3659 22.0456 49.7447 21.8653 49.1136 21.8352L49.0735 21.8051C49.0836 21.4444 49.0735 21.0736 49.1036 20.7129C49.1336 20.3722 49.0134 20.2419 48.6728 20.2419C47.6409 20.2419 46.6391 20.0215 45.6774 19.6607C45.1464 19.4603 44.6255 19.2198 44.0945 18.9993Z"
-          fill="#010101"
-        />
-      </svg>
-    ),
-    [],
-  );
-
   const Shape = useCallback(
     () => (
       <svg
@@ -131,8 +313,8 @@ export const TiktokConnect = () => {
     ),
     [],
   );
-  const Selection = useCallback(
-    () => (
+  
+  const Selection = () => (
       <FormField>
         <div
           style={{
@@ -144,7 +326,7 @@ export const TiktokConnect = () => {
         >
           <Logo />
           <Shape />
-          <Tiktok />
+          <img src={instagram} alt="instagram connect" />
         </div>
         <Heading>Here are a few things this integration will do</Heading>
         <div
@@ -156,7 +338,46 @@ export const TiktokConnect = () => {
           }}
         >
           <Check />
-          <p style={{marginLeft: '10px'}}> Connect your store to Tiktok</p>
+          <p style={{marginLeft: '10px'}}> Connect your instagram stories</p>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'start',
+            margin: '10px',
+            alignItems: 'center',
+          }}
+        >
+          <Check />
+          <p style={{marginLeft: '10px'}}> Connect your instagram videos</p>
+        </div>
+        <div 
+        style={{
+            display: 'flex',
+            flexDirection:'column',
+            justifyContent: 'center',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+            <p>What kind of account do you want to connect</p>
+            <div style={{padding:"20px"}}>
+            <Checkbox
+                id="personal"
+                name="instagram"
+                label="Personal"
+                checked={type==="personal"}
+                onChange={handleChange}
+                />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+            <Checkbox
+             id="professional"
+             name="instagram"
+             label="Professional"
+             checked={type==="professional"}
+             onChange={handleChange}
+            />
+            </div>
         </div>
         <div
           style={{
@@ -167,18 +388,14 @@ export const TiktokConnect = () => {
           }}
         >
           <Button onClick={setDefault}> Cancel</Button>
-          <Button primary onClick={setUsername}>
-            {' '}
-            Connect Account
+          <Button primary onClick={()=> nextScreen("username")}>
+           Continue
           </Button>
         </div>
       </FormField>
-    ),
-    [],
-  );
+    )
 
-  const Connected = useCallback(
-    () => (
+  const Connected = () => (
       <FormField>
         <div
           style={{
@@ -190,7 +407,7 @@ export const TiktokConnect = () => {
         >
           <Logo />
           <Shape />
-          <Tiktok />
+          <img src={instagram} alt="instagram connect" />
         </div>
         <div
           style={{
@@ -201,7 +418,7 @@ export const TiktokConnect = () => {
           }}
         >
           <DisplayText size="medium">
-            Your Tiktok account has been connected
+            Your account has been connected
           </DisplayText>
         </div>
         <div
@@ -214,18 +431,16 @@ export const TiktokConnect = () => {
         >
           <Button
             primary
-            url={`/user/id/${userId}/account/id/${accountId}/connect`}
+            onClick={setDefault}
           >
             {' '}
             Finish
           </Button>
         </div>
       </FormField>
-    ),
-    [],
-  );
-  const Username = useCallback(
-    () => (
+    );
+
+  const Username = () => (
       <FormField>
         <div
           style={{
@@ -235,19 +450,21 @@ export const TiktokConnect = () => {
             alignItems: 'center',
           }}
         >
-          <Tiktok />
+          <img src={instagram} alt="instagram logo" />
         </div>
         <div
           style={{
             display: 'flex',
+            flexDirection:'column',
             justifyContent: 'center',
             margin: '30px',
             alignItems: 'center',
           }}
         >
-          <DisplayText size="medium">Setup Tiktok Username</DisplayText>
+          <DisplayText size="medium">Instagram username</DisplayText>
+          <p style={{padding:"10px"}}>Enter your instagram username below</p>
         </div>
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(setUsername)}>
           <FormLayout>
             <div
               style={{
@@ -263,10 +480,11 @@ export const TiktokConnect = () => {
                 prefix={<Icon source={MentionMajorMonotone} />}
                 error={invalidUsername ? 'Username is invalid' : null}
                 label="Username"
-                placeholder="Tiktok Username"
+                placeholder="Instagram Username"
                 labelHidden
                 type="text"
                 name="username"
+               
               />
             </div>
             <div
@@ -278,7 +496,7 @@ export const TiktokConnect = () => {
               }}
             >
               <Button onClick={setDefault}> Cancel</Button>
-              <Button primary onClick={setTags} loading={loading}>
+              <Button primary submit loading={loading}>
                 {' '}
                 Continue{' '}
               </Button>
@@ -286,65 +504,12 @@ export const TiktokConnect = () => {
           </FormLayout>
         </Form>
       </FormField>
-    ),
-    [],
-  );
+    )
 
-  const Tags = useCallback(
-    () => (
-      <FormField>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Tiktok />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <DisplayText size="medium">Setup Video Tags</DisplayText>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'start',
-            margin: '10px',
-            alignItems: 'center',
-          }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Button onClick={setDefault}> Cancel</Button>
-          <Button primary onClick={setConnected}>
-            {' '}
-            Continue
-          </Button>
-        </div>
-      </FormField>
-    ),
-    [],
-  );
   const View = () => {
     switch (form) {
       case 'username':
         return <Username />;
-      case 'tags':
-        return <Tags />;
       case 'connected':
         return <Connected />;
       default:
@@ -355,11 +520,11 @@ export const TiktokConnect = () => {
   return (
     <Page
       fullWidth
-      title="Connect Titktok"
+      title="Connect Instagram"
       breadcrumbs={[
         {
           content: 'Connected Accounts',
-          url: `/user/id/${userId}/account/id/${accountId}/connect`,
+          url: `/account/id/${accountId}/connect`,
         },
       ]}
     >

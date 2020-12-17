@@ -1,1 +1,1 @@
-export * from './VideoCard'
+export * from './MediaCard'

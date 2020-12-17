@@ -1,2 +1,3 @@
-export * from './ConnectAccount';
-export * from './TiktokConnect';
+export * from './components/ConnectAccount';
+export * from './components/TiktokConnect';
+export * from './components/IntagramConnect';

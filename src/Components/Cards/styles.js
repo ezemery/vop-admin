@@ -7,6 +7,7 @@ export const Card = styled.div`
 `
 export const Text = styled.div`
 ${tw`flex justify-center w-full items-center`}
+height:40px;
 color: #637381;
 fill:#637381;
 .Polaris-Icon{

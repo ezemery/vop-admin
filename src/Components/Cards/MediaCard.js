@@ -10,6 +10,7 @@ import {
   } from '@shopify/polaris';
 import {Video} from '../Video';
 import {Card, ButtonGroup, Button, Text} from './styles'
+import instagram from '../Icons/instagram.png';
 
 export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
     const videoRef = React.createRef();
@@ -122,14 +123,15 @@ export const VideoCard = ({item, openModal, currentIndex, SetInfo, user}) => {
       ),[])
     return (
         <Card>
+            {item.media_type ==="video"?
             <Video
             coverImg={item.cover_img}
             isMuted
-            videoUrl={item.video_url}
+            videoUrl={item.media_url}
             videoRef={videoRef}
-            onClick={() => openModal(currentIndex) }
-            />
-            <Text> <Tiktok/> <div style={{textAlign:"center", marginRight:"10px", marginLeft:"10px"}}>{user.username} </div><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></Text>
+            onClick={() => openModal(currentIndex)}/>
+            :<img src={item.media_url} style={{objectFit:"cover", height:"90%"}}/>}
+            <Text> {item.platform ==="instagram"?<img src={instagram} style={{height:"15px"}}/>:<Tiktok/>} <div style={{textAlign:"center", marginRight:"10px", marginLeft:"10px"}}>{user.username} </div><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></Text>
             <ButtonGroup>
                 <Button onClick={() => SetInfo("reject")}><Icon source={CircleCancelMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Dismiss</div> </Button>
                 <Button onClick={() => openModal(currentIndex)} style={{borderRight:"1px solid #e2e8f0"}}> <Icon source={CircleTickMajorMonotone} /> <div style={{textAlign:"center", marginRight:"30px"}}>Start Approval</div> </Button>

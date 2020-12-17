@@ -6,10 +6,10 @@ export const LoginContainer = styled.div`
 `;
 
 export const LoginForm = styled.div`
-  ${tw`p-10 sm:text-left text-center bg-white rounded m-auto`}
-  max-width: 445px;
+  ${tw`p-1 md:p-10 sm:text-left max-w-full md:max-w-3xl text-center bg-white rounded m-auto`}
   height: 400px;
 `;
+
 export const Logo = styled.svg`
   ${tw`lg:absolute lg:left-10 lg:top-10 mr-auto ml-auto mt-10 mb-20`}
   width: 80px;
@@ -424,3 +424,16 @@ export const CompanyLogo = styled.svg`
     }
   }
 `;
+
+export const NewAccount = styled.div`
+${tw`flex pb-5`}
+justify-content:space-evenly;
+cursor:pointer;
+border-bottom:1px solid #DFE3E8;
+font-size: 14px;
+line-height: 20px;
+.Polaris-Icon{
+  margin:0px ;
+
+}
+`

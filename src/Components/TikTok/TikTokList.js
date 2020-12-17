@@ -10,6 +10,7 @@ import {TikTokCard} from './TikTokCard';
 import {FrameStore, UserStore, VideoStore} from '../../Context/store';
 import {useVideoFetch} from "../../Hooks/video.hook";
 
+
 const InputGroup = Input.Group;
 const {Option} = Select;
 
@@ -49,6 +50,7 @@ export const TikTokList = ({
   const [query, setQuery] = useState('');
   const [hasTags, setHasTags] = useState('');
   const [lastVideo, setLastVideo] = useState('');
+  const [nextVideo, setNextVideo] = useState(1);
   const [more, setMore] = useState(false);
 
   const [data, updateData] = useReducer(videoReducer, videoInitial);
@@ -62,7 +64,7 @@ export const TikTokList = ({
 
   const fetchVideos = () => {
     setFetchLoading(true)
-    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/social/tiktok/import`, {
+    fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/account/id/${accountId}/connected/start_all`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -84,13 +86,14 @@ export const TikTokList = ({
   const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
   const loadFunc = useCallback(async () => {
-    await videoFetch.fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId);
+    await videoFetch.fetchVideoDataAsync(lastVideo, status, hasTags, query, userId, accountId,nextVideo);
   }, [hasTags, lastVideo, query, status, userId, accountId]);
 
   useEffect(() => {
       setMore(videoFetch.videos.has_more);
       if (videoFetch.videos.data) {
         if (videoFetch.videos.data.length > 0) {
+          setNextVideo(videoFetch.videos.next_page);
           setLastVideo(videoFetch.videos.data.slice(-1)[0].id);
           updateData({type: 'append', videos: videoFetch.videos.data});
         }
@@ -103,7 +106,7 @@ export const TikTokList = ({
     async function fetchData() {
       updateData({type: 'reset'})
       setIsLoading()
-      await videoFetch.fetchVideoDataAsync('', status, hasTags, query, userId, accountId);
+      await videoFetch.fetchVideoDataAsync('', status, hasTags, query, userId, accountId,nextVideo);
     }
     fetchData();
   }, [status, hasTags, query, userId, accountId]);

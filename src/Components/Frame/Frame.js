@@ -11,7 +11,7 @@ import {
   Button
 } from '@shopify/polaris';
 import {MenuBar, UserMenu, AccountMenu, MenuIcon, UserProfile, DropdownMenu, Spacing} from "./styles"
-import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor, MobileHamburgerMajorMonotone} from '@shopify/polaris-icons';
+import {HomeMajorMonotone, OrdersMajorTwotone, AppsMajorMonotone, AnalyticsMajorMonotone, CircleTickMajorMonotone, FeaturedContentMajorMonotone, LogOutMinor, MobileHamburgerMajorMonotone, StoreMajorMonotone} from '@shopify/polaris-icons';
 import Intercom from 'react-intercom';
 import {Link, useHistory, useLocation, useParams} from "react-router-dom";
 import {FrameStore, UserStore, AccountStore} from '../../Context/store';
@@ -22,7 +22,10 @@ export const AppFrame = (props) => {
   const { accountId } = useParams();
   const {user, fetchUserDataAsync } = React.useContext(UserStore);
   const {account, fetchAccountDataAsync } = React.useContext(AccountStore);
+  const frameContext = useFrameContext();
+  
   const userId = user.id
+  
 
   const UsernameInitials = () => {
     return user.name.toUpperCase().slice(0,1);
@@ -67,7 +70,6 @@ export const AppFrame = (props) => {
       ),
     [],
   );
-  const frameContext = useFrameContext()
 
   const handleLogout = async () => {
     try {
@@ -119,7 +121,7 @@ export const AppFrame = (props) => {
             <Spacing className="initials">{UsernameInitials()}</Spacing>
               <Spacing>{UsernameCapitalize()}</Spacing>
               <Spacing>{user.email}</Spacing>
-            <Spacing><Button url={`/account/id/${accountId}/settings`} outline>Manage Your Account</Button></Spacing>
+            <Spacing><Button url={`/account/id/${accountId}/connect`} outline>Manage Your Account</Button></Spacing>
             <Spacing><Button onClick={handleLogout} plain icon={LogOutMinor}>Logout</Button></Spacing> 
           </div>
         </UserMenu>
@@ -149,18 +151,26 @@ export const AppFrame = (props) => {
             icon: FeaturedContentMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
-          // {
-          //   label: 'Connected Account',
-          //   url:`/account/id/${accountId}/connect`,
-          //   icon: CircleTickMajorMonotone,
-          //   // onClick: toggleIsLoading,
-          // },
           {
-            label: 'Settings',
-            url: `/account/id/${accountId}/settings`,
-            icon: OrdersMajorTwotone,
+            label: 'Connect Account',
+            url:`/account/id/${accountId}/connect`,
+            icon: CircleTickMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
+          // {
+          //   label: 'Shop',
+          //   url: `/account/id/${accountId}/shop`,
+          //   icon: StoreMajorMonotone,
+          //   onClick: frameContext.setIsLoading,
+          // },
+          //DEPRECATED
+          // {
+          //   label: 'Settings',
+          //   url: `/account/id/${accountId}/settings`,
+          //   icon: OrdersMajorTwotone,
+          //   onClick: frameContext.setIsLoading,
+          // },
+          
           // {
           //   label: 'Logout',
           //   icon: LogOutMinor,

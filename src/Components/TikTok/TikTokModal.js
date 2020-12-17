@@ -62,15 +62,18 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
             },
             body: JSON.stringify({
                 status: status,
-                products: selectedProducts
+                products: selectedProducts,
+                is_group: false
             })
         }).then(function(response) {
+            console.log(response)
             return response.json()
         }).then(function(json) {
+            console.log(json)
         }).catch(function(ex) {
 
         });
-        setSelectedProducts([]);
+        //setSelectedProducts([]);
     };
 
     const selectProduct = (id) => {
@@ -150,7 +153,7 @@ export const TikTokModal = ({setModal, modal, data, currentIndex, removeItem}) =
     >
         <Row>
             <Col xs={5}>
-                <video src={currentItem.video_url} controls autoPlay="autoPlay" style={{width: "300px"}}/>
+               {currentItem.media_type==="video"?<video src={currentItem.media_url} controls autoPlay="autoPlay" style={{width: "300px"}}/>: <img src={currentItem.media_url} style={{objectFit:"cover", height:"400px"}}/>} 
             </Col>
             <Col xs={7}>
                 <div style={{width: "300px"}}>&nbsp;</div>
