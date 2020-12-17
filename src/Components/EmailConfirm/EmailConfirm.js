@@ -32,12 +32,12 @@ export const EmailConfirm = (props) => {
   const {handleSubmit, control} = useForm();
   const [help, setHelp] = React.useState("");
   const [loading, setLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState("")
+  const [emailSent, setEmailSent] = useState("");
 
   const onSubmit = (data) => {
     setLoading(true);
     const {email} = data;
-
+    setHelp("");
     fetch(`${process.env.REACT_APP_API_HOST}/admin/password/forgot/${email}`, {
       method: 'GET',
       credentials: 'include',

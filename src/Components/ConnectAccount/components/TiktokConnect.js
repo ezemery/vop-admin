@@ -119,6 +119,7 @@ export const TiktokConnect = () => {
       })
       .catch((ex) => {
         setLoading(false);
+        setInvalidUsername(true);
       });
   
   };
@@ -173,6 +174,7 @@ export const TiktokConnect = () => {
       })
       .catch((ex) => {
         setLoading(false);
+        setInvalidUsername(true);
       });
   };
 
