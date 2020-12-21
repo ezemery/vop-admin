@@ -53,6 +53,7 @@ export const AppFrame = (props) => {
     setSearchActive(false);
     setSearchValue('');
   }, []);
+  
   const handleSearchFieldChange = useCallback((value) => {
     setSearchValue(value);
     setSearchActive(value.length > 0);
@@ -157,25 +158,12 @@ export const AppFrame = (props) => {
             icon: CircleTickMajorMonotone,
             onClick: frameContext.setIsLoading,
           },
-          // {
-          //   label: 'Shop',
-          //   url: `/account/id/${accountId}/shop`,
-          //   icon: StoreMajorMonotone,
-          //   onClick: frameContext.setIsLoading,
-          // },
-          //DEPRECATED
-          // {
-          //   label: 'Settings',
-          //   url: `/account/id/${accountId}/settings`,
-          //   icon: OrdersMajorTwotone,
-          //   onClick: frameContext.setIsLoading,
-          // },
-          
-          // {
-          //   label: 'Logout',
-          //   icon: LogOutMinor,
-          //   onClick: handleLogout,
-          // },
+          {
+            label: 'Shop',
+            url: `/account/id/${accountId}/shop`,
+            icon: StoreMajorMonotone,
+            onClick: frameContext.setIsLoading,
+          }
         ]}
       />
     </Navigation>
