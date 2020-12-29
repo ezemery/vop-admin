@@ -66,3 +66,7 @@ export const ThumbnailContent = styled.div`
 ${tw`lg:flex justify-end hidden  `}
     cursor:pointer;
 `
+
+export const Upload = styled.div`
+${tw`flex items-center py-10 my-5 border-b border-gray-300`}
+`

@@ -1,13 +1,12 @@
 import React, {useContext, useCallback} from 'react';
 import { useState, useEffect } from 'react';
-import {TextField, FormLayout, Layout, Banner, Button, Form} from '@shopify/polaris';
+import {Page, TextField, FormLayout, Layout, Banner, Button, Form, DropZone, Stack, Thumbnail, Caption} from '@shopify/polaris';
+import {NoteMinor } from '@shopify/polaris-icons';
 import { useHistory} from 'react-router-dom';
-import {
-  Page
-  } from '@shopify/polaris';
 import {FrameStore, UserStore} from "../../../Context/store";
 import {useParams} from "react-router-dom";
 import {useForm, Controller} from 'react-hook-form';
+import {Upload} from '../styles'
 
 
 const Store = () => {
@@ -15,11 +14,48 @@ const Store = () => {
     const [error, setError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
-    const {accountId} = useParams();
+    const [openFileDialog, setOpenFileDialog] = useState(false);
+    const [files, setFiles] = useState([]);
     const {user} = React.useContext(UserStore);
+    const {accountId} = useParams();
     const userId = user.id;
     const {setIsLoading,unsetIsLoading} = useContext(FrameStore)
     const history = useHistory();
+
+    const toggleOpenFileDialog = useCallback(
+      () => setOpenFileDialog((openFileDialog) => !openFileDialog),
+      [],
+    );
+
+    const handleDropZoneDrop = useCallback(
+      (dropFiles, _acceptedFiles, _rejectedFiles) =>
+        setFiles((files) => [...files, ...dropFiles]),
+      [],
+    );
+
+    const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+
+    const uploadedFiles = files.length > 0 && (
+      <Stack vertical>
+        {files.map((file, index) => (
+          <Stack alignment="center" key={index}>
+            <Thumbnail
+              size="small"
+              alt={file.name}
+              source={
+                validImageTypes.indexOf(file.type) > 0
+                  ? window.URL.createObjectURL(file)
+                  : NoteMinor
+              }
+            />
+            <div>
+              {file.name} <Caption>{file.size} bytes</Caption>
+            </div>
+          </Stack>
+        ))}
+      </Stack>
+    );
+
     const onSubmit = (data) => {
         if(!data.handle || !data.title || !data.description){
             setError(true);
@@ -27,10 +63,12 @@ const Store = () => {
           return;
         }
         data.handle = data.handle.toLowerCase();
+        const picture = files[0].name
        setIsLoading();
        setSuccess(false)
        setError(false);
-       const request =  {...data,account_id:accountId,user_id:userId}
+       const request =  {...data,account_id:accountId,user_id:userId,picture}
+       console.log(request)
         fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/shop/`, {
           method: 'POST',
           credentials: 'include',
@@ -80,6 +118,23 @@ const Store = () => {
                           status="critical"
                           onDismiss={() => setFailure(false)}
                           />:null}
+        <Upload>
+          <div style={{width: 100, height: 100}}>
+          <DropZone
+          openFileDialog={openFileDialog}
+          onDrop={handleDropZoneDrop}
+          onFileDialogClose={toggleOpenFileDialog}
+          >
+           {uploadedFiles}
+          </DropZone>
+          </div>
+          <div style={{marginLeft:"15px"}}>
+             <Button onClick={toggleOpenFileDialog} >Upload Picture</Button>
+          </div>
+          
+        </Upload>
+        
+
         <Layout>
             <Layout.AnnotatedSection
             title="Shop Details"
