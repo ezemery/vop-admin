@@ -3,7 +3,7 @@ import {UserStore, FrameStore} from "../../../Context/store";
 import {useParams, useHistory} from 'react-router-dom';
 import tw, {styled} from 'twin.macro';
 import {ViewStyles} from '../styles'
-import { ClipboardMinor, DeleteMinor, EditMinor, MobileVerticalDotsMajorMonotone } from '@shopify/polaris-icons';
+import { ClipboardMinor,DuplicateMinor, DeleteMinor, EditMinor, MobileVerticalDotsMajorMonotone,PlayCircleMajorMonotone } from '@shopify/polaris-icons';
 import {TikTokCard} from '../../TikTok';
 import {TikTokModal} from '../../TikTok';
 import {
@@ -179,13 +179,16 @@ export const ViewShop = () => {
               <Image/>
                 <div>
                     <DisplayText size="medium">{shop.title}</DisplayText>
-                    <p style={{maxWidth:"48rem"}}>{shop.description}</p>
+                    <p style={{maxWidth:"20rem", display:"flex", justifyContent:"start", alignItems:"center", marginTop:"10px",marginBottom:"10px" }}><Icon source={PlayCircleMajorMonotone}/> &nbsp;&nbsp; {thumbnails.length} Videos</p>
+                    <div style={{display:"flex"}}><p style={{maxWidth:"48rem"}}>{shop.description}</p></div>
                 </div> 
+                
               </div>
-              <div style={{display:"flex"}}>
-              <div className="clipboard_copy" onClick={() => copyTextToClipboard(`${process.env.REACT_APP_VOPSHOP_HOST}/${shop.handle}`)}> 
-              <span className="copy">{process.env.REACT_APP_VOPSHOP_HOST}/{shop.handle}</span><Icon source={ClipboardMinor} />   
-            </div>
+              <div style={{display:"flex", alignItems:"center"}}>
+              <div className="copy"> 
+                  <span className="clipboard_copy" onClick={()=> previewShop(shop.handle)}>{process.env.REACT_APP_VOPSHOP_HOST}/{shop.handle}</span>
+                  <span className="icon" onClick={() => copyTextToClipboard(`${process.env.REACT_APP_VOPSHOP_HOST}/${shop.handle}`)}> <Icon source={DuplicateMinor} /></span>
+              </div>
                 <div className="list-item drop">  
                     <div className="">
                         <Icon source={MobileVerticalDotsMajorMonotone} />

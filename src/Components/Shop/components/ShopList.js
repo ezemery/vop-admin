@@ -1,21 +1,22 @@
 import React,{useState, useCallback, useEffect} from 'react'
 import {ShopContent, ProductImage, ThumbnailContent} from '../styles'
-import {DisplayText,Icon, Thumbnail, Toast} from '@shopify/polaris';
+import {DisplayText, Icon, Thumbnail, Toast} from '@shopify/polaris';
+
 import { useHistory} from 'react-router-dom';
-import { ClipboardMinor } from '@shopify/polaris-icons';
+import { DuplicateMinor,PlayCircleMajorMonotone } from '@shopify/polaris-icons';
 import {FrameStore} from "../../../Context/store";
 import tw, {styled} from 'twin.macro';
 
 export default function ShopList({handle,title,description, account_id, id}) {
   const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore);
-    const [thumbnails, setThumbnails] = useState();
+    const [thumbnails, setThumbnails] = useState([]);
     const [active, setActive] = useState(false);
     const toggleActive = useCallback(() => setActive((active) => !active), []);
     const history = useHistory();
 
       useEffect(()=>{
         setIsLoading()
-        fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${account_id}?limit=10`, {
+        fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${account_id}?limit=6`, {
           credentials: 'include',
           method: 'GET',
       }).then(function (response) {
@@ -27,6 +28,10 @@ export default function ShopList({handle,title,description, account_id, id}) {
       });
       }, [])
     
+
+      const previewShop = (url) => {
+        window.open(`${process.env.REACT_APP_VOPSHOP_HOST}/${url}`,"_blank");
+      }
 
     const showMore = (id)  =>  {
       history.push(`/account/id/${account_id}/shop/${id}`)
@@ -83,12 +88,13 @@ export default function ShopList({handle,title,description, account_id, id}) {
                     <Image/>
                     <div>
                     <DisplayText size="medium">{title}</DisplayText>
-                    <p style={{maxWidth:"20rem"}}>{description}</p>
+                    <p style={{maxWidth:"20rem", display:"flex", justifyContent:"start", alignItems:"center" }}><Icon source={PlayCircleMajorMonotone}/> &nbsp;&nbsp; {thumbnails.length} Videos</p>
                     </div>
                    
                  </div>
-                <div className="clipboard_copy" onClick={() => copyTextToClipboard(`${process.env.REACT_APP_VOPSHOP_HOST}/${handle}`)}> 
-                  <span className="copy">{process.env.REACT_APP_VOPSHOP_HOST}/{handle}</span><Icon source={ClipboardMinor} />
+                <div className="copy"> 
+                  <span className="clipboard_copy" onClick={()=> previewShop(handle)}>{process.env.REACT_APP_VOPSHOP_HOST}/{handle}</span>
+                  <span className="icon" onClick={() => copyTextToClipboard(`${process.env.REACT_APP_VOPSHOP_HOST}/${handle}`)}> <Icon source={DuplicateMinor} /></span>
                 </div>
              </div>
              {toastMarkup}

@@ -12,6 +12,9 @@ import {Upload} from '../styles'
 const Store = () => {
     const {handleSubmit, control} = useForm();
     const [error, setError] = useState(false);
+    const [titleError, setTitleError] = useState(false);
+    const [handleError, setHandleError] = useState(false);
+    const [descError, setDescError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [failure, setFailure] = useState(false);
     const [openFileDialog, setOpenFileDialog] = useState(false);
@@ -57,17 +60,30 @@ const Store = () => {
     );
 
     const onSubmit = (data) => {
-        if(!data.handle || !data.title || !data.description){
-            setError(true);
+      setError(false);
+      setHandleError(false);
+      setTitleError(false);
+      setDescError(false);
+
+        if(!data.handle){
+            setHandleError(true);
             unsetIsLoading();
+          return;
+        }else if(!data.title){
+          setTitleError(true);
+          unsetIsLoading();
+          return;
+        }else if(!data.description){
+          setDescError(true);
+          unsetIsLoading();
           return;
         }
         data.handle = data.handle.toLowerCase();
-        const picture = files[0].name
+        //const picture = files[0].name
        setIsLoading();
        setSuccess(false)
        setError(false);
-       const request =  {...data,account_id:accountId,user_id:userId,picture}
+       const request =  {...data,account_id:accountId,user_id:userId}
        console.log(request)
         fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/shop/`, {
           method: 'POST',
@@ -119,7 +135,7 @@ const Store = () => {
                           onDismiss={() => setFailure(false)}
                           />:null}
         <Upload>
-          <div style={{width: 100, height: 100}}>
+          <div style={{width: 100, height: 100, borderRadius:"50%"}}>
           <DropZone
           openFileDialog={openFileDialog}
           onDrop={handleDropZoneDrop}
@@ -129,7 +145,7 @@ const Store = () => {
           </DropZone>
           </div>
           <div style={{marginLeft:"15px"}}>
-             <Button onClick={toggleOpenFileDialog} >Upload Picture</Button>
+             <Button onClick={toggleOpenFileDialog}>Upload Picture</Button>
           </div>
           
         </Upload>
@@ -144,9 +160,9 @@ const Store = () => {
                     <Form onSubmit={handleSubmit(onSubmit)}>
                         <FormLayout>
                             
-                        <Controller as={TextField}  control={control} type="text"  label="Handle" placeholder="Enter a handle"  name="handle"  connectedLeft={<Button disabled>{process.env.REACT_APP_VOPSHOP_HOST}/</Button>} error={error ? 'Field cannot be empty' : null}/>
-                        <Controller as={TextField}  control={control} type="text"  label="Shop Title" placeholder="Enter a shop title"  name="title" error={error ? 'Field cannot be empty' : null} />
-                        <Controller as={TextField}  control={control} type="text" label="Shop Bio" placeholder="Enter a short bio" maxLength={100} showCharacterCount name="description" multiline={4} error={error ? 'Field cannot be empty' : null}/>
+                        <Controller as={TextField}  control={control} type="text"  label="Handle" placeholder="Enter a handle"  name="handle"  connectedLeft={<Button disabled>{process.env.REACT_APP_VOPSHOP_HOST}/</Button>} error={handleError ? 'Field cannot be empty' : null}/>
+                        <Controller as={TextField}  control={control} type="text"  label="Shop Title" placeholder="Enter a shop title"  name="title" error={titleError ? 'Field cannot be empty' : null} />
+                        <Controller as={TextField}  control={control} type="text" label="Shop Bio" placeholder="Enter a short bio" maxLength={100} showCharacterCount name="description" multiline={4} error={descError ? 'Field cannot be empty' : null}/>
                         <div style={{display:"flex", justifyContent:"flex-end"}}><Button primary submit>Save</Button></div>
                         </FormLayout>
                     </Form>
@@ -162,7 +178,7 @@ export const CreateShop = () => {
     const {accountId} = useParams();
     return (
         <Page fullWidth
-        title="Create Shop"
+        title="Create new vop shop"
         breadcrumbs={[
           {
             content: 'All shops',
