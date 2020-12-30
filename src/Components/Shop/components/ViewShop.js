@@ -4,8 +4,7 @@ import {useParams, useHistory} from 'react-router-dom';
 import tw, {styled} from 'twin.macro';
 import {ViewStyles} from '../styles'
 import { ClipboardMinor,DuplicateMinor, DeleteMinor, EditMinor, MobileVerticalDotsMajorMonotone,PlayCircleMajorMonotone } from '@shopify/polaris-icons';
-import {TikTokCard} from '../../TikTok';
-import {TikTokModal} from '../../TikTok';
+import {TikTokCard, TikTokModal} from '../../TikTok';
 import {
     EmptyState,
     Button,

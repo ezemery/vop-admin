@@ -72,4 +72,19 @@ ${tw`lg:flex justify-end hidden  `}
 
 export const Upload = styled.div`
 ${tw`flex items-center py-10 my-5 border-b border-gray-300`}
+img{
+    border-raduis:50%;
+    width:100px;
+    height:100px;
+    object-fit:contain;
+}
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
 `
