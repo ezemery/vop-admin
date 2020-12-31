@@ -45,7 +45,7 @@ export const Shop = () => {
     <Page fullWidth title="All Shops" primaryAction={shops.length < 1 ? {content: 'Create new shop', onAction: addShop}: ""}>
         {shops && shops.length  > 0 ? shops.map((item) => <ShopList {...item} key={item.id}/>): <EmptyState
         heading="Create and customise your vop shops"
-        image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+        image="../../../../illustration.png"
       >
         <Button
                 primary
