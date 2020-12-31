@@ -39,7 +39,7 @@ const Store = () => {
           return response.json();
         })
         .then((json) => {
-          setFiles(json.shop.picture)
+          setAvatar(URL.createObjectURL(json.shop.files))
           setHandle(json.shop.handle)
           setTitle(json.shop.title)
           setDesc(json.shop.description)
@@ -63,24 +63,11 @@ const Store = () => {
       setDesc(e);
     }
 
-    const convertBase64 = (file) => {
-      return new Promise((resolve, reject) => {
-        const fileReader = new FileReader();
-        fileReader.readAsDataURL(file)
-        fileReader.onload = () => {
-          resolve(fileReader.result);
-        }
-        fileReader.onerror = (error) => {
-          reject(error);
-        }
-      })
-    }
 
   const handleImageUpload = async (e) => {
     const files = e.target.files[0];
     if(files){
-      const base64 = await convertBase64(files)
-      setAvatar(base64)
+      setAvatar(URL.createObjectURL(files))
       setFiles(files);
     }
   }
