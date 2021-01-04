@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import tw, { styled } from 'twin.macro';
+import React, {useCallback, useState, useEffect} from 'react';
+import {useParams, useHistory} from 'react-router-dom';
+import tw, {styled} from 'twin.macro';
 import {
   ClipboardMinor,
   DuplicateMinor,
@@ -19,16 +19,16 @@ import {
   Popover,
   ActionList,
 } from '@shopify/polaris';
-import { ViewStyles } from '../styles';
-import { TikTokCard, TikTokModal } from '../../TikTok';
-import { UserStore, FrameStore } from '../../../Context/store';
+import {ViewStyles} from '../styles';
+import {TikTokCard, TikTokModal} from '../../TikTok';
+import {UserStore, FrameStore} from '../../../Context/store';
 
 export const ViewShop = () => {
-  const { setIsLoading, unsetIsLoading } = React.useContext(FrameStore);
-  const { user } = React.useContext(UserStore);
+  const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore);
+  const {user} = React.useContext(UserStore);
   const userId = user.id;
   const history = useHistory();
-  const { shop_id, accountId } = useParams();
+  const {shop_id, accountId} = useParams();
   const [shop, setShop] = useState({});
   const [active, setActive] = useState(false);
   const [thumbnails, setThumbnails] = useState([]);
@@ -92,19 +92,21 @@ export const ViewShop = () => {
   };
 
   useEffect(() => {
-    setIsLoading();
-    fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${shop.account_id}`, {
-      credentials: 'include',
-      method: 'GET',
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.data) {
-          unsetIsLoading();
-          setThumbnails(json.data);
-        }
+    if (shop.account_id) {
+      setIsLoading();
+      fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${shop.account_id}`, {
+        credentials: 'include',
+        method: 'GET',
       })
-      .catch((ex) => {});
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.data) {
+            unsetIsLoading();
+            setThumbnails(json.data);
+          }
+        })
+        .catch((ex) => {});
+    }
   }, [shop]);
 
   const openModal = (index) => {
@@ -112,8 +114,9 @@ export const ViewShop = () => {
     setModal(true);
   };
 
-  const feedList = thumbnails.length > 0
-    && thumbnails.map((item, idx) => (
+  const feedList =
+    thumbnails.length > 0 &&
+    thumbnails.map((item, idx) => (
       <TikTokCard
         item={item}
         currentIndex={idx}
@@ -167,9 +170,10 @@ export const ViewShop = () => {
   };
 
   const Image = styled.div`
-    ${({ image }) => (image
-    ? `background: url(${image})`
-    : 'background: url("../../../../bg.png")')};
+    ${({image}) =>
+      image
+        ? `background: url(${image})`
+        : 'background: url("../../../../bg.png")'};
     ${tw`bg-cover rounded-full h-24 w-24 mr-6`}
   `;
   const toastMarkup = active ? (
@@ -193,7 +197,7 @@ export const ViewShop = () => {
     >
       {shop && shop.handle ? (
         <ViewStyles>
-          <div style={{ display: 'flex', marginBottom: '20px' }}>
+          <div style={{display: 'flex', marginBottom: '20px'}}>
             <Image image={shop.shop_image} />
             <div>
               <DisplayText size="medium">{shop.title}</DisplayText>
@@ -207,34 +211,29 @@ export const ViewShop = () => {
                   marginBottom: '10px',
                 }}
               >
-                <Icon source={PlayCircleMajorMonotone} />
-{' '}
-&nbsp;&nbsp;
-{' '}
-                {thumbnails.length}
-{' '}
-Videos
+                <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
+                {thumbnails.length} Videos
               </p>
-              <div style={{ display: 'flex' }}>
-                <p style={{ maxWidth: '48rem' }}>{shop.description}</p>
+              <div style={{display: 'flex'}}>
+                <p style={{maxWidth: '48rem'}}>{shop.description}</p>
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
             <div className="copy">
               <span
                 className="clipboard_copy"
                 onClick={() => previewShop(shop.handle)}
               >
-                {process.env.REACT_APP_VOPSHOP_HOST}
-/
-{shop.handle}
+                {process.env.REACT_APP_VOPSHOP_HOST}/{shop.handle}
               </span>
               <span
                 className="icon"
-                onClick={() => copyTextToClipboard(
-                  `${process.env.REACT_APP_VOPSHOP_HOST}/${shop.handle}`,
-                )}
+                onClick={() =>
+                  copyTextToClipboard(
+                    `${process.env.REACT_APP_VOPSHOP_HOST}/${shop.handle}`,
+                  )
+                }
               >
                 {' '}
                 <Icon source={DuplicateMinor} />
@@ -245,7 +244,7 @@ Videos
                 <Icon source={MobileVerticalDotsMajorMonotone} />
               </div>
               <div className="dropdown-content">
-                <div style={{ marginBottom: '5px' }}>
+                <div style={{marginBottom: '5px'}}>
                   <Button
                     plain
                     icon={EditMinor}
@@ -271,7 +270,7 @@ Videos
           </div>
         </ViewStyles>
       ) : null}
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>{feedList}</div>
+      <div style={{display: 'flex', flexWrap: 'wrap'}}>{feedList}</div>
       {toastMarkup}
       {thumbnails.length > 0 ? (
         <TikTokModal

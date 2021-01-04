@@ -36,7 +36,7 @@ const Store = () => {
   const {user} = React.useContext(UserStore);
   const {accountId} = useParams();
   const userId = user.id;
-  const {setIsLoading, unsetIsLoading} = useContext(FrameStore);
+  const {setIsLoading, unsetIsLoading, isLoading} = useContext(FrameStore);
   const history = useHistory();
   const toggleOpenFileDialog = useCallback(
     () => setOpenFileDialog((openFileDialog) => !openFileDialog),
@@ -192,7 +192,7 @@ const Store = () => {
                   error={descError ? 'Field cannot be empty' : null}
                 />
                 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                  <Button primary submit>
+                  <Button primary submit disabled={isLoading}>
                     Save
                   </Button>
                 </div>
