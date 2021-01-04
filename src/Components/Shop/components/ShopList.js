@@ -90,7 +90,7 @@ export default function ShopList({
       image
         ? `background: url(${image})`
         : 'background: url("../../../bg.png")'};
-    ${tw`bg-cover rounded-full h-24 w-24 mr-6`}
+    ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
   `;
   const toastMarkup = active ? (
     <Toast content="Copied successfully" onDismiss={toggleActive} />
@@ -105,7 +105,7 @@ export default function ShopList({
         >
           <Image {...{image}} />
           <div>
-            <DisplayText size="medium">{title}</DisplayText>
+            <DisplayText size="medium">{title!=="undefined"?title:null}</DisplayText>
             <p
               style={{
                 maxWidth: '20rem',

@@ -10,6 +10,7 @@ export const Shop = () => {
   const {user} = React.useContext(UserStore);
   const userId = user.id;
   const [shops, setShops]  = useState([])
+ 
   const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
 
   const addShop = () => {
@@ -34,7 +35,6 @@ export const Shop = () => {
       .then((json) => {
         setShops(json.shops)
         unsetIsLoading()
-        
         //throw new Error('Network response was not ok');
       })
       .catch((ex) => {
@@ -42,7 +42,7 @@ export const Shop = () => {
   }, [])
 
   return (
-    <Page fullWidth title="All Shops" primaryAction={shops.length < 1 ? {content: 'Create new shop', onAction: addShop}: ""}>
+    <Page fullWidth title="All Shops" primaryAction={shops.length > 0 ? {content: 'Create new shop', onAction: addShop}: ""}>
         {shops && shops.length  > 0 ? shops.map((item) => <ShopList {...item} key={item.id}/>): <EmptyState
         heading="Create and customise your vop shops"
         image="../../../../illustration.png"
