@@ -61,7 +61,7 @@ ${tw`flex mb-14 justify-between`}
 `
 
 export const ProductImage = styled.img`
-${tw`h-auto w-28 mr-5 rounded m-5`}
+${tw`h-auto w-36 mr-5 rounded m-5`}
  object-fit:cover;
 `;
 

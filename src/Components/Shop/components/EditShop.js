@@ -1,4 +1,5 @@
 import React, {useContext, useCallback, useState, useEffect} from 'react';
+import tw, {styled} from 'twin.macro';
 import {
   TextField,
   FormLayout,
@@ -49,8 +50,13 @@ const Store = () => {
       })
       .then((json) => {
         setHandle(json.shop.handle);
-        setTitle(json.shop.title);
-        setDesc(json.shop.description);
+        if(json.shop.title !== "undefined"){
+          setTitle(json.shop.title);
+        }
+        if(json.shop.description !== "undefined"){
+          setDesc(json.shop.description);
+        }
+       
         if (json.shop.shop_image) {
           setAvatar(json.shop.shop_image);
         }
@@ -80,7 +86,7 @@ const Store = () => {
   };
 
   const onSubmit = () => {
-    if (!handle || !title || !description) {
+    if (!handle || !title) {
       setError(true);
       unsetIsLoading();
       return;
@@ -125,6 +131,13 @@ const Store = () => {
         unsetIsLoading();
       });
   };
+  const Image = styled.div`
+    ${({image}) =>
+      image
+        ? `background: url(${image})`
+        : 'background: url("../../../../bg.png")'};
+    ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
+  `;
 
   return (
     <>
@@ -137,7 +150,7 @@ const Store = () => {
       ) : null}
 
       <Upload>
-        <img src={avatar} />
+      <Image image={avatar} />
         <label className="custom-file-upload">
           <input
             type="file"
@@ -155,7 +168,7 @@ const Store = () => {
           title="Shop Details"
           description="Edit an existing vop shop"
         >
-          <div style={{background: '#F9FAFB', padding: '30px'}}>
+          <div style={{background: '#fff', padding: '30px'}}>
             <Form onSubmit={handleSubmit(onSubmit)}>
               <FormLayout>
                 <TextField
@@ -178,7 +191,7 @@ const Store = () => {
                 />
                 <TextField
                   type="text"
-                  label="Shop Bio"
+                  label="Shop Bio (optional)"
                   placeholder="Enter a short bio"
                   value={description}
                   onChange={descChange}
@@ -188,7 +201,7 @@ const Store = () => {
                 />
                 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                   <Button primary submit disabled={isLoading}>
-                    Update
+                    Save
                   </Button>
                 </div>
               </FormLayout>
