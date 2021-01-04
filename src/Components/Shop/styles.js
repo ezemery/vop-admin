@@ -66,7 +66,8 @@ ${tw`h-auto w-36 mr-5 rounded m-5`}
 `;
 
 export const ThumbnailContent = styled.div`
-${tw`lg:flex justify-end hidden  `}
+${tw`lg:flex justify-end hidden lg:w-3/4 sm:w-1/2`}
+    overflow:scroll;
     cursor:pointer;
 `
 

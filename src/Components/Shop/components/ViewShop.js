@@ -244,10 +244,32 @@ export const ViewShop = () => {
 
   return (
     <Page
-      primaryAction={{
-        content: 'Preview Shop',
-        onAction: () => previewShop(shop.handle),
-      }}
+      primaryAction={
+        <div>
+           <Button
+            primary
+            onClick={() => previewShop(shop.handle)}
+            connectedDisclosure={{
+              accessibilityLabel: 'Other save actions',
+              actions: [{
+                content: 'Edit Shop',
+                onAction:() => {
+                  editShop()
+                }
+            },
+            {
+              content: 'Delete Shop',
+              onAction:() => {
+                deleteShop()
+              }
+          }],
+            }}
+          >
+            Preview Shop
+          </Button>
+        </div>
+       
+      }
       fullWidth
       title={title}
       breadcrumbs={[
@@ -259,6 +281,7 @@ export const ViewShop = () => {
     >
       {shop && shop.handle ? (
         <ViewStyles>
+          <div>
           <div style={{display: 'flex', marginBottom: '20px'}}>
             <Image image={shop.shop_image} />
             <div>
@@ -269,19 +292,22 @@ export const ViewShop = () => {
                   display: 'flex',
                   justifyContent: 'start',
                   alignItems: 'center',
-                  marginTop: '15px',
+                  marginTop: '8px',
                   marginBottom: '15px',
                 }}
               >
                 <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
                 {thumbnails.length} Videos
               </p>
-              <div style={{display: 'flex'}}>
-                <p style={{maxWidth: '48rem'}}>{description}</p>
-              </div>
             </div>
           </div>
-          <div style={{display: 'flex', alignItems: 'center'}}>
+
+          <div style={{display: 'flex'}}>
+                <p style={{maxWidth: '48rem'}}>{description}</p>
+              </div>
+          </div>
+       
+          <div style={{display: 'flex', alignItems: 'flex-start'}}>
             <div className="copy">
               <span
                 className="clipboard_copy"
@@ -301,38 +327,38 @@ export const ViewShop = () => {
                 <Icon source={DuplicateMinor} />
               </span>
             </div>
-            <div className="list-item drop">
+            {/* <div className="list-item drop">
               <div className="">
                 <Icon source={MobileVerticalDotsMajorMonotone} />
               </div>
-              <div className="dropdown-content">
-                <div style={{marginBottom: '5px'}}>
+                <div className="dropdown-content">
+                  <div style={{marginBottom: '5px'}}>
+                    <Button
+                      plain
+                      icon={EditMinor}
+                      onClick={() => {
+                        editShop();
+                      }}
+                    >
+                      Edit Shop
+                    </Button>
+                  </div>
                   <Button
                     plain
-                    icon={EditMinor}
+                    destructive
+                    icon={DeleteMinor}
                     onClick={() => {
-                      editShop();
+                      deleteShop();
                     }}
                   >
-                    Edit Shop
+                    Delete Shop
                   </Button>
                 </div>
-                <Button
-                  plain
-                  destructive
-                  icon={DeleteMinor}
-                  onClick={() => {
-                    deleteShop();
-                  }}
-                >
-                  Delete Shop
-                </Button>
-              </div>
-            </div>
+              </div> */}
           </div>
         </ViewStyles>
       ) : null}
-      <div style={{display: 'flex', flexWrap: 'wrap'}}>{feedList}</div>
+      <div style={{display: 'flex', flexWrap: 'wrap', borderTop:"1px solid #DFE3E8"}}>{feedList}</div>
       {toastMarkup}
     </Page>
   );

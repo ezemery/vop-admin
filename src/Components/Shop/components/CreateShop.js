@@ -162,7 +162,7 @@ const Store = () => {
 
       <Layout>
         <Layout.AnnotatedSection
-          title="Shop Details"
+          title="Store Details"
           description="Create a shop for your vop customers"
         >
           <div style={{background: '#fff', padding: '30px'}}>
