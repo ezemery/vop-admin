@@ -3,36 +3,39 @@ import tw, {styled} from 'twin.macro';
 export const ShopContent = styled.div`
 ${tw`flex justify-between py-10`}
 border-bottom:1px solid #DFE3E8;
+.copy{
+    ${tw`inline-flex justify-between items-center`}
+}
 .clipboard_copy{
-    ${tw`inline-flex rounded-full py-2 px-4 justify-between items-center`}
+    ${tw`rounded-full py-2 px-4 mr-5`}
     background-color:#B4E0FA;
     cursor:pointer;
-    .copy{
-        margin-right:10px
-    }
-    .Polaris-Icon{
-        margin:0;
-        width:1em;
-        height:1em;
-    }
+}
+
+.Polaris-Icon{
+    margin:0;
+    width:1em;
+    height:1em;
+    cursor:pointer;
 }
 `;
 
 export const ViewStyles = styled.div`
 ${tw`flex mb-14 justify-between`}
+.copy{
+    ${tw`inline-flex justify-between items-center mr-5`}
+}
 .clipboard_copy{
-    ${tw`inline-flex rounded-full py-2 px-4 justify-between items-center`}
+    ${tw`rounded-full py-2 px-4 mr-5`}
     background-color:#B4E0FA;
-    height:30px;
     cursor:pointer;
-    .copy{
-        margin-right:10px
-    }
-    .Polaris-Icon{
-        margin:0;
-        width:1em;
-        height:1em;
-    }
+}
+
+.Polaris-Icon{
+    margin:0;
+    width:1em;
+    height:1em;
+    cursor:pointer;
 }
 
 .list-item{
@@ -58,11 +61,30 @@ ${tw`flex mb-14 justify-between`}
 `
 
 export const ProductImage = styled.img`
-${tw`h-auto w-28 mr-5 rounded`}
+${tw`h-auto w-28 mr-5 rounded m-5`}
  object-fit:cover;
 `;
 
 export const ThumbnailContent = styled.div`
 ${tw`lg:flex justify-end hidden  `}
     cursor:pointer;
+`
+
+export const Upload = styled.div`
+${tw`flex items-center py-10 my-5 border-b border-gray-300`}
+img{
+    border-raduis:50%;
+    width:100px;
+    height:100px;
+    object-fit:contain;
+}
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
 `
