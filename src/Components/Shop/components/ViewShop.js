@@ -285,7 +285,7 @@ export const ViewShop = () => {
           <div style={{display: 'flex', marginBottom: '20px'}}>
             <Image image={shop.shop_image} />
             <div>
-              <DisplayText size="medium">{title}</DisplayText>
+            <h1 style={{fontSize:"16px", color: "#212B36", fontWeight:"bold"}}>{title !== "undefined"  ? title:null}</h1>
               <p
                 style={{
                   maxWidth: '20rem',
@@ -303,7 +303,7 @@ export const ViewShop = () => {
           </div>
 
           <div style={{display: 'flex'}}>
-                <p style={{maxWidth: '48rem'}}>{description}</p>
+                <p style={{maxWidth: '48rem', color: "#637381"}}>{description}</p>
               </div>
           </div>
        

@@ -98,20 +98,21 @@ export default function ShopList({
 
   return (
     <ShopContent>
-      <div>
+      <div style={{display:"flex", flexDirection:"column", justifyContent:"space-between", margin:"16px"}}>
         <div
           style={{display: 'flex', marginBottom: '20px', cursor: 'pointer'}}
           onClick={() => showMore(id)}
         >
           <Image {...{image}} />
           <div>
-            <DisplayText size="medium">{title!=="undefined"?title:null}</DisplayText>
+            <h1 style={{fontSize:"16px", color: "#212B36", fontWeight:"bold"}}>{title !== "undefined"  ? title:null}</h1>
             <p
               style={{
                 maxWidth: '20rem',
                 display: 'flex',
                 justifyContent: 'start',
                 alignItems: 'center',
+                marginTop:"10px"
               }}
             >
               <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}

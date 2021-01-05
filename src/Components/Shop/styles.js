@@ -4,7 +4,7 @@ export const ShopContent = styled.div`
 ${tw`flex justify-between py-10`}
 border-bottom:1px solid #DFE3E8;
 .copy{
-    ${tw`inline-flex justify-between items-center`}
+    ${tw`inline-flex items-center`}
 }
 .clipboard_copy{
     ${tw`rounded-full py-2 px-4 mr-5`}
