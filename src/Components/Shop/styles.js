@@ -64,7 +64,7 @@ ${tw`grid md:grid-cols-2 sm:grid-cols-1 gap-2 mb-14`}
 `
 
 export const ProductImage = styled.img`
-${tw`h-auto w-36 mr-5 rounded m-5`}
+${tw`h-64 w-36 mr-5 rounded m-5 object-cover`}
  object-fit:cover;
 `;
 

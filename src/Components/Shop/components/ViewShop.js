@@ -124,7 +124,7 @@ export const ViewShop = () => {
   useEffect(() => {
     if (shop.account_id) {
       setIsLoading();
-      fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${shop.account_id}`, {
+      fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${shop.account_id}?limit=20`, {
         credentials: 'include',
         method: 'GET',
       })
@@ -308,7 +308,7 @@ export const ViewShop = () => {
                 }}
               >
                 <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
-                {shop.total_accepted_contents} Videos
+                {shop.total_accepted_contents || 0} Videos
               </p>
             </div>
           </div>
