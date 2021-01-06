@@ -1,7 +1,7 @@
 import tw, {styled} from 'twin.macro';
 
 export const ShopContent = styled.div`
-${tw`flex justify-between py-10`}
+${tw`grid md:grid-cols-2 sm:grid-cols-1 gap-2`}
 border-bottom:1px solid #DFE3E8;
 .copy{
     ${tw`inline-flex items-center`}
@@ -21,9 +21,12 @@ border-bottom:1px solid #DFE3E8;
 `;
 
 export const ViewStyles = styled.div`
-${tw`flex mb-14 justify-between`}
+${tw`grid md:grid-cols-2 sm:grid-cols-1 gap-2 mb-14`}
+.copy_container{
+    ${tw`flex sm:items-start sm:justify-end justify-start sm:p-0 p-5`}
+}
 .copy{
-    ${tw`inline-flex justify-between items-center mr-5`}
+    ${tw`inline-flex justify-between items-center`}
 }
 .clipboard_copy{
     ${tw`rounded-full py-2 px-4 mr-5`}
@@ -66,9 +69,7 @@ ${tw`h-auto w-36 mr-5 rounded m-5`}
 `;
 
 export const ThumbnailContent = styled.div`
-${tw`lg:flex justify-end hidden lg:w-3/4 sm:w-1/2`}
-    overflow:scroll;
-    cursor:pointer;
+${tw`sm:mx-auto grid md:grid-cols-6  sm:grid-cols-3 grid-cols-3 sm:gap-7 gap-1`}
 `
 
 export const Upload = styled.div`
@@ -89,3 +90,13 @@ input[type="file"] {
     cursor: pointer;
 }
 `
+
+export const Text = styled.h1`
+    font-size: 16px;
+    color: #212B36;
+    font-weight: bold; 
+    white-space: nowrap;  
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    width:300px;
+`;

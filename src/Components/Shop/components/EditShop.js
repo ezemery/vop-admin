@@ -195,6 +195,8 @@ const Store = () => {
                   placeholder="Enter a short bio"
                   value={description}
                   onChange={descChange}
+                  maxLength={150}
+                  showCharacterCount
                   name="description"
                   multiline={4}
                   error={error ? 'Field cannot be empty' : null}

@@ -22,7 +22,7 @@ import {
   Popover,
   ActionList,
 } from '@shopify/polaris';
-import {ViewStyles} from '../styles';
+import {ViewStyles, Text} from '../styles';
 import {TikTokCard, TikTokModal} from '../../TikTok';
 import {UserStore, FrameStore} from '../../../Context/store';
 
@@ -145,21 +145,31 @@ export const ViewShop = () => {
     shortFormat: true,
   };
 
+  //style={{borderTop:"1px solid #DFE3E8"}}
+
+  const Container = styled.div`
+    ${tw`mx-auto grid md:grid-cols-4 sm:grid-cols-3 grid-cols-2 sm:gap-7 gap-2`}
+  `;
+
   const Content = styled.div`
-    ${tw`rounded-md overflow-hidden mx-auto relative m-6`}
-    width: 250px;
+    ${tw`relative rounded-md`}
     height: 410px;
     
     img{
-        ${tw`absolute top-0 bottom-0 h-full w-full object-cover`} 
-    }
-    .overlay{
-        ${tw`absolute top-0 bottom-0 h-full w-full`} 
+        ${tw`h-full w-full object-cover overflow-hidden`} 
         background: rgb(0,0,0);
         background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(9,9,121,0.024247198879551846) 46%, rgba(0,212,255,0) 100%);
     }
+
+    &:hover .bio{
+      ${tw`flex`} 
+      background: rgb(0,0,0);
+      background: linear-gradient(0deg, rgba(0,0,0,1) 0%, rgba(9,9,121,0.024247198879551846) 46%, rgba(0,212,255,0) 100%);
+    }
+
     .bio{
-        ${tw`flex text-white justify-between text-sm absolute bottom-0 p-5 left-0 right-0 object-cover w-80 m-auto`} 
+        ${tw`hidden text-white justify-between text-sm absolute bottom-0 p-5 left-0 right-0 object-cover w-full m-auto`} 
+        
      p{
         ${tw`font-semibold`}  
      }
@@ -238,6 +248,7 @@ export const ViewShop = () => {
         : 'background: url("../../../../bg.png")'};
     ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
   `;
+  
   const toastMarkup = active ? (
     <Toast content="Copied successfully" onDismiss={toggleActive} />
   ) : null;
@@ -282,10 +293,10 @@ export const ViewShop = () => {
       {shop && shop.handle ? (
         <ViewStyles>
           <div>
-          <div style={{display: 'flex', marginBottom: '20px'}}>
+          <div style={{display: 'flex', marginBottom: '20px', alignItems:"center"}}>
             <Image image={shop.shop_image} />
             <div>
-            <h1 style={{fontSize:"16px", color: "#212B36", fontWeight:"bold"}}>{title !== "undefined"  ? title:null}</h1>
+            <Text>{title !== "undefined"  ? title:null}</Text>
               <p
                 style={{
                   maxWidth: '20rem',
@@ -297,7 +308,7 @@ export const ViewShop = () => {
                 }}
               >
                 <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
-                {thumbnails.length} Videos
+                {shop.total_accepted_contents} Videos
               </p>
             </div>
           </div>
@@ -307,7 +318,7 @@ export const ViewShop = () => {
               </div>
           </div>
        
-          <div style={{display: 'flex', alignItems: 'flex-start'}}>
+          <div className="copy_container">
             <div className="copy">
               <span
                 className="clipboard_copy"
@@ -327,38 +338,10 @@ export const ViewShop = () => {
                 <Icon source={DuplicateMinor} />
               </span>
             </div>
-            {/* <div className="list-item drop">
-              <div className="">
-                <Icon source={MobileVerticalDotsMajorMonotone} />
-              </div>
-                <div className="dropdown-content">
-                  <div style={{marginBottom: '5px'}}>
-                    <Button
-                      plain
-                      icon={EditMinor}
-                      onClick={() => {
-                        editShop();
-                      }}
-                    >
-                      Edit Shop
-                    </Button>
-                  </div>
-                  <Button
-                    plain
-                    destructive
-                    icon={DeleteMinor}
-                    onClick={() => {
-                      deleteShop();
-                    }}
-                  >
-                    Delete Shop
-                  </Button>
-                </div>
-              </div> */}
           </div>
         </ViewStyles>
       ) : null}
-      <div style={{display: 'flex', flexWrap: 'wrap', borderTop:"1px solid #DFE3E8"}}>{feedList}</div>
+      <Container >{feedList}</Container>
       {toastMarkup}
     </Page>
   );
