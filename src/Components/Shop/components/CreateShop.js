@@ -197,15 +197,15 @@ const Store = () => {
                   type="text"
                   label="Shop Bio (optional)"
                   placeholder="Enter a short bio"
-                  maxLength={100}
+                  maxLength={150}
                   showCharacterCount
-                  name="description"
                   multiline={4}
+                  name="description"
                   error={descError ? 'Field cannot be empty' : null}
                 />
                 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                   <Button primary submit disabled={isLoading}>
-                    Save
+                    Create Shop
                   </Button>
                 </div>
               </FormLayout>

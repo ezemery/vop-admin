@@ -5,12 +5,13 @@ import {useHistory} from 'react-router-dom';
 import {DuplicateMinor, PlayCircleMajorMonotone} from '@shopify/polaris-icons';
 import tw, {styled} from 'twin.macro';
 import {FrameStore} from '../../../Context/store';
-import {ShopContent, ProductImage, ThumbnailContent} from '../styles';
+import {ShopContent, ProductImage, ThumbnailContent, Text} from '../styles';
 
 export default function ShopList({
   handle,
   title,
   description,
+  total_accepted_contents,
   account_id,
   id,
   shop_image: image,
@@ -98,14 +99,14 @@ export default function ShopList({
 
   return (
     <ShopContent>
-      <div style={{display:"flex", flexDirection:"column", justifyContent:"space-between", margin:"16px"}}>
+      <div style={{display:"flex", flexDirection:"column", justifyContent:"space-between", marginBottom:"16px"}}>
         <div
-          style={{display: 'flex', marginBottom: '20px', cursor: 'pointer'}}
+          style={{display: 'flex', marginBottom: '20px', cursor: 'pointer', alignItems:"center"}}
           onClick={() => showMore(id)}
         >
           <Image {...{image}} />
           <div>
-            <h1 style={{fontSize:"16px", color: "#212B36", fontWeight:"bold"}}>{title !== "undefined"  ? title:null}</h1>
+            <Text>{title !== "undefined"  ? title:null}</Text>
             <p
               style={{
                 maxWidth: '20rem',
@@ -116,7 +117,7 @@ export default function ShopList({
               }}
             >
               <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
-              {thumbnails.length} Videos
+              {total_accepted_contents} Videos
             </p>
           </div>
         </div>
