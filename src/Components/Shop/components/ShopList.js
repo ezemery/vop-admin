@@ -117,7 +117,7 @@ export default function ShopList({
               }}
             >
               <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
-              {total_accepted_contents} Videos
+              {total_accepted_contents || 0} Videos
             </p>
           </div>
         </div>
