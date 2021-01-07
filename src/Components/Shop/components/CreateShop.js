@@ -52,6 +52,7 @@ const Store = () => {
   const onSubmit = (data) => {
     setHandleNotAllowed(false);
     setError(false);
+    setFailure(false);
     setHandleError(false);
     setTitleError(false);
     setDescError(false);
@@ -105,11 +106,11 @@ const Store = () => {
         return response.json();
       })
       .then((json) => {
-        if (json) {
+        if (json.id) {
           setSuccess(true);
           setFailure(false);
           unsetIsLoading();
-          history.push(`/account/id/${accountId}/shop/${json.shop.id}`);
+          history.push(`/account/id/${accountId}/shop/${json.id}`);
         } else {
           setFailure(true);
           unsetIsLoading();
@@ -141,7 +142,7 @@ const Store = () => {
 
       {failure ? (
         <Banner
-          title="Shop handle exists, please try again"
+          title="Something went wrong, please try again"
           status="critical"
           onDismiss={() => setFailure(false)}
         />

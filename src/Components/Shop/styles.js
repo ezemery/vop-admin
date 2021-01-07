@@ -69,7 +69,7 @@ ${tw`h-64 w-36 mr-5 rounded m-5 object-cover`}
 `;
 
 export const ThumbnailContent = styled.div`
-${tw`sm:mx-auto grid md:grid-cols-6  sm:grid-cols-3 grid-cols-3 sm:gap-7 gap-1`}
+${tw`sm:mx-auto grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid-cols-3 sm:gap-7 gap-1`}
 `
 
 export const Upload = styled.div`

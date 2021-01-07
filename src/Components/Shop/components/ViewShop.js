@@ -1,7 +1,8 @@
-import React, {useCallback, useState, useEffect} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {useParams, useHistory} from 'react-router-dom';
 import tw, {styled} from 'twin.macro';
 import instagram from '../../Icons/instagram.png';
+import InfiniteScroll from 'react-infinite-scroller';
 import NumericLabel from 'react-pretty-numbers';
 import {
   ClipboardMinor,
@@ -21,6 +22,7 @@ import {
   DisplayText,
   Popover,
   ActionList,
+  Modal,
 } from '@shopify/polaris';
 import {ViewStyles, Text} from '../styles';
 import {TikTokCard, TikTokModal} from '../../TikTok';
@@ -39,6 +41,13 @@ export const ViewShop = () => {
   const [thumbnails, setThumbnails] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const toggleActive = useCallback(() => setActive((active) => !active), []); 
+  const pageRef = useRef(1);
+  const [page, setPage] = useState(1);
+  const [more, setMore] = useState(false);
+  const [deleteActive, setDeleteActive] = useState(false);
+  const [deleteModalActive, setDeletemodalActive] = useState(false);
+  const toggleToastDeleteActive = () => setDeleteActive((deleteActive) => !deleteActive)
+  const handleDeleteChange = useCallback(() =>{setDeletemodalActive(!deleteModalActive)}, [deleteModalActive]);
 
   useEffect(() => {
     setIsLoading();
@@ -72,6 +81,15 @@ export const ViewShop = () => {
       })
       .catch((ex) => {});
   }, []);
+
+  const handleNextPage = () => {
+    setPage(pageRef.current + 1);
+  };
+
+  const toastDeleteMarkup = deleteActive ? (
+    <Toast content="Successfully Deleted" onDismiss={toggleToastDeleteActive} />
+  ) : null
+
   const Tiktok = useCallback(
     () => (
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,7 +142,7 @@ export const ViewShop = () => {
   useEffect(() => {
     if (shop.account_id) {
       setIsLoading();
-      fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${shop.account_id}?limit=20`, {
+      fetch(`${process.env.REACT_APP_API_HOST}/embed/feed/${shop.account_id}?limit=20&page=${page}`, {
         credentials: 'include',
         method: 'GET',
       })
@@ -132,12 +150,13 @@ export const ViewShop = () => {
         .then((json) => {
           if (json.data) {
             unsetIsLoading();
-            setThumbnails(json.data);
+            setThumbnails([...thumbnails, ...json.data]);
+            setMore(json.has_more)
           }
         })
         .catch((ex) => {});
     }
-  }, [shop]);
+  }, [shop,page]);
 
   let params = {
     justification: 'L',
@@ -145,7 +164,6 @@ export const ViewShop = () => {
     shortFormat: true,
   };
 
-  //style={{borderTop:"1px solid #DFE3E8"}}
 
   const Container = styled.div`
     ${tw`mx-auto grid md:grid-cols-4 sm:grid-cols-3 grid-cols-2 sm:gap-7 gap-2`}
@@ -168,7 +186,7 @@ export const ViewShop = () => {
     }
 
     .bio{
-        ${tw`hidden text-white justify-between text-sm absolute bottom-0 p-5 left-0 right-0 object-cover w-full m-auto`} 
+        ${tw`hidden text-white justify-between sm:text-xl text-sm absolute bottom-0 p-5 left-0 right-0 object-cover w-full m-auto`} 
         
      p{
         ${tw`font-semibold`}  
@@ -184,8 +202,7 @@ export const ViewShop = () => {
     }
 `
 
-  const feedList =
-    thumbnails.length > 0 &&
+  const feedList = thumbnails.length > 0 &&
     thumbnails.map((item, idx) => (
       <Content  key={item.id}>
         <img src={item.cover_img}/>
@@ -196,7 +213,8 @@ export const ViewShop = () => {
                 <div style={{display:"flex"}}><Icon source={HeartMajorMonotone} /> &nbsp; <NumericLabel params={params}>{item.like_count}</NumericLabel></div>
         </div>
       </Content>
-    ));
+    ))
+   ;
 
   const previewShop = (url) => {
     window.open(`${process.env.REACT_APP_VOPSHOP_HOST}/${url}`, '_blank');
@@ -247,6 +265,7 @@ export const ViewShop = () => {
         ? `background: url(${image})`
         : 'background: url("../../../../bg.png")'};
     ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
+    min-width:8rem;
   `;
   
   const toastMarkup = active ? (
@@ -271,7 +290,7 @@ export const ViewShop = () => {
             {
               content: 'Delete Shop',
               onAction:() => {
-                deleteShop()
+                handleDeleteChange()
               }
           }],
             }}
@@ -303,8 +322,7 @@ export const ViewShop = () => {
                   display: 'flex',
                   justifyContent: 'start',
                   alignItems: 'center',
-                  marginTop: '8px',
-                  marginBottom: '15px',
+                  marginTop:"10px"
                 }}
               >
                 <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
@@ -341,7 +359,40 @@ export const ViewShop = () => {
           </div>
         </ViewStyles>
       ) : null}
-      <Container >{feedList}</Container>
+       <InfiniteScroll
+          pageStart={0}
+          loadMore={handleNextPage}
+          hasMore={more}
+          loader={
+            <div className="loader" key={0}>
+              Loading ...
+            </div>
+          }
+        >
+          <Container> 
+            {feedList}
+          </Container>
+        </InfiniteScroll>
+
+        <Modal
+        open={deleteModalActive}
+        onClose={handleDeleteChange}
+        title="Are you sure you want to delete this shop"
+        primaryAction={
+          {
+            content: 'Yes',
+            onAction: ()=>{deleteShop()},
+          }
+        }
+        secondaryActions={[
+          {
+            content: 'Cancel',
+            onAction: handleDeleteChange,
+          },
+        ]}
+      >
+      </Modal>
+      {toastDeleteMarkup}
       {toastMarkup}
     </Page>
   );

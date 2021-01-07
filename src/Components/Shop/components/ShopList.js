@@ -92,6 +92,7 @@ export default function ShopList({
         ? `background: url(${image})`
         : 'background: url("../../../bg.png")'};
     ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
+      min-width:8rem;
   `;
   const toastMarkup = active ? (
     <Toast content="Copied successfully" onDismiss={toggleActive} />
