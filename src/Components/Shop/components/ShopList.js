@@ -100,14 +100,14 @@ export default function ShopList({
 
   return (
     <ShopContent>
-      <div style={{display:"flex", flexDirection:"column", justifyContent:"space-between", marginBottom:"16px"}}>
+      <div style={{display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
         <div
           style={{display: 'flex', marginBottom: '20px', cursor: 'pointer', alignItems:"center"}}
           onClick={() => showMore(id)}
         >
           <Image {...{image}} />
-          <div>
-            <Text>{title !== "undefined"  ? title:null}</Text>
+          <Text>
+            <h1>{title !== "undefined"  ? title:null}</h1>
             <p
               style={{
                 maxWidth: '20rem',
@@ -120,7 +120,7 @@ export default function ShopList({
               <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
               {total_accepted_contents || 0} Videos
             </p>
-          </div>
+          </Text>
         </div>
         <div className="copy">
           <span className="clipboard_copy" onClick={() => previewShop(handle)}>
