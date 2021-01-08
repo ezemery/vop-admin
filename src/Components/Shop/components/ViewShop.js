@@ -24,7 +24,7 @@ import {
   ActionList,
   Modal,
 } from '@shopify/polaris';
-import {ViewStyles, Text} from '../styles';
+import {ViewStyles, FullText} from '../styles';
 import {TikTokCard, TikTokModal} from '../../TikTok';
 import {UserStore, FrameStore} from '../../../Context/store';
 
@@ -314,8 +314,8 @@ export const ViewShop = () => {
           <div>
           <div style={{display: 'flex', marginBottom: '20px', alignItems:"center"}}>
             <Image image={shop.shop_image} />
-            <div>
-            <Text>{title !== "undefined"  ? title:null}</Text>
+            <FullText>
+            <h1>{title !== "undefined"  ? title:null}</h1>
               <p
                 style={{
                   maxWidth: '20rem',
@@ -328,7 +328,7 @@ export const ViewShop = () => {
                 <Icon source={PlayCircleMajorMonotone} /> &nbsp;&nbsp;{' '}
                 {shop.total_accepted_contents || 0} Videos
               </p>
-            </div>
+            </FullText>
           </div>
 
           <div style={{display: 'flex'}}>

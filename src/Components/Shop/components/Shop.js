@@ -42,7 +42,7 @@ export const Shop = () => {
   }, [])
 
   return (
-    <Page title="All Shops">
+    <Page fullWidth title="All Shops">
         {shops && shops.length  > 0 ? shops.map((item) => <ShopList {...item} key={item.id}/>): <EmptyState
         heading="Create and customise your vop shops"
         image="../../../../illustration.png"

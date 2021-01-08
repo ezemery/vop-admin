@@ -1,7 +1,7 @@
 import tw, {styled} from 'twin.macro';
 
 export const ShopContent = styled.div`
-${tw`grid md:grid-cols-2 sm:grid-cols-1 gap-2`}
+${tw`grid md:grid-cols-3 sm:grid-cols-1 gap-2 pb-5`}
 border-bottom:1px solid #DFE3E8;
 .copy{
     ${tw`inline-flex items-center`}
@@ -64,12 +64,12 @@ ${tw`grid md:grid-cols-2 sm:grid-cols-1 gap-2 mb-14`}
 `
 
 export const ProductImage = styled.img`
-${tw`h-64 w-36 mr-5 rounded m-5 object-cover`}
+${tw`h-64 w-40 rounded object-cover`}
  object-fit:cover;
 `;
 
 export const ThumbnailContent = styled.div`
-${tw`sm:mx-auto grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid-cols-3 sm:gap-7 gap-1`}
+${tw`sm:mx-auto col-span-2 grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid-cols-3 sm:gap-7 gap-1`}
 `
 
 export const Upload = styled.div`
@@ -91,12 +91,18 @@ input[type="file"] {
 }
 `
 
-export const Text = styled.h1`
+export const Text = styled.div`
     font-size: 16px;
     color: #212B36;
     font-weight: bold; 
-    white-space: nowrap;  
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    width:300px;
+    max-width:220px;
+    width:100%;
+`;
+
+export const FullText = styled.div`
+    font-size: 16px;
+    color: #212B36;
+    font-weight: bold; 
+    max-width:500px;
+    width:100%;
 `;
