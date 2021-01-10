@@ -8,6 +8,7 @@ import {
   Button,
   Form,
   Page,
+  PageActions,
 } from '@shopify/polaris';
 
 import {useParams} from 'react-router-dom';
@@ -15,7 +16,7 @@ import {useForm, Controller} from 'react-hook-form';
 import {FrameStore, UserStore} from '../../../Context/store';
 import {Upload} from '../styles';
 
-const Store = () => {
+export const EditShop = () => {
   const {handleSubmit, control} = useForm();
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -138,85 +139,6 @@ const Store = () => {
         : 'background: url("../../../../bg.png")'};
     ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
   `;
-
-  return (
-    <>
-      {success ? (
-        <Banner
-          title="Your shop has been updated successfully."
-          status="success"
-          onDismiss={() => setSuccess(false)}
-        />
-      ) : null}
-
-      <Upload>
-      <Image image={avatar} />
-        <label className="custom-file-upload">
-          <input
-            type="file"
-            name="image"
-            id="file"
-            accept=".jpeg, .png, .jpg"
-            onChange={handleImageUpload}
-          />
-          Update Picture
-        </label>
-      </Upload>
-
-      <Layout>
-        <Layout.AnnotatedSection
-          title="Shop Details"
-          description="Edit an existing vop shop"
-        >
-          <div style={{background: '#fff', padding: '30px'}}>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <FormLayout>
-                <TextField
-                  type="text"
-                  label="Handle"
-                  placeholder="Enter a handle"
-                  name="handle"
-                  value={handle}
-                  onChange={handleChange}
-                  error={error ? 'Field cannot be empty' : null}
-                />
-                <TextField
-                  type="text"
-                  label="Shop Title"
-                  placeholder="Enter a shop title"
-                  value={title}
-                  onChange={titleChange}
-                  name="title"
-                  error={error ? 'Field cannot be empty' : null}
-                />
-                <TextField
-                  type="text"
-                  label="Shop Bio (optional)"
-                  placeholder="Enter a short bio"
-                  value={description}
-                  onChange={descChange}
-                  maxLength={150}
-                  showCharacterCount
-                  name="description"
-                  multiline={4}
-                  error={error ? 'Field cannot be empty' : null}
-                />
-                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                  <Button primary submit disabled={isLoading}>
-                    Save
-                  </Button>
-                </div>
-              </FormLayout>
-            </Form>
-          </div>
-        </Layout.AnnotatedSection>
-      </Layout>
-    </>
-  );
-};
-
-export const EditShop = () => {
-  const {accountId} = useParams();
   return (
     <Page
       fullWidth
@@ -228,7 +150,82 @@ export const EditShop = () => {
         },
       ]}
     >
-      <Store />
+       <>
+          {success ? (
+            <Banner
+              title="Your shop has been updated successfully."
+              status="success"
+              onDismiss={() => setSuccess(false)}
+            />
+          ) : null}
+
+          <Upload>
+          <Image image={avatar} />
+            <label className="custom-file-upload">
+              <input
+                type="file"
+                name="image"
+                id="file"
+                accept=".jpeg, .png, .jpg"
+                onChange={handleImageUpload}
+              />
+              Update Picture
+            </label>
+          </Upload>
+
+          <Layout>
+            <Layout.AnnotatedSection
+              title="Shop Details"
+              description="Edit an existing vop shop"
+            >
+              <div style={{background: '#fff', padding: '30px',  marginBottom:"20px"}}>
+                <Form onSubmit={handleSubmit(onSubmit)}>
+                  <FormLayout>
+                    <TextField
+                      type="text"
+                      label="Handle"
+                      placeholder="Enter a handle"
+                      name="handle"
+                      value={handle}
+                      onChange={handleChange}
+                      error={error ? 'Field cannot be empty' : null}
+                    />
+                    <TextField
+                      type="text"
+                      label="Shop Title"
+                      placeholder="Enter a shop title"
+                      value={title}
+                      onChange={titleChange}
+                      name="title"
+                      error={error ? 'Field cannot be empty' : null}
+                    />
+                    <TextField
+                      type="text"
+                      label="Shop Bio (optional)"
+                      placeholder="Enter a short bio"
+                      value={description}
+                      onChange={descChange}
+                      maxLength={150}
+                      showCharacterCount
+                      name="description"
+                      multiline={4}
+                      error={error ? 'Field cannot be empty' : null}
+                    />
+                    {/* <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                      <Button primary submit disabled={isLoading}>
+                        Save
+                      </Button>
+                    </div> */}
+                  </FormLayout>
+                </Form>
+              </div>
+            </Layout.AnnotatedSection>
+          </Layout>
+        </>
+        <PageActions
+          primaryAction={{content: 'Save', disabled:isLoading, onAction:()=>onSubmit()}}
+          secondaryActions={[{content: 'Cancel',  url: `/account/id/${accountId}/shop`}]}
+        />
     </Page>
   );
 };

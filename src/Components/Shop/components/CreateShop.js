@@ -12,6 +12,7 @@ import {
   Stack,
   Thumbnail,
   Caption,
+  PageActions,
 } from '@shopify/polaris';
 import {NoteMinor} from '@shopify/polaris-icons';
 import {useHistory, useParams} from 'react-router-dom';
@@ -20,10 +21,14 @@ import {useForm, Controller} from 'react-hook-form';
 import {FrameStore, UserStore} from '../../../Context/store';
 import {Upload} from '../styles';
 
-const Store = () => {
+export const CreateShop = () => {
   const {handleSubmit, control} = useForm();
   const [error, setError] = useState(false);
+  const [titleValue, setTitleValue] = useState("");
+  const [handleValue, setHandleValue] = useState("");
+  const [descValue, setDescValue] = useState("");
   const [titleError, setTitleError] = useState(false);
+  const [imageError, setShopImageError] = useState(false);
   const [handleError, setHandleError] = useState(false);
   const [handleNotAllowed, setHandleNotAllowed] = useState(false);
   const [descError, setDescError] = useState(false);
@@ -41,12 +46,25 @@ const Store = () => {
   const notAllowed  =  ["stop-store", "tashehs", "getstartedtoday", "shoptiktoktoday", "adika", "shoptiktok", "mwl-boutique", "nani-tf", "therealmorgancasey", "beawesomebeardcare", "marttinibylana", "supresell", "bluespecsglasses", "getstarted", "getnaughtee", "boltbeauty", "lskd", "lindsayrustperper", "mintandbasil", "thesensiblemama", "glowfashion", "whitefox", "thebeautyspy", "bnnywear", "adeline", "holly", "princesspolly"]
 
   const handleImageUpload = async (e) => {
+    setShopImageError(false);
     const file = e.target.files[0];
     if (file) {
       setAvatar(URL.createObjectURL(file));
       setShopImageFile(file);
     }
   };
+
+  const onChangeHandleValue = (e) => {
+    setHandleValue(e)
+  }
+
+  const onChangeTitleValue = (e) => {
+    setTitleValue(e)
+  }
+
+  const onChangeDescValue = (e) => {
+    setDescValue(e)
+  }
   
 
   const onSubmit = (data) => {
@@ -54,24 +72,28 @@ const Store = () => {
     setError(false);
     setFailure(false);
     setHandleError(false);
+    setShopImageError(false);
     setTitleError(false);
     setDescError(false);
 
-    if (!data.handle) {
+    if (!handleValue) {
       setHandleError(true);
       unsetIsLoading();
       return;
     }
 
-    if (!data.title) {
+    if (!titleValue) {
       setTitleError(true);
       unsetIsLoading();
       return;
     }
-
+    if(!shopImageFile){
+      setShopImageError(true);
+      unsetIsLoading();
+      return;
+    }
    
-    const validate = notAllowed.indexOf(data.handle.toLowerCase()) > -1;
-    console.log("validate",validate)
+    const validate = notAllowed.indexOf(handleValue.toLowerCase()) > -1;
 
     if(validate){
       setHandleNotAllowed(true);
@@ -79,9 +101,9 @@ const Store = () => {
       return;
     }
     const formData = new FormData();
-    formData.append('handle', data.handle.toLowerCase());
-    formData.append('title', data.title);
-    formData.append('description', data.description);
+    formData.append('handle', handleValue.toLowerCase());
+    formData.append('title', titleValue);
+    formData.append('description', descValue);
     formData.append('account_id', accountId);
     formData.append('user_id', userId);
     formData.append('shop_image', shopImageFile);
@@ -129,97 +151,6 @@ const Store = () => {
         : 'background: url("../../../../bg.png")'};
     ${tw`bg-cover rounded-full h-32 w-32 mr-6`}
   `;
-
-  return (
-    <>
-      {success ? (
-        <Banner
-          title="Your shop has been created successfully."
-          status="success"
-          onDismiss={() => setSuccess(false)}
-        />
-      ) : null}
-
-      {failure ? (
-        <Banner
-          title="Something went wrong, please try again"
-          status="critical"
-          onDismiss={() => setFailure(false)}
-        />
-      ) : null}
-      <Upload>
-      <Image image={avatar} />
-        <label className="custom-file-upload">
-          <input
-            type="file"
-            name="image"
-            id="file"
-            accept=".jpeg, .png, .jpg"
-            onChange={handleImageUpload}
-          />
-          Upload Picture
-        </label>
-      </Upload>
-
-      <Layout>
-        <Layout.AnnotatedSection
-          title="Store Details"
-          description="Create a shop for your vop customers"
-        >
-          <div style={{background: '#fff', padding: '30px'}}>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <FormLayout>
-                <Controller
-                  as={TextField}
-                  control={control}
-                  type="text"
-                  label="Handle"
-                  placeholder="Enter a handle"
-                  name="handle"
-                  connectedLeft={
-                    <Button disabled>
-                      {process.env.REACT_APP_VOPSHOP_HOST}/
-                    </Button>
-                  }
-                  error={handleError ? 'Field cannot be empty' : handleNotAllowed ? "Handle is not allowed": null}
-                />
-                <Controller
-                  as={TextField}
-                  control={control}
-                  type="text"
-                  label="Shop Title"
-                  placeholder="Enter a shop title"
-                  name="title"
-                  error={titleError ? 'Field cannot be empty' : null}
-                />
-                <Controller
-                  as={TextField}
-                  control={control}
-                  type="text"
-                  label="Shop Bio (optional)"
-                  placeholder="Enter a short bio"
-                  maxLength={150}
-                  showCharacterCount
-                  multiline={4}
-                  name="description"
-                  error={descError ? 'Field cannot be empty' : null}
-                />
-                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                  <Button primary submit disabled={isLoading}>
-                    Create Shop
-                  </Button>
-                </div>
-              </FormLayout>
-            </Form>
-          </div>
-        </Layout.AnnotatedSection>
-      </Layout>
-    </>
-  );
-};
-
-export const CreateShop = () => {
-  const {accountId} = useParams();
   return (
     <Page
       fullWidth
@@ -231,7 +162,95 @@ export const CreateShop = () => {
         },
       ]}
     >
-      <Store />
+      <>
+        {success ? (
+          <Banner
+            title="Your shop has been created successfully."
+            status="success"
+            onDismiss={() => setSuccess(false)}
+          />
+        ) : null}
+
+        {failure ? (
+          <Banner
+            title="Something went wrong, please try again"
+            status="critical"
+            onDismiss={() => setFailure(false)}
+          />
+        ) : null}
+        <Upload>
+        <Image image={avatar} />
+          <label className="custom-file-upload">
+            <input
+              type="file"
+              name="image"
+              id="file"
+              accept=".jpeg, .png, .jpg"
+              onChange={handleImageUpload}
+            />
+           
+           <span style={{color:`${imageError?"red":"black"}`}}>{imageError ? 'Field cannot be empty' : 'Upload Picture'}</span>
+          </label>
+        </Upload>
+
+        <Layout>
+          <Layout.AnnotatedSection
+            title="Store Details"
+            description="Create a shop for your vop customers"
+          >
+            <div style={{background: '#fff', padding: '30px', marginBottom:"20px"}}>
+              <Form>
+                <FormLayout>
+                  <TextField
+                    type="text"
+                    label="Handle"
+                    placeholder="Enter a handle"
+                    name="handle"
+                    value={handleValue}
+                    onChange={onChangeHandleValue}
+                    connectedLeft={
+                      <Button disabled>
+                        {process.env.REACT_APP_VOPSHOP_HOST}/
+                      </Button>
+                    }
+                    error={handleError ? 'Field cannot be empty' : handleNotAllowed ? "Handle is not allowed": null}
+                  />
+                  <TextField
+                    type="text"
+                    label="Shop Title"
+                    placeholder="Enter a shop title"
+                    name="title"
+                    value={titleValue}
+                    onChange={onChangeTitleValue}
+                    error={titleError ? 'Field cannot be empty' : null}
+                  />
+                  <TextField
+                    type="text"
+                    label="Shop Bio (optional)"
+                    placeholder="Enter a short bio"
+                    maxLength={150}
+                    showCharacterCount
+                    multiline={4}
+                    name="description"
+                    value={descValue}
+                    onChange={onChangeDescValue}
+                    error={descError ? 'Field cannot be empty' : null}
+                  />
+                  {/* <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <Button primary submit disabled={isLoading}>
+                      Create Shop
+                    </Button>
+                  </div> */}
+                </FormLayout>
+              </Form>
+            </div>
+          </Layout.AnnotatedSection>
+        </Layout>
+      </>
+      <PageActions
+          primaryAction={{content: 'Create Shop', disabled:isLoading, onAction:()=>onSubmit()}}
+          secondaryActions={[{content: 'Cancel',  url: `/account/id/${accountId}/shop`}]}
+        />
     </Page>
   );
 };
