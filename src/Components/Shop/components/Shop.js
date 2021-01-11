@@ -10,6 +10,7 @@ export const Shop = () => {
   const {user} = React.useContext(UserStore);
   const userId = user.id;
   const [shops, setShops]  = useState([])
+ 
   const {setIsLoading, unsetIsLoading} = React.useContext(FrameStore)
 
   const addShop = () => {
@@ -34,7 +35,6 @@ export const Shop = () => {
       .then((json) => {
         setShops(json.shops)
         unsetIsLoading()
-        
         //throw new Error('Network response was not ok');
       })
       .catch((ex) => {
@@ -42,17 +42,17 @@ export const Shop = () => {
   }, [])
 
   return (
-    <Page fullWidth title="All Shops" primaryAction={shops.length > 0 ? {content: 'Add a new shop', onAction: addShop}: ""}>
+    <Page fullWidth title="All Shops">
         {shops && shops.length  > 0 ? shops.map((item) => <ShopList {...item} key={item.id}/>): <EmptyState
         heading="Create and customise your vop shops"
-        image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+        image="../../../../illustration.png"
       >
         <Button
                 primary
                 url={`/account/id/${accountId}/shop/create`}
               >
                 {' '}
-                Create Shop
+                Create new shop
               </Button>
       </EmptyState>}
      

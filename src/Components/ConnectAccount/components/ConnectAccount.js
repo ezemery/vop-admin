@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect} from 'react';
-import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList, TextStyle,Avatar,Icon,Toast} from '@shopify/polaris';
+import {EmptyState, Button, Page, Modal, Heading, Filters, ResourceList,TextStyle,Avatar,Icon,Toast} from '@shopify/polaris';
 import {useParams} from 'react-router-dom';
 import {HashtagMajorMonotone,CustomersMajorMonotone,PlayCircleMajorMonotone,DeleteMinor,RefreshMinor} from '@shopify/polaris-icons';
 import {Social, ConnectList, Resource} from '../styles';
@@ -391,7 +391,7 @@ export const ConnectAccount = () => {
               </Button>
             </div>
           </Social>
-          {/* <Social>
+          <Social>
             <div style={{display: 'flex'}}>
               <img src={instagram} alt="instagram logo"/>
               <div style={{marginLeft: '20px'}}>
@@ -407,7 +407,7 @@ export const ConnectAccount = () => {
                 Connect Account
               </Button>
             </div>
-          </Social> */}
+          </Social>
         </Modal.Section>
       </Modal>
 

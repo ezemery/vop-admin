@@ -1,4 +1,4 @@
-import React, {useCallback, useState,useContext} from 'react';
+import React, {useCallback, useState, useContext} from 'react';
 import {
   EmptyState,
   Button,
@@ -13,27 +13,37 @@ import {
   Loading,
   Tag,
   TextContainer,
-  Stack
+  Stack,
 } from '@shopify/polaris';
-import {MentionMajorMonotone,HashtagMajorMonotone} from '@shopify/polaris-icons';
+import {
+  MentionMajorMonotone,
+  HashtagMajorMonotone,
+} from '@shopify/polaris-icons';
 import {useForm, Controller} from 'react-hook-form';
-import {Switch, Route, useRouteMatch,useHistory, useParams} from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  useRouteMatch,
+  useHistory,
+  useParams,
+} from 'react-router-dom';
 import {Container, FormField} from '../styles';
-import {UserStore,FrameStore} from "../../../Context/store";
+import {UserStore, FrameStore} from '../../../Context/store';
+
 export const TiktokConnect = () => {
   const {accountId} = useParams();
   const {user} = React.useContext(UserStore);
-  const userId = user.id
+  const userId = user.id;
   const history = useHistory();
   const [form, setForm] = useState('');
   const [invalidUsername, setInvalidUsername] = useState(false);
-  const [alreadyExists, setAlreadyExists] = useState(false)
+  const [alreadyExists, setAlreadyExists] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const {register, handleSubmit, control} = useForm();
   const [textFieldValue, setTextFieldValue] = useState('');
-  const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
+  const {unsetIsLoading, setIsLoading, isLoading} = useContext(FrameStore);
   const handleTextFieldChange = useCallback(
     (value) => setTextFieldValue(value),
     [],
@@ -43,7 +53,7 @@ export const TiktokConnect = () => {
     const options = [...selectedOptions];
     options.push(tag);
     setSelectedOptions(options);
-  }
+  };
 
   const removeTag = useCallback(
     (tag) => () => {
@@ -54,13 +64,12 @@ export const TiktokConnect = () => {
     [selectedOptions],
   );
 
-  const titleCase = (string) => {
-    return string
+  const titleCase = (string) =>
+    string
       .toLowerCase()
       .split(' ')
       .map((word) => word.replace(word[0], word[0].toUpperCase()))
       .join('');
-  }
 
   const tagsMarkup = selectedOptions.map((option) => {
     let tagLabel = '';
@@ -73,91 +82,95 @@ export const TiktokConnect = () => {
     );
   });
 
+  const nextScreen = (value) => {
+    setForm(value);
+  };
+
   const setUsername = ({username}) => {
     setInvalidUsername(false);
     setAlreadyExists(false);
     setLoading(true);
-    setIsLoading()
-    if(!username ){
+    setIsLoading();
+    if (!username) {
       setLoading(false);
       setInvalidUsername(true);
       return;
     }
-    
-    const data = { platform: "tiktok", type: "username", data: username}
 
-    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
+    const data = {platform: 'tiktok', type: 'username', data: username};
+
+    fetch(
+      `${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       },
-      body: JSON.stringify(data),
-    })
+    )
       .then((response) => {
-        console.log(response)
         if (!response.ok) {
-          if(response.status ===  409){
-            setAlreadyExists(true)
-          }else if(response.status ===  400){
-            setInvalidUsername(true);
-          }
+          unsetIsLoading();
+          setLoading(false);
+          if (response.status === 409) return setAlreadyExists(true);
+          if (response.status === 400) return setInvalidUsername(true);
           throw new Error('Network response was not ok');
         }
         setInvalidUsername(false);
         return response.json();
       })
       .then((json) => {
+        unsetIsLoading();
+        setLoading(false);
         if (json.success) {
-          unsetIsLoading()
-          setLoading(false);
-          nextScreen("connected")
+          nextScreen('connected');
         }
-          setInvalidUsername(true);
-          throw new Error('Network response was not ok');
-        
+        setInvalidUsername(true);
       })
       .catch((ex) => {
         setLoading(false);
         setInvalidUsername(true);
       });
-  
   };
 
   const setDefault = () => {
     setForm('');
-    history.push(`/account/id/${accountId}/connect`)
+    history.push(`/account/id/${accountId}/connect`);
   };
 
   const setTags = ({tag}) => {
     setInvalidUsername(false);
     setAlreadyExists(false);
     setLoading(true);
-    setIsLoading()
-    if(!tag ){
+    setIsLoading();
+
+    if (!tag) {
       setLoading(false);
       setInvalidUsername(true);
       return;
     }
-    
-    const data = { platform: "tiktok", type: "tag", data: tag}
 
-    fetch(`${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
+    const data = {platform: 'tiktok', type: 'tag', data: tag};
+
+    fetch(
+      `${process.env.REACT_APP_API_HOST}/admin/user/id/${userId}/account/id/${accountId}/connected/create`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       },
-      body: JSON.stringify(data),
-    })
+    )
       .then((response) => {
         if (!response.ok) {
-          console.log(response)
-          if(response.status ===  409){
-            setAlreadyExists(true)
-          }else if(response.status ===  400){
-            setInvalidUsername(true);
-          }
+          unsetIsLoading();
+          setLoading(false);
+          if (response.status === 409) return setAlreadyExists(true);
+          if (response.status === 400) return setInvalidUsername(true);
           throw new Error('Network response was not ok');
         }
         setInvalidUsername(false);
@@ -167,21 +180,16 @@ export const TiktokConnect = () => {
         if (json.success) {
           unsetIsLoading();
           setLoading(false);
-          nextScreen("connected")
+          nextScreen('connected');
         }
-          setInvalidUsername(true);
-          throw new Error('Network response was not ok');
+        setInvalidUsername(true);
+        throw new Error('Network response was not ok');
       })
       .catch((ex) => {
         setLoading(false);
         setInvalidUsername(true);
       });
   };
-
-  const nextScreen = (value) => {
-    setForm(value);
-  }
-  
 
   const Check = useCallback(
     () => (
@@ -268,237 +276,245 @@ export const TiktokConnect = () => {
     ),
     [],
   );
-  
+
   const Selection = () => (
-      <FormField>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Logo />
-          <Shape />
-          <Tiktok />
-        </div>
-        <Heading>Here are a few things this integration will do</Heading>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'start',
-            margin: '10px',
-            alignItems: 'center',
-          }}
-        >
-          <Check />
-          <p style={{marginLeft: '10px'}}> Connect your Tiktok username</p>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'start',
-            margin: '10px',
-            alignItems: 'center',
-          }}
-        >
-          <Check />
-          <p style={{marginLeft: '10px'}}> Connect your Tiktok tags</p>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Button primary onClick={()=> nextScreen("tags")}>  Add Tag</Button>
-          <Button primary onClick={()=> nextScreen("username")}>
-            Add Username
-          </Button>
-        </div>
-      </FormField>
-    )
+    <FormField>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <Logo />
+        <Shape />
+        <Tiktok />
+      </div>
+      <Heading>Here are a few things this integration will do</Heading>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'start',
+          margin: '10px',
+          alignItems: 'center',
+        }}
+      >
+        <Check />
+        <p style={{marginLeft: '10px'}}> Connect your Tiktok username</p>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'start',
+          margin: '10px',
+          alignItems: 'center',
+        }}
+      >
+        <Check />
+        <p style={{marginLeft: '10px'}}> Connect your Tiktok tags</p>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginTop: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <Button primary onClick={() => nextScreen('tags')}>
+          {' '}
+          Add Tag
+        </Button>
+        <Button primary onClick={() => nextScreen('username')}>
+          Add Username
+        </Button>
+      </div>
+    </FormField>
+  );
 
   const Connected = () => (
-      <FormField>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Logo />
-          <Shape />
-          <Tiktok />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <DisplayText size="medium">
-            Your account has been connected
-          </DisplayText>
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Button
-            primary
-            onClick={setDefault}
-          >
-            {' '}
-            Finish
-          </Button>
-        </div>
-      </FormField>
-    );
+    <FormField>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <Logo />
+        <Shape />
+        <Tiktok />
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <DisplayText size="medium">Your account has been connected</DisplayText>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <Button primary onClick={setDefault}>
+          {' '}
+          Finish
+        </Button>
+      </div>
+    </FormField>
+  );
 
   const Username = () => (
-      <FormField>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Tiktok />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <DisplayText size="medium">Setup Tiktok Username</DisplayText>
-        </div>
-        <Form onSubmit={handleSubmit(setUsername)}>
-          <FormLayout>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '10px',
-                alignItems: 'center',
-              }}
-            >
-              <Controller
-                as={TextField}
-                control={control}
-                prefix={<Icon source={MentionMajorMonotone} />}
-                error={invalidUsername ? 'Username is invalid' : alreadyExists ?"Username already exists":null}
-                label="Username"
-                placeholder="Tiktok Username"
-                labelHidden
-                type="text"
-                name="username"
-               
-              />
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '30px',
-                alignItems: 'center',
-              }}
-            >
-              <Button onClick={setDefault}> Cancel</Button>
-              <Button primary submit loading={loading}>
-                {' '}
-                Continue{' '}
-              </Button>
-            </div>
-          </FormLayout>
-        </Form>
-      </FormField>
-    )
+    <FormField>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <Tiktok />
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <DisplayText size="medium">Setup Tiktok Username</DisplayText>
+      </div>
+      <Form onSubmit={handleSubmit(setUsername)}>
+        <FormLayout>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '10px',
+              alignItems: 'center',
+            }}
+          >
+            <Controller
+              as={TextField}
+              control={control}
+              prefix={<Icon source={MentionMajorMonotone} />}
+              error={
+                invalidUsername
+                  ? 'Username is invalid'
+                  : alreadyExists
+                  ? 'Username already exists'
+                  : null
+              }
+              label="Username"
+              placeholder="Tiktok Username"
+              labelHidden
+              type="text"
+              name="username"
+            />
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '30px',
+              alignItems: 'center',
+            }}
+          >
+            <Button onClick={setDefault}> Cancel</Button>
+            <Button primary submit loading={loading}>
+              {' '}
+              Continue{' '}
+            </Button>
+          </div>
+        </FormLayout>
+      </Form>
+    </FormField>
+  );
 
   const Tags = () => (
-      <FormField>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <Tiktok />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            margin: '30px',
-            alignItems: 'center',
-          }}
-        >
-          <DisplayText size="medium">Setup Video Tags</DisplayText>
-        </div>
-        <Form onSubmit={handleSubmit(setTags)}>
-          <FormLayout>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '10px',
-                alignItems: 'center',
-              }}
-            >
-                <Controller
-                as={TextField}
-                control={control}
-                prefix={<Icon source={HashtagMajorMonotone} />}
-                error={invalidUsername ? 'Tag is invalid' : alreadyExists ? "Tag already exists":null}
-                placeholder="Tiktok Tag"
-                labelHidden
-                type="text"
-                name="tag"
-                label="Tags"
-                // connectedRight={<Button submit>Add</Button>}
-               
-              />
-            </div>
-            <TextContainer>
-                <Stack>{tagsMarkup}</Stack>
-            </TextContainer>
+    <FormField>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <Tiktok />
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '30px',
+          alignItems: 'center',
+        }}
+      >
+        <DisplayText size="medium">Setup Video Tags</DisplayText>
+      </div>
+      <Form onSubmit={handleSubmit(setTags)}>
+        <FormLayout>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              padding: '10px',
+              alignItems: 'center',
+            }}
+          >
+            <Controller
+              as={TextField}
+              control={control}
+              prefix={<Icon source={HashtagMajorMonotone} />}
+              error={
+                invalidUsername
+                  ? 'Tag is invalid'
+                  : alreadyExists
+                  ? 'Tag already exists'
+                  : null
+              }
+              placeholder="Tiktok Tag"
+              labelHidden
+              type="text"
+              name="tag"
+              label="Tags"
+              // connectedRight={<Button submit>Add</Button>}
+            />
+          </div>
+          <TextContainer>
+            <Stack>{tagsMarkup}</Stack>
+          </TextContainer>
 
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '30px',
-                alignItems: 'center',
-              }}
-            >
-              <Button onClick={setDefault}> Cancel</Button>
-              <Button primary submit loading={loading}>
-                {' '}
-                Continue{' '}
-              </Button>
-            </div>
-          </FormLayout>
-        </Form>
-      </FormField>
-    );
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '30px',
+              alignItems: 'center',
+            }}
+          >
+            <Button onClick={setDefault}> Cancel</Button>
+            <Button primary submit loading={loading}>
+              {' '}
+              Continue{' '}
+            </Button>
+          </div>
+        </FormLayout>
+      </Form>
+    </FormField>
+  );
 
   const View = () => {
     switch (form) {
