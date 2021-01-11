@@ -192,10 +192,6 @@ export const TikTokList = ({
       title={approvalScreen ? 'Awaiting Approval' : 'Manage Content'}
       primaryAction={{content: 'Check for Videos', onAction: fetchVideos, loading: fetchLoading}}
     >
-    <Banner
-          title="We are currently experiencing some issues with importing tiktok videos, optimal service will be restored soon."
-          status="warning"
-      />
       {showFetchMessage ? <Banner
           title="We are now checking for videos, this can take up to 5 minutes. Please click the button below after this time."
           status="success"
