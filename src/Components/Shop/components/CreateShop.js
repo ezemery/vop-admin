@@ -103,7 +103,7 @@ export const CreateShop = () => {
     const formData = new FormData();
     formData.append('handle', handleValue.toLowerCase());
     formData.append('title', titleValue);
-    formData.append('description', descValue);
+    if(descValue) formData.append('description', descValue);
     formData.append('account_id', accountId);
     formData.append('user_id', userId);
     formData.append('shop_image', shopImageFile);
