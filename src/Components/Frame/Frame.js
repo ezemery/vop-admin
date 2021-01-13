@@ -74,6 +74,7 @@ export const AppFrame = (props) => {
 
   const handleLogout = async () => {
     try {
+      
       const response = await fetch(process.env.REACT_APP_API_HOST + `/admin/user/id/${userId}/logout`, {
         method: 'GET',
         credentials: 'include',
@@ -81,7 +82,9 @@ export const AppFrame = (props) => {
           'Content-Type': 'application/json',
         },
       })
+      await fetchAccountDataAsync(userId);
       await fetchUserDataAsync();
+     
       // history.push("/login");
     } catch(ex) {
       console.log('parsing failed', ex);

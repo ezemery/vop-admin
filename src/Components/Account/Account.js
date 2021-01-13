@@ -15,7 +15,6 @@ export const Account = () => {
     const { account } = React.useContext(AccountStore);
 
     let { path } = useRouteMatch();
-
     return (
         <Switch>
             <Route exact path={path}>

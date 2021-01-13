@@ -26,7 +26,7 @@ function accountsReducer(state, action) {
         case 'loadingStart':
             return {...state, loading:true}
         case 'error':
-            return {...state, error:true}
+            return {...state,accounts:[],account:null,loading:false, error:true}
         default:
             return state
     }
