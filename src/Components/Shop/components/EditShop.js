@@ -31,6 +31,7 @@ export const EditShop = () => {
   );
   const userId = user.id;
   const {setIsLoading, unsetIsLoading, isLoading} = useContext(FrameStore);
+  console.log(description)
   useEffect(() => {
     setIsLoading();
     fetch(
@@ -99,7 +100,6 @@ export const EditShop = () => {
     const formData = new FormData();
     formData.append('account_id', accountId);
     formData.append('user_id', userId);
-
     if (handle) formData.append('handle', handle.toLowerCase());
     if (title) formData.append('title', title);
     if (description) formData.append('description', description);
