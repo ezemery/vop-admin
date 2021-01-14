@@ -147,6 +147,7 @@ export const InstagramConnect = () => {
     const newCode = code.slice(0,length - 2)
       const data = {
         "platform":"instagram",
+        "type":"username",
         "platform_data": {
             "account_type": "personal",
             "auth_code": newCode,
@@ -200,20 +201,16 @@ export const InstagramConnect = () => {
     console.log(response)
     const FBPages = await fetchFBPages(response.authResponse.accessToken);
     const IGPage = await fetchProfIG(FBPages.pages[0].access_token,FBPages.pages[0].id)
+    console.log("IGPage",IGPage)
     const connectProf = await connectProfessional(IGPage.data.instagram_business_account.id,response.authResponse.accessToken)
     connectProf.success && nextScreen("connected");
   }
 
 
-  const setUsername = async ({username}) => {
+  const setUsername = async () => {
     setInvalidUsername(false);
     setLoading(true);
 
-    if(!username){
-      setLoading(false);
-      setInvalidUsername(true);
-      return;
-    }
     if(type === "professional"){
         setLoading(false);
         window.FB.getLoginStatus(function(response) {
@@ -388,7 +385,7 @@ export const InstagramConnect = () => {
           }}
         >
           <Button onClick={setDefault}> Cancel</Button>
-          <Button primary onClick={()=> nextScreen("username")}>
+          <Button loading={loading}  primary onClick={()=> setUsername()}>
            Continue
           </Button>
         </div>
@@ -508,8 +505,6 @@ export const InstagramConnect = () => {
 
   const View = () => {
     switch (form) {
-      case 'username':
-        return <Username />;
       case 'connected':
         return <Connected />;
       default:
