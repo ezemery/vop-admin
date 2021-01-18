@@ -31,11 +31,20 @@ export const InstagramConnect = () => {
   const history = useHistory();
   const [form, setForm] = useState('');
   const [invalidUsername, setInvalidUsername] = useState(false);
+  const [personalAccountError, setPersonalAccountError] = useState("");
+  const [professionalAccountError, setProfessionalAccountError] = useState("");
+  const [pages, setPages] = useState([])
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const {register, handleSubmit, control} = useForm();
   const [type, setType] = useState("personal")
+  const [import_type, setImportType] = useState("posts")
+  const [fbId, setFbId] = useState("")
+  const [token, setToken] = useState("")
+  const [professionalInstagramId, setProfessionalInstagramId] = useState("");
   const handleChange = useCallback((_checked, newValue) => setType(newValue), []);
+  const handleImportChange = useCallback((_checked, newValue) => setImportType(newValue), []);
+  const handleFbChange = useCallback((_checked, newValue) => {console.log(newValue); return setFbId(newValue)}, []);
   const { unsetIsLoading, setIsLoading, isLoading } = useContext(FrameStore);
 
   useEffect(() => {
@@ -43,17 +52,31 @@ export const InstagramConnect = () => {
       setLoaded(true);
     });
 
-    const url = window.location.href;
-    const splitCode = url.split("code=");
-    const redirectURL = url.split("?")
-    if(splitCode.length > 1){
-        console.log("code",splitCode[1],"url" ,redirectURL[0]);
-        connectPersonal(splitCode[1], redirectURL[0])
+    const sendCode = async () => {
+      const url = window.location.href;
+      const splitCode = url.split("code=");
+      const redirectURL = url.split("?")
+      if(splitCode.length > 1){
+          const response = await connectPersonal(splitCode[1], redirectURL[0])
+          console.log(response)
+          if(response.status  === "fail"){
+            setPersonalAccountError(response.message)
+            nextScreen("personal_account_error")
+            
+          }else{
+            nextScreen("connected")
+          }
+      }
     }
+    sendCode();
     
   },[]);
 
-
+  const FacebookIcon = useCallback(() => (
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9.48986 0C29.8218 0 50.1537 0 70.5101 0C70.6577 0.0736648 70.7806 0.19644 70.9281 0.220994C76.976 1.66974 80 5.47575 80 11.639C80 30.6937 80 49.7483 80 68.803C80 75.3591 75.4026 79.9754 68.8384 79.9754C63.7738 79.9754 58.7093 79.9754 53.6447 79.9754C53.2022 79.9754 52.7597 79.9754 52.268 79.9754C52.268 70.4236 52.268 61.019 52.268 51.4917C52.7843 51.4917 53.2268 51.4917 53.6447 51.4917C56.3491 51.4917 59.0289 51.4917 61.7333 51.4917C63.11 51.4917 63.7492 50.9024 63.9213 49.5519C64.2655 46.8508 64.5851 44.1498 64.9047 41.4242C65.1506 39.4352 64.4376 38.6249 62.4216 38.6004C59.4714 38.6004 56.5458 38.6004 53.5956 38.6004C53.153 38.6004 52.7351 38.5513 52.2434 38.5267C52.2434 35.4328 52.0959 32.4371 52.2926 29.4905C52.4892 26.7158 54.1119 25.3653 56.9146 25.267C58.6601 25.1934 60.4302 25.2425 62.1758 25.2179C63.8722 25.1934 64.5851 24.5304 64.6097 22.8607C64.6343 20.577 64.6343 18.2934 64.6097 16.0098C64.5851 14.3646 63.9459 13.7017 62.2741 13.7262C59.2256 13.7262 56.1524 13.7017 53.1039 13.8735C46.1955 14.2419 40.6884 19.202 39.9017 26.0773C39.4837 29.7115 39.6558 33.3947 39.5821 37.0534C39.5821 37.52 39.5821 37.9865 39.5821 38.5758C37.1235 38.5758 34.8371 38.5513 32.5507 38.5758C31.2231 38.5758 30.3626 39.2634 30.338 40.5157C30.3135 43.585 30.338 46.6298 30.4364 49.6992C30.4856 50.9269 31.1985 51.4426 32.477 51.4672C34.3946 51.4917 36.3122 51.4672 38.2299 51.4672C38.6478 51.4672 39.0904 51.5163 39.4591 51.5163C39.4591 61.0681 39.4591 70.4727 39.4591 79.8772C39.1395 79.9018 38.9428 79.9263 38.7462 79.9263C29.2809 79.9263 19.791 79.9754 10.3258 79.9018C4.64659 79.9018 0 75.0154 0 69.2941C0 49.7974 0 30.3008 0 10.8042C0 5.86863 3.34358 1.59607 8.08851 0.392879C8.55562 0.294659 9.02274 0.14733 9.48986 0Z" fill="#445897"/>
+    </svg>
+  ),[])
 
   const loadSDK = useCallback(() => {
     window.fbAsyncInit = function() {
@@ -116,12 +139,13 @@ export const InstagramConnect = () => {
     })
   }
 
-  const connectProfessional = (ig_business_id,access_token ) => {
+  const connectProfessional = (ig_business_id,access_token,import_type) => {
     setIsLoading()
     const data = {
       "platform":"instagram",
       "type": "ig_business_id",
       "data": ig_business_id,
+      "import_option":import_type,
       "platform_data": {
           "account_type": "professional",
           "auth_code": access_token
@@ -142,12 +166,13 @@ export const InstagramConnect = () => {
     })
   }
 
-  const connectPersonal = (code, redirect_url) => {
+  const connectPersonal = async (code, redirect_url) => {
     const length = code.length;
     const newCode = code.slice(0,length - 2)
       const data = {
         "platform":"instagram",
         "type":"username",
+        "import_option":"posts",
         "platform_data": {
             "account_type": "personal",
             "auth_code": newCode,
@@ -163,13 +188,9 @@ export const InstagramConnect = () => {
         },
         body: JSON.stringify(data),
       }).then((response)=>{
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
           return response.json();
       }).then((json)=> {
           unsetIsLoading()
-          nextScreen("connected")
           return json;
       })
   } 
@@ -198,14 +219,36 @@ export const InstagramConnect = () => {
   }
 
   const fBCallback =  async (response) => {
-    console.log(response)
     const FBPages = await fetchFBPages(response.authResponse.accessToken);
-    const IGPage = await fetchProfIG(FBPages.pages[0].access_token,FBPages.pages[0].id)
-    console.log("IGPage",IGPage)
-    const connectProf = await connectProfessional(IGPage.data.instagram_business_account.id,response.authResponse.accessToken)
-    connectProf.success && nextScreen("connected");
+    if(FBPages.pages.length > 0){
+      setPages(FBPages.pages)
+      nextScreen("list_pages")
+    }else{
+      nextScreen("zero_pages")
+      setProfessionalAccountError("There was an error in connecting your facebook account")
+    }
+   
   }
 
+  const setFbPage = async () => {
+    const IGPage = await fetchProfIG(token,fbId)
+    if(IGPage.data.professional_instagram_id !== null){
+      nextScreen("import_type")
+      setProfessionalInstagramId(IGPage.data.professional_instagram_id)
+    }else{
+      nextScreen("ig_connect_error")
+    }
+  }
+
+  const setConnectProfessional = async () => {
+      const connectProf = await connectProfessional(professionalInstagramId, token, import_type)
+      if(connectProf.success){
+        nextScreen("connected")
+      }else{
+        setProfessionalAccountError(connectProf.message)
+        nextScreen("professional_account_error")
+      }
+  }
 
   const setUsername = async () => {
     setInvalidUsername(false);
@@ -215,13 +258,12 @@ export const InstagramConnect = () => {
         setLoading(false);
         window.FB.getLoginStatus(function(response) {
             if(response.status === 'connected'){
-                console.log("response", response)
+                setToken(response.authResponse.accessToken)
                 fBCallback(response)
             }else{
                 window.FB.login(function(response) {
                     if (response.status === 'connected') {
                       // Logged into your webpage and Facebook.
-                      console.log("response", response)
                       fBCallback(response)
                     } 
                   },{scope:'instagram_basic,pages_show_list'});
@@ -392,6 +434,73 @@ export const InstagramConnect = () => {
       </FormField>
     )
 
+    const ListImportType = () => (
+      <FormField>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <img src={instagram} alt="instagram connect" />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+         <Heading>Choose what to import</Heading>
+        </div>
+      
+        <div 
+        style={{
+            display: 'flex',
+            flexDirection:'column',
+            justifyContent: 'center',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+            <p>Select what content you’ll like to import</p>
+            <div style={{padding:"20px"}}>
+            <Checkbox
+                id="posts"
+                name="instagram"
+                label="Posts"
+                checked={import_type==="posts"}
+                onChange={handleImportChange}
+                />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
+            <Checkbox
+             id="stories"
+             name="instagram"
+             label="Stories"
+             checked={import_type==="stories"}
+             onChange={handleImportChange}
+            />
+            </div>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Button onClick={setDefault}> Cancel</Button>
+          <Button loading={loading}  primary onClick={()=> setConnectProfessional()}>
+           Continue
+          </Button>
+        </div>
+      </FormField>
+    )
+
   const Connected = () => (
       <FormField>
         <div
@@ -436,6 +545,203 @@ export const InstagramConnect = () => {
         </div>
       </FormField>
     );
+
+    const ProfessionalAccountError = () => (
+      <FormField>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Logo />
+          <Shape />
+          <img src={instagram} alt="instagram connect" />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <DisplayText size="medium">
+          {professionalAccountError}
+          </DisplayText>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            primary
+            onClick={setDefault}
+          >
+            {' '}
+            Finish
+          </Button>
+        </div>
+      </FormField>
+    );
+
+    const IGAccountError = () => (
+      <FormField>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Logo />
+          <Shape />
+          <img src={instagram} alt="instagram connect" />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <h2 style={{textAlign:"center"}}>
+           There was an error in connecting your instagram account, please check if your instagram account is a professional account
+          </h2>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            primary
+            onClick={setDefault}
+          >
+            {' '}
+            Finish
+          </Button>
+        </div>
+      </FormField>
+    );
+
+    const PersonalAccountError = () => (
+      <FormField>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Logo />
+          <Shape />
+          <img src={instagram} alt="instagram connect" />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <h2 style={{textAlign:"center"}}>
+           {personalAccountError}
+          </h2>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            primary
+            onClick={setDefault}
+          >
+            {' '}
+            Finish
+          </Button>
+        </div>
+      </FormField>
+    );
+
+    const ListProfessionalPages = () => (
+      <FormField>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            margin: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <FacebookIcon />
+        </div>
+        <Heading>Select which facebook page to connect</Heading>
+        
+        <div 
+        style={{
+            display: 'flex',
+            flexDirection:'column',
+            justifyContent: 'start',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+            <p>What kind of account do you want to connect</p>
+            {pages.map((item, indx)=>(
+                <div
+                key={indx}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'start',
+                  margin: '10px',
+                  alignItems: 'center',
+                  background:"white",
+                  width:"100%"
+                }}
+              >
+              <Checkbox
+                id={item.id}
+                name="facebook_pages"
+                label={item.name}
+                checked={fbId === item.id}
+                onChange={handleFbChange}
+                />
+            </div>
+            ))}
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '30px',
+            alignItems: 'center',
+          }}
+        >
+          <Button onClick={setDefault}> Cancel</Button>
+          <Button loading={loading}  primary onClick={()=> setFbPage()}>
+           Continue
+          </Button>
+        </div>
+      </FormField>
+    )
 
   const Username = () => (
       <FormField>
@@ -507,6 +813,18 @@ export const InstagramConnect = () => {
     switch (form) {
       case 'connected':
         return <Connected />;
+      case 'zero_pages':
+        return <ProfessionalAccountError />;
+      case 'ig_connect_error':
+        return <IGAccountError />;
+      case 'personal_account_error':
+        return <PersonalAccountError />;
+      case 'professional_account_error':
+        return <ProfessionalAccountError />;
+      case 'list_pages':
+        return <ListProfessionalPages />;
+      case 'import_type':
+        return <ListImportType />;
       default:
         return <Selection />;
     }
